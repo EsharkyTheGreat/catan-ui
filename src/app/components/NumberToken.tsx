@@ -38,7 +38,7 @@ export default function NumberToken({
         y={-size / 2}
         width={size}
         height={size}
-        cornerRadius={10}
+        cornerRadius={3}
         fill="white"
         stroke="black"
         strokeWidth={2}
@@ -55,6 +55,8 @@ export default function NumberToken({
         verticalAlign="middle"
         width={size}
         height={size / 2}
+        stroke="green"
+        strokeWidth={0.5}
         y={-size / 4}
         x={-size / 2}
       />
