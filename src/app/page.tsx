@@ -137,6 +137,37 @@ export default function Home() {
 
   const [catanEdges, setCatanEdges] = useState<{startX: number, startY: number, endX: number, endY: number, color: string}[]>([]);
 
+  // Handle vertex hover effects
+  const handleVertexMouseEnter = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const target = e.target as Konva.Shape;
+    target.stroke('black');
+    target.strokeWidth(3);
+  };
+
+  const handleVertexMouseLeave = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const target = e.target as Konva.Shape;
+    target.stroke('#D63031');
+    target.strokeWidth(1);
+  };
+
+  // Handle edge hover effects
+  const handleEdgeMouseEnter = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const target = e.target as Konva.Shape;
+    target.stroke('black');
+    target.strokeWidth(4);
+  };
+
+  const handleEdgeMouseLeave = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const target = e.target as Konva.Shape;
+    // Restore the original random color and stroke width
+    const edgeIndex = parseInt(target.attrs.key?.split('-')[1] || '0');
+    const originalEdge = catanEdges[edgeIndex];
+    if (originalEdge) {
+      target.stroke(originalEdge.color);
+      target.strokeWidth(2);
+    }
+  };
+
   const clampStagePosition = (
     pos: { x: number; y: number },
     scale: number
@@ -269,6 +300,8 @@ export default function Home() {
                 points={[edge.startX, edge.startY, edge.endX, edge.endY]}
                 stroke={edge.color}
                 strokeWidth={2}
+                onMouseEnter={handleEdgeMouseEnter}
+                onMouseLeave={handleEdgeMouseLeave}
               />
             ))}
           </Layer>
@@ -283,6 +316,8 @@ export default function Home() {
                 fill="#FF6B6B"
                 stroke="#D63031"
                 strokeWidth={1}
+                onMouseEnter={handleVertexMouseEnter}
+                onMouseLeave={handleVertexMouseLeave}
               />
             ))}
           </Layer>
