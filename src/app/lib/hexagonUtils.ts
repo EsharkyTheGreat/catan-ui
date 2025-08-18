@@ -6,7 +6,7 @@ export interface CatanTile {
   x: number;
   y: number;
   type: string;
-  number: number | null;
+  number: number;
 }
 
 // Convert q,r,s coordinates to x,y coordinates
@@ -47,7 +47,7 @@ export const generateCatanMap = (dimensions: {
             x: centerX + x,
             y: centerY + y,
             type: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
-            number: Math.floor(Math.random() * 6) + 2, // Random number token 2-7
+            number: Math.floor(Math.random() * 11) + 2, // Random number token 2-12
           });
         }
       }

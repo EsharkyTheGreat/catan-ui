@@ -1,6 +1,7 @@
 import { Layer, RegularPolygon, Image } from "react-konva";
 import { CatanTile } from "../lib/hexagonUtils";
 import useImage from "use-image";
+import NumberToken from "./NumberToken";
 
 type Props = {
   catanTiles: CatanTile[];
@@ -43,6 +44,16 @@ export default function HexagonLayer({ catanTiles }: Props) {
             fillPatternScaleY={0.07}
             fillPatternOffsetX={500}
             fillPatternOffsetY={500}
+          />
+        );
+      })}
+      {catanTiles.map((tile) => {
+        return (
+          <NumberToken
+            key={`${tile.q}-${tile.r}-${tile.s}`}
+            number={tile.number}
+            x={tile.x}
+            y={tile.y}
           />
         );
       })}
