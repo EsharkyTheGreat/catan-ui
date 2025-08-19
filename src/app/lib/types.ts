@@ -1,9 +1,19 @@
-export interface CatanEdge {
+export interface CatanEdgePosition {
   startX: number;
   startY: number;
   endX: number;
   endY: number;
   color: string;
+  data: CatanEdge;
+}
+
+export interface CatanEdge {
+  q1: number;
+  r1: number;
+  s1: number;
+  q2: number;
+  r2: number;
+  s2: number;
 }
 
 // CatanTile interface
@@ -41,13 +51,14 @@ export type Tile = {
 
 export type GameSnapshot = {
   players: Player[];
-  board: { tiles: Tile[] };
+  faces: CatanTilePosition[];
+  edges: CatanEdgePosition[];
   currentPlayer: string | null;
   phase: "dice" | "build" | "trade" | "robber";
   lastRoll: number | null;
 };
 
 export type GameState = GameSnapshot & {
-  setInitialState: (snapshot: GameSnapshot) => void;
-  updateState: (partial: Partial<GameSnapshot>) => void;
+  //   setInitialState: (snapshot: GameSnapshot) => void;
+  //   updateState: (partial: Partial<GameSnapshot>) => void;
 };

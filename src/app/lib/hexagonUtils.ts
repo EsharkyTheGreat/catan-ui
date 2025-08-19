@@ -1,4 +1,9 @@
-import { CatanTilePosition, Resource } from "./types";
+import {
+  CatanEdgePosition,
+  CatanTilePosition,
+  Resource,
+  CatanEdge,
+} from "./types";
 
 // Convert q,r,s coordinates to x,y coordinates
 export const hexToPixel = (
@@ -57,7 +62,7 @@ export const calculateVertices = (tiles: CatanTilePosition[]) => {
   tiles.forEach((tile) => {
     // Calculate the 6 vertices of each hexagon
     for (let i = 0; i < 6; i++) {
-      const angle = (i * 60 * Math.PI) / 180 + Math.PI / 6; // 60 degrees per vertex
+      const angle = ((i * 60 - 90) * Math.PI) / 180; // 60 degrees per vertex
       const vertexX = tile.x + size * Math.cos(angle);
       const vertexY = tile.y + size * Math.sin(angle);
 
@@ -76,49 +81,80 @@ export const calculateVertices = (tiles: CatanTilePosition[]) => {
 };
 
 // Calculate all edges between vertices
-export const calculateEdges = (tiles: CatanTilePosition[]) => {
-  const edges = new Set<string>(); // Use Set to avoid duplicates
+export const calculateEdges = (
+  tiles: CatanTilePosition[]
+): CatanEdgePosition[] => {
+  const edges = new Map<string, CatanEdgePosition>(); // Use Map to store edge data
   const size = 30; // Same size as used in hexToPixel
 
+  // Helper function to get adjacent hexagon coordinates
+  const getAdjacentHexes = (q: number, r: number, s: number) => {
+    return [
+      { q: q + 1, r: r - 1, s: s }, // Top-Right
+      { q: q + 1, r: r, s: s - 1 }, // Right
+      { q: q, r: r + 1, s: s - 1 }, // Bottom-Right
+      { q: q - 1, r: r + 1, s: s }, // Bottom-Left
+      { q: q - 1, r: r, s: s + 1 }, // left
+      { q: q, r: r - 1, s: s + 1 }, // Top-left
+    ];
+  };
+
+  // Helper function to create a consistent edge key between two faces
+  const createEdgeKey = (
+    face1: { q: number; r: number; s: number },
+    face2: { q: number; r: number; s: number }
+  ) => {
+    // Sort the faces to ensure consistent key generation
+    const sorted = [face1, face2].sort((a, b) => {
+      if (a.q !== b.q) return a.q - b.q;
+      if (a.r !== b.r) return a.r - b.r;
+      return a.s - b.s;
+    });
+    return `${sorted[0].q},${sorted[0].r},${sorted[0].s}-${sorted[1].q},${sorted[1].r},${sorted[1].s}`;
+  };
+
   tiles.forEach((tile) => {
-    // Calculate the 6 vertices of each hexagon
-    for (let i = 0; i < 6; i++) {
-      const angle1 = (i * 60 * Math.PI) / 180 + Math.PI / 6;
-      const angle2 = (((i + 1) % 6) * 60 * Math.PI) / 180 + Math.PI / 6;
+    const { q, r, s } = tile.data;
+    const adjacentHexes = getAdjacentHexes(q, r, s);
 
-      const vertex1X = tile.x + size * Math.cos(angle1);
-      const vertex1Y = tile.y + size * Math.sin(angle1);
-      const vertex2X = tile.x + size * Math.cos(angle2);
-      const vertex2Y = tile.y + size * Math.sin(angle2);
+    // Check each adjacent position for a tile
+    adjacentHexes.forEach((adjacent, direction) => {
+      // Create edge key between these two faces
+      const edgeKey = createEdgeKey(
+        { q, r, s },
+        { q: adjacent.q, r: adjacent.r, s: adjacent.s }
+      );
 
-      // Round to avoid floating point precision issues
-      const rounded1X = Math.round(vertex1X * 100000) / 100000;
-      const rounded1Y = Math.round(vertex1Y * 100000) / 100000;
-      const rounded2X = Math.round(vertex2X * 100000) / 100000;
-      const rounded2Y = Math.round(vertex2Y * 100000) / 100000;
+      if (!edges.has(edgeKey)) {
+        const vertices = calculateVertices([tile]);
 
-      // Create edge key ensuring consistent ordering
-      const edgeKey =
-        rounded1X < rounded2X ||
-        (rounded1X === rounded2X && rounded1Y < rounded2Y)
-          ? `${rounded1X},${rounded1Y}-${rounded2X},${rounded2Y}`
-          : `${rounded2X},${rounded2Y}-${rounded1X},${rounded1Y}`;
+        const startX = vertices[direction].x;
+        const startY = vertices[direction].y;
 
-      edges.add(edgeKey);
-    }
+        const endX = vertices[(direction + 1) % 6].x;
+        const endY = vertices[(direction + 1) % 6].y;
+
+        // Create the edge data
+        const edgeData: CatanEdge = {
+          q1: q,
+          r1: r,
+          s1: s,
+          q2: adjacent.q,
+          r2: adjacent.r,
+          s2: adjacent.s,
+        };
+
+        edges.set(edgeKey, {
+          startX,
+          startY,
+          endX,
+          endY,
+          color: `hsl(${Math.random() * 360}, 70%, 60%)`, // Random HSL color
+          data: edgeData,
+        });
+      }
+    });
   });
 
-  // Convert back to array of edge objects
-  return Array.from(edges).map((edge) => {
-    const [start, end] = edge.split("-");
-    const [startX, startY] = start.split(",").map(Number);
-    const [endX, endY] = end.split(",").map(Number);
-    return {
-      startX,
-      startY,
-      endX,
-      endY,
-      color: `hsl(${Math.random() * 360}, 70%, 60%)`, // Random HSL color
-    };
-  });
+  return Array.from(edges.values());
 };

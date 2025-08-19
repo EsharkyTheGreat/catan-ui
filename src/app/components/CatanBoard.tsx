@@ -6,7 +6,7 @@ import {
   calculateVertices,
   calculateEdges,
 } from "../lib/hexagonUtils";
-import { CatanEdge, CatanTilePosition } from "../lib/types";
+import { CatanEdgePosition, CatanTilePosition } from "../lib/types";
 import HexagonLayer from "./HexagonLayer";
 import VertexLayer from "./VertexLayer";
 import EdgeLayer from "./EdgeLayer";
@@ -28,7 +28,7 @@ export default function CatanBoard({ parentRef }: Props) {
   const [catanVertices, setCatanVertices] = useState<
     { x: number; y: number }[]
   >([]);
-  const [catanEdges, setCatanEdges] = useState<CatanEdge[]>([]);
+  const [catanEdges, setCatanEdges] = useState<CatanEdgePosition[]>([]);
 
   const clampStagePosition = (
     pos: { x: number; y: number },
