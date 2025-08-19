@@ -35,7 +35,7 @@ export default function NumberToken({
       {/* background rect */}
       <Rect
         x={-size / 2}
-        y={-size / 2}
+        y={+size * 0.15}
         width={size}
         height={size}
         cornerRadius={3}
@@ -57,12 +57,12 @@ export default function NumberToken({
         height={size / 2}
         stroke="green"
         strokeWidth={0.5}
-        y={-size / 4}
+        y={+size / 3}
         x={-size / 2}
       />
 
       {/* probability dots */}
-      <Group y={size / 4}>
+      <Group y={size * 1.0}>
         {Array.from({ length: dotCount }).map((_, i) => (
           <Circle
             key={i}
