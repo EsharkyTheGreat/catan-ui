@@ -6,10 +6,10 @@ import {
   calculateVertices,
   calculateEdges,
 } from "../lib/hexagonUtils";
-import { CatanEdgePosition, CatanTilePosition } from "../lib/types";
 import HexagonLayer from "./HexagonLayer";
 import VertexLayer from "./VertexLayer";
 import EdgeLayer from "./EdgeLayer";
+import { useGameStore } from "../store/GameState";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement | null>;
@@ -24,11 +24,7 @@ export default function CatanBoard({ parentRef }: Props) {
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>();
 
-  const [catanTiles, setCatanTiles] = useState<CatanTilePosition[]>([]);
-  const [catanVertices, setCatanVertices] = useState<
-    { x: number; y: number }[]
-  >([]);
-  const [catanEdges, setCatanEdges] = useState<CatanEdgePosition[]>([]);
+  const { setFaces, setVertices, setEdges } = useGameStore();
 
   const clampStagePosition = (
     pos: { x: number; y: number },
@@ -116,9 +112,9 @@ export default function CatanBoard({ parentRef }: Props) {
   useEffect(() => {
     if (dimensions.width > 0 && dimensions.height > 0) {
       const tiles = generateCatanMap(dimensions);
-      setCatanTiles(tiles);
-      setCatanVertices(calculateVertices(tiles));
-      setCatanEdges(calculateEdges(tiles));
+      setFaces(tiles);
+      setVertices(calculateVertices(tiles));
+      setEdges(calculateEdges(tiles));
     }
   }, [dimensions]);
 
@@ -147,11 +143,11 @@ export default function CatanBoard({ parentRef }: Props) {
         )}
       </Layer>
       {/* Render Catan tiles */}
-      <HexagonLayer catanTiles={catanTiles} />
+      <HexagonLayer />
       {/* Render edges */}
-      <EdgeLayer edges={catanEdges} />
+      <EdgeLayer />
       {/* Render vertices */}
-      <VertexLayer vertices={catanVertices} />
+      <VertexLayer />
       <Layer>
         <Text text="Try to drag shapes" fontSize={15} />
         <Rect

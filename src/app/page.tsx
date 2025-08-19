@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import CatanBoard from "./components/CatanBoard";
+import BottomNavbar from "./components/BottomNavbar";
 
 export default function Home() {
   const canvasParentRef = useRef<HTMLDivElement>(null);
@@ -8,7 +9,7 @@ export default function Home() {
   return (
     <div className="w-screen h-screen flex">
       {/* Game Canvas */}
-      <div className="w-4/5 h-4/5" ref={canvasParentRef}>
+      <div className="w-4/5 h-14/16" ref={canvasParentRef}>
         <CatanBoard parentRef={canvasParentRef} />
       </div>
 
@@ -16,7 +17,9 @@ export default function Home() {
       <div className="w-1/5 h-full bg-green-500"></div>
 
       {/* Bottom Navbar */}
-      <div className="absolute bottom-0 left-0 w-4/5 h-1/5 bg-red-500"></div>
+      <div className="absolute bottom-0 left-0 w-4/5 h-2/16">
+        <BottomNavbar />
+      </div>
     </div>
   );
 }

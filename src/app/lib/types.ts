@@ -14,6 +14,18 @@ export interface CatanEdge {
   q2: number;
   r2: number;
   s2: number;
+  owner: string | null;
+}
+
+export interface CatanVertex {
+  settlement: string | null;
+  city: string | null;
+}
+
+export interface CatanVertexPosition {
+  x: number;
+  y: number;
+  data: CatanVertex;
 }
 
 // CatanTile interface
@@ -49,16 +61,24 @@ export type Tile = {
   hasRobber: boolean;
 };
 
+export type GamePhases = "dice" | "road_placement" | "house_placement" | "settlement_placement" | "robber"
+
 export type GameSnapshot = {
   players: Player[];
   faces: CatanTilePosition[];
   edges: CatanEdgePosition[];
+  vertices: CatanVertexPosition[];
   currentPlayer: string | null;
-  phase: "dice" | "build" | "trade" | "robber";
+  phase: GamePhases;
   lastRoll: number | null;
 };
 
 export type GameState = GameSnapshot & {
   //   setInitialState: (snapshot: GameSnapshot) => void;
   //   updateState: (partial: Partial<GameSnapshot>) => void;
+  setPhase: (phase: GamePhases) => void;
+  buildRoad: (roadIndex: number) => void;
+  setFaces: (faces: CatanTilePosition[]) => void;
+  setVertices: (vertices: CatanVertexPosition[]) => void;
+  setEdges: (edges: CatanEdgePosition[]) => void;
 };

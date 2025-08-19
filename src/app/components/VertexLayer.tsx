@@ -1,11 +1,10 @@
 import { Layer, Circle } from "react-konva";
 import Konva from "konva";
+import { useGameStore } from "../store/GameState";
 
-type Props = {
-  vertices: { x: number; y: number }[];
-};
 
-export default function VertexLayer({ vertices }: Props) {
+export default function VertexLayer() {
+  const {vertices} = useGameStore();
   // Handle vertex hover effects
   const handleVertexMouseEnter = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const target = e.target as Konva.Shape;

@@ -1,13 +1,12 @@
-import { Layer, RegularPolygon, Image } from "react-konva";
-import { CatanTilePosition } from "../lib/types";
+import { Layer, RegularPolygon } from "react-konva";
+import { useState } from "react";
 import useImage from "use-image";
 import NumberToken from "./NumberToken";
+import { useGameStore } from "../store/GameState";
 
-type Props = {
-  catanTiles: CatanTilePosition[];
-};
-
-export default function HexagonLayer({ catanTiles }: Props) {
+export default function HexagonLayer() {
+  const {faces} = useGameStore();
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [brickImage] = useImage("/BrickSprite.png");
   const [stoneImage] = useImage("/StoneSprite.png");
   const [wheatImage] = useImage("/WheatSprite.png");
@@ -16,7 +15,8 @@ export default function HexagonLayer({ catanTiles }: Props) {
   return (
     <Layer>
       {/* Render Catan tiles */}
-      {catanTiles.map((tile) => {
+      {faces.map((tile) => {
+        const tileKey = `${tile.data.q}-${tile.data.r}-${tile.data.s}`;
         // Determine which image to use based on tile type
         let backgroundImage = brickImage;
         if (tile.data.type === "brick") {
@@ -31,7 +31,7 @@ export default function HexagonLayer({ catanTiles }: Props) {
 
         return (
           <RegularPolygon
-            key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}
+            key={tileKey}
             sides={6}
             radius={30}
             x={tile.x}
@@ -44,10 +44,13 @@ export default function HexagonLayer({ catanTiles }: Props) {
             fillPatternScaleY={0.07}
             fillPatternOffsetX={500}
             fillPatternOffsetY={500}
+            opacity={hoveredKey === tileKey ? 0.7 : 1}
+            onMouseEnter={() => setHoveredKey(tileKey)}
+            onMouseLeave={() => setHoveredKey(null)}
           />
         );
       })}
-      {catanTiles.map((tile) => {
+      {faces.map((tile) => {
         return (
           <NumberToken
             key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}
