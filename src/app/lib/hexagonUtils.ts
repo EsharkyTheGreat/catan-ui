@@ -1,13 +1,4 @@
-// CatanTile interface
-export interface CatanTile {
-  q: number;
-  r: number;
-  s: number;
-  x: number;
-  y: number;
-  type: string;
-  number: number;
-}
+import { CatanTilePosition, Resource } from "./types";
 
 // Convert q,r,s coordinates to x,y coordinates
 export const hexToPixel = (
@@ -26,12 +17,12 @@ export const generateCatanMap = (dimensions: {
   width: number;
   height: number;
 }) => {
-  const tiles: CatanTile[] = [];
+  const tiles: CatanTilePosition[] = [];
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
 
   // Define available tile types
-  const tileTypes = ["forest", "brick", "stone", "wheat"];
+  const tileTypes: Resource[] = ["forest", "brick", "stone", "wheat"];
 
   // Create a 3x3 grid of hexagons around center
   for (let q = -3; q <= 3; q++) {
@@ -41,13 +32,15 @@ export const generateCatanMap = (dimensions: {
         if (q + r + s === 0) {
           const { x, y } = hexToPixel(q, r, s);
           tiles.push({
-            q,
-            r,
-            s,
+            data: {
+              q,
+              r,
+              s,
+              number: Math.floor(Math.random() * 11) + 2, // Random number token 2-12
+              type: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
+            },
             x: centerX + x,
             y: centerY + y,
-            type: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
-            number: Math.floor(Math.random() * 11) + 2, // Random number token 2-12
           });
         }
       }
@@ -57,7 +50,7 @@ export const generateCatanMap = (dimensions: {
 };
 
 // Calculate all vertex coordinates for the hexagonal tiles
-export const calculateVertices = (tiles: CatanTile[]) => {
+export const calculateVertices = (tiles: CatanTilePosition[]) => {
   const vertices = new Set<string>(); // Use Set to avoid duplicates
   const size = 30; // Same size as used in hexToPixel
 
@@ -83,7 +76,7 @@ export const calculateVertices = (tiles: CatanTile[]) => {
 };
 
 // Calculate all edges between vertices
-export const calculateEdges = (tiles: CatanTile[]) => {
+export const calculateEdges = (tiles: CatanTilePosition[]) => {
   const edges = new Set<string>(); // Use Set to avoid duplicates
   const size = 30; // Same size as used in hexToPixel
 

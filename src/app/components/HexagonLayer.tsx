@@ -1,10 +1,10 @@
 import { Layer, RegularPolygon, Image } from "react-konva";
-import { CatanTile } from "../lib/hexagonUtils";
+import { CatanTilePosition } from "../lib/types";
 import useImage from "use-image";
 import NumberToken from "./NumberToken";
 
 type Props = {
-  catanTiles: CatanTile[];
+  catanTiles: CatanTilePosition[];
 };
 
 export default function HexagonLayer({ catanTiles }: Props) {
@@ -19,19 +19,19 @@ export default function HexagonLayer({ catanTiles }: Props) {
       {catanTiles.map((tile) => {
         // Determine which image to use based on tile type
         let backgroundImage = brickImage;
-        if (tile.type === "brick") {
+        if (tile.data.type === "brick") {
           backgroundImage = brickImage;
-        } else if (tile.type === "stone") {
+        } else if (tile.data.type === "stone") {
           backgroundImage = stoneImage;
-        } else if (tile.type === "wheat") {
+        } else if (tile.data.type === "wheat") {
           backgroundImage = wheatImage;
-        } else if (tile.type === "forest") {
+        } else if (tile.data.type === "forest") {
           backgroundImage = forestImage;
         }
 
         return (
           <RegularPolygon
-            key={`${tile.q}-${tile.r}-${tile.s}`}
+            key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}
             sides={6}
             radius={30}
             x={tile.x}
@@ -50,8 +50,8 @@ export default function HexagonLayer({ catanTiles }: Props) {
       {catanTiles.map((tile) => {
         return (
           <NumberToken
-            key={`${tile.q}-${tile.r}-${tile.s}`}
-            number={tile.number}
+            key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}
+            number={tile.data.number}
             x={tile.x}
             y={tile.y}
           />

@@ -2,12 +2,11 @@ import Konva from "konva";
 import { useRef, useEffect, useState } from "react";
 import { Image, Layer, Rect, Stage, Text } from "react-konva";
 import {
-  CatanTile,
   generateCatanMap,
   calculateVertices,
   calculateEdges,
 } from "../lib/hexagonUtils";
-import { CatanEdge } from "../lib/types";
+import { CatanEdge, CatanTilePosition } from "../lib/types";
 import HexagonLayer from "./HexagonLayer";
 import VertexLayer from "./VertexLayer";
 import EdgeLayer from "./EdgeLayer";
@@ -25,7 +24,7 @@ export default function CatanBoard({ parentRef }: Props) {
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>();
 
-  const [catanTiles, setCatanTiles] = useState<CatanTile[]>([]);
+  const [catanTiles, setCatanTiles] = useState<CatanTilePosition[]>([]);
   const [catanVertices, setCatanVertices] = useState<
     { x: number; y: number }[]
   >([]);
