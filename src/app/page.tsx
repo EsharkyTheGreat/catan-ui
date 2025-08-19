@@ -17,7 +17,7 @@ export default function Home() {
       <div className="w-1/5 h-full bg-green-500"></div>
 
       {/* Bottom Navbar */}
-      <div className="absolute bottom-0 left-0 w-4/5 h-2/16">
+      <div className="absolute bottom-0 left-0 w-4/5 h-2/16 bg-black">
         <BottomNavbar />
       </div>
     </div>

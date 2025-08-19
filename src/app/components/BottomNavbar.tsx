@@ -1,6 +1,7 @@
 import { Building, Check, Dice1, Hammer, Handshake, House, Minus, Play, Spade } from "lucide-react";
 import Image from "next/image";
 import { useGameStore } from "../store/GameState";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 
 export default function BottomNavbar() {
 
@@ -27,13 +28,33 @@ export default function BottomNavbar() {
             </div>
             <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">
                 <div className="transition-transform duration-200 hover:scale-110">
-                    <Handshake size={88} stroke="black" className="" />
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Handshake size={88} stroke="black" className="" />
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Trade</DialogTitle>
+                                <DialogDescription>Trade</DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 
             </div>
             <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">
                 <div className="transition-transform duration-200 hover:scale-110">
-                    <Hammer size={88} stroke="black" className=""/>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Hammer size={88} stroke="black" className=""/>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Buy Development Card</DialogTitle>
+                                <DialogDescription>Buy Development Card</DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
             <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
@@ -43,12 +64,12 @@ export default function BottomNavbar() {
             </div>
             <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
                 <div className="transition-transform duration-200 hover:scale-110">
-                    <House size={88} stroke="black" className="" />
+                    <House size={88} stroke="black" className="" onClick={()=>{setPhase("house_placement")}} />
                 </div>
             </div>
             <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
                 <div className="transition-transform duration-200 hover:scale-110">
-                    <Building size={88} stroke="black" className="" />
+                    <Building size={88} stroke="black" className="" onClick={()=>{setPhase("settlement_placement")}} />
                 </div>
             </div>
             <div className=" flex px-2 items-center h-full bg-amber-50 rounded-xl">

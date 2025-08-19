@@ -4,7 +4,7 @@ import { useGameStore } from "../store/GameState";
 
 
 export default function VertexLayer() {
-  const {vertices} = useGameStore();
+  const {vertices, phase} = useGameStore();
   // Handle vertex hover effects
   const handleVertexMouseEnter = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const target = e.target as Konva.Shape;
@@ -21,7 +21,7 @@ export default function VertexLayer() {
   return (
     <Layer>
       {/* Render vertices as circles */}
-      {vertices.map((vertex, index) => (
+      {(phase === "house_placement" || phase === "settlement_placement") && vertices.filter((v)=>{return v.data.city === null || v.data.settlement === null}).map((vertex, index) => (
         <Circle
           key={`vertex-${index}`}
           x={vertex.x}
