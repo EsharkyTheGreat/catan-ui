@@ -95,4 +95,6 @@ export type GameState = GameSnapshot & {
   setEdges: (edges: CatanEdgePosition[]) => void;
   setChat: (messages: ChatMessage[]) => void;
   addChat: (message: ChatMessage) => void;
+  setGameLog: (gameLog: ChatMessage[]) => void;
+  addGameLog: (gameLog: ChatMessage) => void;
 };

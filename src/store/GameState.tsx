@@ -18,9 +18,25 @@ export const useGameStore = create<GameState>()(
     currentPlayer: "1",
     phase: "dice",
     lastRoll: null,
-    gameLog: [{ player: "Esharky", message: "Joined the lobby" }],
-    chat: [{ player: "Esharky", message: "Game Chat" }],
+    gameLog: Array.from({ length: 12 }, () => ({
+      player: "Esharky",
+      message: "Hello",
+    })),
+    chat: Array.from({ length: 12 }, () => ({
+      player: "Esharky",
+      message: "Hello",
+    })),
 
+    setGameLog: (gameLog: ChatMessage[]) => set({ gameLog }),
+    addGameLog: (log: ChatMessage) => {
+      set((state) => {
+        const newLogs = [...state.gameLog, log];
+        return {
+          ...state,
+          gameLog: newLogs,
+        };
+      });
+    },
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
     addChat: (message: ChatMessage) => {
       set((state) => {
