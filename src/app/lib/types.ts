@@ -45,6 +45,11 @@ export interface CatanTile {
 
 export type Resource = "forest" | "brick" | "sheep" | "wheat" | "stone";
 
+export type ChatMessage = {
+  player: string;
+  message: string;
+};
+
 export type Player = {
   id: string;
   name: string;
@@ -61,9 +66,16 @@ export type Tile = {
   hasRobber: boolean;
 };
 
-export type GamePhases = "dice" | "road_placement" | "house_placement" | "settlement_placement" | "robber"
+export type GamePhases =
+  | "dice"
+  | "road_placement"
+  | "house_placement"
+  | "settlement_placement"
+  | "robber";
 
 export type GameSnapshot = {
+  chat: ChatMessage[];
+  gameLog: ChatMessage[];
   players: Player[];
   faces: CatanTilePosition[];
   edges: CatanEdgePosition[];
@@ -81,4 +93,6 @@ export type GameState = GameSnapshot & {
   setFaces: (faces: CatanTilePosition[]) => void;
   setVertices: (vertices: CatanVertexPosition[]) => void;
   setEdges: (edges: CatanEdgePosition[]) => void;
+  setChat: (messages: ChatMessage[]) => void;
+  addChat: (message: ChatMessage) => void;
 };

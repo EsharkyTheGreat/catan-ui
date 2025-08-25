@@ -1,8 +1,15 @@
 import { create } from "zustand";
-import { CatanEdgePosition, CatanTilePosition, CatanVertexPosition, GamePhases, GameState } from "../lib/types";
+import {
+  CatanEdgePosition,
+  CatanTilePosition,
+  CatanVertexPosition,
+  ChatMessage,
+  GamePhases,
+  GameState,
+} from "../lib/types";
 import { devtools } from "zustand/middleware";
 
-export const useGameStore = create<GameState>() (
+export const useGameStore = create<GameState>()(
   devtools((set) => ({
     players: [],
     edges: [],
@@ -11,8 +18,20 @@ export const useGameStore = create<GameState>() (
     currentPlayer: "1",
     phase: "dice",
     lastRoll: null,
-  
-    setPhase: (phase: GamePhases) => set({phase}),
+    gameLog: [{ player: "Esharky", message: "Joined the lobby" }],
+    chat: [{ player: "Esharky", message: "Game Chat" }],
+
+    setChat: (messages: ChatMessage[]) => set({ chat: messages }),
+    addChat: (message: ChatMessage) => {
+      set((state) => {
+        const newMessages = [...state.chat, message];
+        return {
+          ...state,
+          chat: newMessages,
+        };
+      });
+    },
+    setPhase: (phase: GamePhases) => set({ phase }),
     buildRoad: (roadIndex: number) => {
       set((state) => {
         // Check if there's a current player
@@ -39,21 +58,18 @@ export const useGameStore = create<GameState>() (
           ...newEdges[roadIndex],
           data: {
             ...newEdges[roadIndex].data,
-            owner: state.currentPlayer
-          }
+            owner: state.currentPlayer,
+          },
         };
 
         return {
           ...state,
-          edges: newEdges
+          edges: newEdges,
         };
       });
     },
-    setFaces: (faces: CatanTilePosition[]) => set({faces}),
-    setVertices: (vertices: CatanVertexPosition[]) => set({vertices}),
-    setEdges: (edges: CatanEdgePosition[]) => set({edges}),
+    setFaces: (faces: CatanTilePosition[]) => set({ faces }),
+    setVertices: (vertices: CatanVertexPosition[]) => set({ vertices }),
+    setEdges: (edges: CatanEdgePosition[]) => set({ edges }),
   }))
-) 
-
-
-
+);
