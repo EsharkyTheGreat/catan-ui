@@ -1,3 +1,4 @@
+import Bank from "./Bank";
 import GameChat from "./GameChat";
 import GameLog from "./GameLog";
 
@@ -10,11 +11,7 @@ export default function RightNavbar() {
       <GameLog />
 
       {/* Third section - 12.5% */}
-      <div className="h-1/8 bg-yellow-200 border-b border-gray-300">
-        <div className="p-4">
-          <h3 className="font-bold text-lg">Third Section</h3>
-        </div>
-      </div>
+      <Bank />
 
       {/* Fourth section - 12.5% */}
       <div className="h-1/8 bg-orange-200 border-b border-gray-300">
