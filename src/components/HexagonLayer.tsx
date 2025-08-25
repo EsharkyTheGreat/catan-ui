@@ -1,11 +1,11 @@
 import { Layer, RegularPolygon } from "react-konva";
 import { useState } from "react";
 import useImage from "use-image";
-import NumberToken from "./NumberToken";
-import { useGameStore } from "../store/GameState";
+import NumberToken from "@/components/NumberToken";
+import { useGameStore } from "@/store/GameState";
 
 export default function HexagonLayer() {
-  const {faces} = useGameStore();
+  const { faces } = useGameStore();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [brickImage] = useImage("/BrickSprite.png");
   const [stoneImage] = useImage("/StoneSprite.png");

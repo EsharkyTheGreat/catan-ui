@@ -4,7 +4,7 @@ import {
   Resource,
   CatanEdge,
   CatanVertexPosition,
-} from "./types";
+} from "@/lib/types";
 
 // Convert q,r,s coordinates to x,y coordinates
 export const hexToPixel = (
@@ -56,7 +56,9 @@ export const generateCatanMap = (dimensions: {
 };
 
 // Calculate all vertex coordinates for the hexagonal tiles
-export const calculateVertices = (tiles: CatanTilePosition[]): CatanVertexPosition[] => {
+export const calculateVertices = (
+  tiles: CatanTilePosition[]
+): CatanVertexPosition[] => {
   const vertices = new Set<string>(); // Use Set to avoid duplicates
   const size = 30; // Same size as used in hexToPixel
 
@@ -77,10 +79,14 @@ export const calculateVertices = (tiles: CatanTilePosition[]): CatanVertexPositi
   // Convert back to array of coordinate objects
   return Array.from(vertices).map((coord) => {
     const [x, y] = coord.split(",").map(Number);
-    return { x, y, data: {
-      city: null,
-      settlement: null
-    } };
+    return {
+      x,
+      y,
+      data: {
+        city: null,
+        settlement: null,
+      },
+    };
   });
 };
 
@@ -146,7 +152,7 @@ export const calculateEdges = (
           q2: adjacent.q,
           r2: adjacent.r,
           s2: adjacent.s,
-          owner: null
+          owner: null,
         };
 
         edges.set(edgeKey, {

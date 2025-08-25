@@ -1,7 +1,6 @@
 import { Layer, Line } from "react-konva";
 import Konva from "konva";
-import { CatanEdgePosition } from "../lib/types";
-import { useGameStore } from "../store/GameState";
+import { useGameStore } from "@/store/GameState";
 import { useState } from "react";
 
 export default function EdgeLayer() {
@@ -13,7 +12,7 @@ export default function EdgeLayer() {
     const target = e.target as Konva.Line;
     target.stroke("black");
     target.strokeWidth(4);
-    
+
     // Get the edge index from the key
     const edgeIndex = target.index;
     setHoveredEdgeIndex(edgeIndex);
@@ -34,8 +33,8 @@ export default function EdgeLayer() {
   const handleEdgeMouseClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const target = e.target as Konva.Line;
     const edgeIndex = target.index;
-    buildRoad(edgeIndex)
-  }
+    buildRoad(edgeIndex);
+  };
 
   return (
     <Layer>

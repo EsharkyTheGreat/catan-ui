@@ -5,11 +5,11 @@ import {
   generateCatanMap,
   calculateVertices,
   calculateEdges,
-} from "../lib/hexagonUtils";
-import HexagonLayer from "./HexagonLayer";
-import VertexLayer from "./VertexLayer";
-import EdgeLayer from "./EdgeLayer";
-import { useGameStore } from "../store/GameState";
+} from "@/lib/hexagonUtils";
+import HexagonLayer from "@/components/HexagonLayer";
+import VertexLayer from "@/components/VertexLayer";
+import EdgeLayer from "@/components/EdgeLayer";
+import { useGameStore } from "@/store/GameState";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement | null>;

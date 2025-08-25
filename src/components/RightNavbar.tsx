@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { useGameStore } from "../store/GameState";
+import { useGameStore } from "@/store/GameState";
 import { useEffect, useRef, useState } from "react";
 
 export default function RightNavbar() {

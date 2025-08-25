@@ -1,9 +1,8 @@
 "use client";
 import { useRef } from "react";
-import CatanBoard from "./components/CatanBoard";
-import BottomNavbar from "./components/BottomNavbar";
-import RightNavbar from "./components/RightNavbar";
-
+import CatanBoard from "@/components/CatanBoard";
+import BottomNavbar from "@/components/BottomNavbar";
+import RightNavbar from "@/components/RightNavbar";
 export default function Home() {
   const canvasParentRef = useRef<HTMLDivElement>(null);
 

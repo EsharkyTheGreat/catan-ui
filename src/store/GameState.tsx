@@ -6,7 +6,7 @@ import {
   ChatMessage,
   GamePhases,
   GameState,
-} from "../lib/types";
+} from "@/lib/types";
 import { devtools } from "zustand/middleware";
 
 export const useGameStore = create<GameState>()(
