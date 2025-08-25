@@ -51,12 +51,13 @@ export type ChatMessage = {
 };
 
 export type Player = {
-  id: string;
+  id: number;
   name: string;
-  resources: Record<Resource, number>;
-  settlements: string[];
-  roads: string[];
-  points: number;
+  longestRoad: number;
+  longestArmy: number;
+  developmentCards: number;
+  cardCount: number;
+  victoryPoints: number;
 };
 
 export type Tile = {

@@ -11,7 +11,44 @@ import { devtools } from "zustand/middleware";
 
 export const useGameStore = create<GameState>()(
   devtools((set) => ({
-    players: [],
+    players: [
+      {
+        cardCount: 12,
+        developmentCards: 1,
+        id: 2,
+        longestArmy: 123,
+        longestRoad: 12,
+        name: "Esharky",
+        victoryPoints: 13,
+      },
+      {
+        cardCount: 12,
+        developmentCards: 1,
+        id: 2,
+        longestArmy: 123,
+        longestRoad: 12,
+        name: "Esharky",
+        victoryPoints: 13,
+      },
+      {
+        cardCount: 12,
+        developmentCards: 1,
+        id: 2,
+        longestArmy: 123,
+        longestRoad: 12,
+        name: "Esharky",
+        victoryPoints: 13,
+      },
+      {
+        cardCount: 12,
+        developmentCards: 1,
+        id: 2,
+        longestArmy: 123,
+        longestRoad: 12,
+        name: "Esharky",
+        victoryPoints: 13,
+      },
+    ],
     edges: [],
     faces: [],
     vertices: [],
