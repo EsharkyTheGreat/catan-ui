@@ -84,6 +84,7 @@ export type GameSnapshot = {
   currentPlayer: string | null;
   phase: GamePhases;
   lastRoll: number | null;
+  socket: WebSocket | null;
 };
 
 export type GameState = GameSnapshot & {
@@ -98,4 +99,5 @@ export type GameState = GameSnapshot & {
   addChat: (message: ChatMessage) => void;
   setGameLog: (gameLog: ChatMessage[]) => void;
   addGameLog: (gameLog: ChatMessage) => void;
+  connect: (ws: WebSocket) => void;
 };

@@ -10,7 +10,7 @@ import {
 import { devtools } from "zustand/middleware";
 
 export const useGameStore = create<GameState>()(
-  devtools((set) => ({
+  devtools((set, get) => ({
     players: [
       {
         cardCount: 12,
@@ -63,7 +63,14 @@ export const useGameStore = create<GameState>()(
       player: "Esharky",
       message: "Hello",
     })),
-
+    socket: null,
+    connect: (ws: WebSocket) => {
+      set({ socket: ws });
+      ws.onopen = () => {
+        console.log("Websocket Connection");
+      };
+      ws.onmessage = (e) => {};
+    },
     setGameLog: (gameLog: ChatMessage[]) => set({ gameLog }),
     addGameLog: (log: ChatMessage) => {
       set((state) => {
