@@ -1,3 +1,5 @@
+import { ChatMessageEvent, ConnectedEvent } from "./websocket";
+
 export interface CatanEdgePosition {
   startX: number;
   startY: number;
@@ -99,5 +101,8 @@ export type GameState = GameSnapshot & {
   addChat: (message: ChatMessage) => void;
   setGameLog: (gameLog: ChatMessage[]) => void;
   addGameLog: (gameLog: ChatMessage) => void;
+
   connect: (ws: WebSocket) => void;
+  onChatMessage: (event: ChatMessageEvent) => void;
+  onWsConnected: (event: ConnectedEvent) => void;
 };

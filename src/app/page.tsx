@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { fetchGameRooms, GameRoom } from "@/lib/api";
+import { createGameRoom, fetchGameRooms, GameRoom } from "@/lib/api";
+import toast from "react-hot-toast";
 
 export default function Page() {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
   const [loading, setLoading] = useState(true);
   const [playerName, setPlayerName] = useState("");
-  const [showCreateForm, setShowCreateForm] = useState(false);
 
   useEffect(() => {
     const loadGameRooms = async () => {
@@ -27,6 +27,15 @@ export default function Page() {
 
     loadGameRooms();
   }, []);
+
+  const createNewGame = async () => {
+    if (playerName.trim() == "") {
+      toast.error("Username is empty");
+    }
+    const newGameId = await createGameRoom(playerName);
+    if (!newGameId) return;
+    window.location.href = `/${newGameId}?username=${playerName}`;
+  };
 
   return (
     <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
@@ -48,9 +57,7 @@ export default function Page() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Available Games</h3>
-              <Button onClick={() => setShowCreateForm(!showCreateForm)}>
-                {showCreateForm ? "Cancel" : "Create New Game"}
-              </Button>
+              <Button onClick={createNewGame}>Create New Game</Button>
             </div>
             <div className="space-y-2">
               {loading ? (
@@ -80,7 +87,13 @@ export default function Page() {
                     </div>
                     <Button
                       variant="outline"
-                      onClick={() => (window.location.href = `/${room.id}`)}
+                      onClick={() => {
+                        if (playerName.trim() == "") {
+                          toast.error("Please enter your name");
+                          return;
+                        }
+                        window.location.href = `/${room.id}?username=${playerName}`;
+                      }}
                       disabled={room.players.length >= 4}
                     >
                       {room.players.length >= 4 ? "Full" : "Join Game"}

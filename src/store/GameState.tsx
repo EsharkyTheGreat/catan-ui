@@ -8,6 +8,12 @@ import {
   GameState,
 } from "@/lib/types";
 import { devtools } from "zustand/middleware";
+import {
+  ChatMessageEvent,
+  ConnectedEvent,
+  ServerMessage,
+} from "@/lib/websocket";
+import toast from "react-hot-toast";
 
 export const useGameStore = create<GameState>()(
   devtools((set, get) => ({
@@ -64,12 +70,27 @@ export const useGameStore = create<GameState>()(
       message: "Hello",
     })),
     socket: null,
+    onChatMessage: (event: ChatMessageEvent) => {},
+    onWsConnected: (event: ConnectedEvent) => {
+      toast.success(`${event.username} has joined the lobby`);
+    },
     connect: (ws: WebSocket) => {
       set({ socket: ws });
-      ws.onopen = () => {
-        console.log("Websocket Connection");
+      ws.onopen = () => console.log("Websocket Connection established");
+      ws.onclose = () => console.log("Websocket Connection Closed");
+      ws.onmessage = (e) => {
+        try {
+          const data: ServerMessage = JSON.parse(e.data);
+          console.log(data);
+          if (!data.type) return;
+          if (data.type === "CHAT_MESSAGE")
+            get().onChatMessage(data as ChatMessageEvent);
+          if (data.type === "CONNECTED")
+            get().onWsConnected(data as ConnectedEvent);
+        } catch (err) {
+          console.error("Invalid JSON Data: ", e.data, err);
+        }
       };
-      ws.onmessage = (e) => {};
     },
     setGameLog: (gameLog: ChatMessage[]) => set({ gameLog }),
     addGameLog: (log: ChatMessage) => {
