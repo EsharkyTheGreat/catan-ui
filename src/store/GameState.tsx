@@ -58,19 +58,29 @@ export const useGameStore = create<GameState>()(
     edges: [],
     faces: [],
     vertices: [],
-    currentPlayer: "1",
+    currentPlayer: null,
     phase: "dice",
     lastRoll: null,
     gameLog: Array.from({ length: 12 }, () => ({
       player: "Esharky",
       message: "Hello",
     })),
-    chat: Array.from({ length: 12 }, () => ({
-      player: "Esharky",
-      message: "Hello",
-    })),
+    chat: [],
     socket: null,
-    onChatMessage: (event: ChatMessageEvent) => {},
+    setCurrentPlayer: (name: string) => set({ currentPlayer: name }),
+    onChatMessage: (event: ChatMessageEvent) => {
+      console.log("ChatMessageEvent Received", event);
+      set((state) => {
+        const newMessages = [
+          ...state.chat,
+          { player: event.player, message: event.message },
+        ];
+        return {
+          ...state,
+          chat: newMessages,
+        };
+      });
+    },
     onWsConnected: (event: ConnectedEvent) => {
       toast.success(`${event.username} has joined the lobby`);
     },
@@ -81,7 +91,7 @@ export const useGameStore = create<GameState>()(
       ws.onmessage = (e) => {
         try {
           const data: ServerMessage = JSON.parse(e.data);
-          console.log(data);
+          console.log("WS Data", data);
           if (!data.type) return;
           if (data.type === "CHAT_MESSAGE")
             get().onChatMessage(data as ChatMessageEvent);
@@ -103,9 +113,19 @@ export const useGameStore = create<GameState>()(
       });
     },
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
-    addChat: (message: ChatMessage) => {
+    addChat: (message: string) => {
       set((state) => {
-        const newMessages = [...state.chat, message];
+        if (!state.currentPlayer) return state;
+        const newMessages = [
+          ...state.chat,
+          { player: state.currentPlayer, message: message },
+        ];
+        const event: ChatMessageEvent = {
+          type: "CHAT_MESSAGE",
+          message: message,
+          player: state.currentPlayer,
+        };
+        get().socket?.send(JSON.stringify(event));
         return {
           ...state,
           chat: newMessages,

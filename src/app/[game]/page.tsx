@@ -12,10 +12,12 @@ export default function Home() {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
   const gameId = params.game as string;
-  const { connect } = useGameStore();
+  const { connect, setCurrentPlayer } = useGameStore();
 
   useEffect(() => {
     if (!gameId) return;
+    if (!username) return;
+    setCurrentPlayer(username);
     const ws = new WebSocket(
       `ws://localhost:8000/ws/${gameId}?player_name=${username}`
     );

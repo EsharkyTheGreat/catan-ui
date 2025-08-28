@@ -29,7 +29,7 @@ export const fetchGameRooms = async (): Promise<GameRoom[]> => {
 
 export const createGameRoom = async (host: string): Promise<string | null> => {
   try {
-    const resp = await fetch(`${BASE_PATH}/game?host=${host}}`, {
+    const resp = await fetch(`${BASE_PATH}/game?host=${host}`, {
       method: "POST",
     });
     const data = await resp.json();

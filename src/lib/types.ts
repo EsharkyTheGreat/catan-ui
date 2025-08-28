@@ -98,9 +98,10 @@ export type GameState = GameSnapshot & {
   setVertices: (vertices: CatanVertexPosition[]) => void;
   setEdges: (edges: CatanEdgePosition[]) => void;
   setChat: (messages: ChatMessage[]) => void;
-  addChat: (message: ChatMessage) => void;
+  addChat: (message: string) => void;
   setGameLog: (gameLog: ChatMessage[]) => void;
   addGameLog: (gameLog: ChatMessage) => void;
+  setCurrentPlayer: (name: string) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;

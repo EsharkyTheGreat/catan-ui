@@ -11,7 +11,7 @@ export default function GameChat() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (messageInput.trim()) {
-      addChat({ player: "Esharky", message: messageInput.trim() });
+      addChat(messageInput.trim());
       setMessageInput("");
     }
   };
