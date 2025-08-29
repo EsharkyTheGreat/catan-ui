@@ -1,4 +1,9 @@
-import { ChatMessageEvent, ConnectedEvent } from "./websocket";
+import {
+  ChatMessageEvent,
+  ConnectedEvent,
+  GameStartedEvent,
+  GenericErrorEvent,
+} from "./websocket";
 
 export interface CatanEdgePosition {
   startX: number;
@@ -76,6 +81,8 @@ export type GamePhases =
   | "settlement_placement"
   | "robber";
 
+export type GameStatuses = "active" | "lobby" | "finished";
+
 export type GameSnapshot = {
   chat: ChatMessage[];
   gameLog: ChatMessage[];
@@ -85,6 +92,7 @@ export type GameSnapshot = {
   vertices: CatanVertexPosition[];
   currentPlayer: string | null;
   phase: GamePhases;
+  status: GameStatuses;
   lastRoll: number | null;
   socket: WebSocket | null;
 };
@@ -93,17 +101,26 @@ export type GameState = GameSnapshot & {
   //   setInitialState: (snapshot: GameSnapshot) => void;
   //   updateState: (partial: Partial<GameSnapshot>) => void;
   setPhase: (phase: GamePhases) => void;
+  setGameStatus: (gameStatus: GameStatuses) => void;
+
   buildRoad: (roadIndex: number) => void;
+
   setFaces: (faces: CatanTilePosition[]) => void;
   setVertices: (vertices: CatanVertexPosition[]) => void;
   setEdges: (edges: CatanEdgePosition[]) => void;
+
   setChat: (messages: ChatMessage[]) => void;
   addChat: (message: string) => void;
+
   setGameLog: (gameLog: ChatMessage[]) => void;
   addGameLog: (gameLog: ChatMessage) => void;
+
   setCurrentPlayer: (name: string) => void;
+  setPlayers: (players: Player[]) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;
   onWsConnected: (event: ConnectedEvent) => void;
+  onGameStart: (event: GameStartedEvent) => void;
+  onWsError: (event: GenericErrorEvent) => void;
 };

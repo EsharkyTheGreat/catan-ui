@@ -6,55 +6,22 @@ import {
   ChatMessage,
   GamePhases,
   GameState,
+  GameStatuses,
+  Player,
 } from "@/lib/types";
 import { devtools } from "zustand/middleware";
 import {
   ChatMessageEvent,
   ConnectedEvent,
+  GameStartedEvent,
+  GenericErrorEvent,
   ServerMessage,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 
 export const useGameStore = create<GameState>()(
   devtools((set, get) => ({
-    players: [
-      {
-        cardCount: 12,
-        developmentCards: 1,
-        id: 2,
-        longestArmy: 123,
-        longestRoad: 12,
-        name: "Esharky",
-        victoryPoints: 13,
-      },
-      {
-        cardCount: 12,
-        developmentCards: 1,
-        id: 2,
-        longestArmy: 123,
-        longestRoad: 12,
-        name: "Esharky",
-        victoryPoints: 13,
-      },
-      {
-        cardCount: 12,
-        developmentCards: 1,
-        id: 2,
-        longestArmy: 123,
-        longestRoad: 12,
-        name: "Esharky",
-        victoryPoints: 13,
-      },
-      {
-        cardCount: 12,
-        developmentCards: 1,
-        id: 2,
-        longestArmy: 123,
-        longestRoad: 12,
-        name: "Esharky",
-        victoryPoints: 13,
-      },
-    ],
+    players: [],
     edges: [],
     faces: [],
     vertices: [],
@@ -67,6 +34,9 @@ export const useGameStore = create<GameState>()(
     })),
     chat: [],
     socket: null,
+    status: "lobby",
+    setGameStatus: (status: GameStatuses) => set({ status }),
+    setPlayers: (players: Player[]) => set({ players }),
     setCurrentPlayer: (name: string) => set({ currentPlayer: name }),
     onChatMessage: (event: ChatMessageEvent) => {
       console.log("ChatMessageEvent Received", event);
@@ -84,6 +54,12 @@ export const useGameStore = create<GameState>()(
     onWsConnected: (event: ConnectedEvent) => {
       toast.success(`${event.username} has joined the lobby`);
     },
+    onGameStart: (data: GameStartedEvent) => {
+      set({ status: "active" });
+    },
+    onWsError: (e: GenericErrorEvent) => {
+      toast.error(e.message);
+    },
     connect: (ws: WebSocket) => {
       set({ socket: ws });
       ws.onopen = () => console.log("Websocket Connection established");
@@ -97,6 +73,9 @@ export const useGameStore = create<GameState>()(
             get().onChatMessage(data as ChatMessageEvent);
           if (data.type === "CONNECTED")
             get().onWsConnected(data as ConnectedEvent);
+          if (data.type === "GAME_STARTED")
+            get().onGameStart(data as GameStartedEvent);
+          if (data.type === "ERROR") get().onWsError(data as GenericErrorEvent);
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }

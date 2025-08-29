@@ -1,11 +1,12 @@
 import toast from "react-hot-toast";
+import { GameStatuses, Player } from "./types";
 
 export interface GameRoom {
   id: number;
   host: string;
   name: string;
-  players: string[];
-  status: string;
+  players: Player[];
+  status: GameStatuses;
   createdAt: number;
 }
 
@@ -39,4 +40,15 @@ export const createGameRoom = async (host: string): Promise<string | null> => {
     toast.error("Failed to call Create Game Room API");
     return null;
   }
+};
+
+export const fetchGameRoomSummary = async (
+  game_id: string
+): Promise<GameRoom> => {
+  const response = await fetch(`${BASE_PATH}/game/${game_id}`);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = (await response.json()) as GameRoom;
+  return data;
 };

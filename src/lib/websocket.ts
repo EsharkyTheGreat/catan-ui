@@ -14,7 +14,18 @@ export type DisconnectedEvent = {
   username: number;
 };
 
+export type GameStartedEvent = {
+  type: "GAME_STARTED";
+};
+
+export type GenericErrorEvent = {
+  type: "ERROR";
+  message: string;
+};
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
-  | DisconnectedEvent;
+  | DisconnectedEvent
+  | GameStartedEvent
+  | GenericErrorEvent;
