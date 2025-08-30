@@ -18,22 +18,21 @@ export default function Home() {
   const gameId = params.game as string;
   const {
     connect,
-    setCurrentPlayer,
     players,
-    setPlayers,
     status,
-    setGameStatus,
     socket,
+    refreshGameMetadata,
+    setId,
+    setUsername,
   } = useGameStore();
 
   useEffect(() => {
     async function startup() {
       if (!gameId) return;
       if (!username) return;
-      const gameSummary = await fetchGameRoomSummary(gameId);
-      setGameStatus(gameSummary.status);
-      setPlayers(gameSummary.players);
-      setCurrentPlayer(username);
+      setId(gameId);
+      setUsername(username);
+      refreshGameMetadata();
       const ws = new WebSocket(
         `ws://localhost:8000/ws/${gameId}?player_name=${username}`
       );

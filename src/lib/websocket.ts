@@ -23,9 +23,15 @@ export type GenericErrorEvent = {
   message: string;
 };
 
+export type JoinedEvent = {
+  type: "JOINED";
+  username: string;
+};
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
   | DisconnectedEvent
   | GameStartedEvent
-  | GenericErrorEvent;
+  | GenericErrorEvent
+  | JoinedEvent;

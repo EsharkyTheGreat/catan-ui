@@ -1,8 +1,10 @@
 import {
   ChatMessageEvent,
   ConnectedEvent,
+  DisconnectedEvent,
   GameStartedEvent,
   GenericErrorEvent,
+  JoinedEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -84,6 +86,8 @@ export type GamePhases =
 export type GameStatuses = "active" | "lobby" | "finished";
 
 export type GameSnapshot = {
+  id: string;
+  username: string;
   chat: ChatMessage[];
   gameLog: ChatMessage[];
   players: Player[];
@@ -98,8 +102,10 @@ export type GameSnapshot = {
 };
 
 export type GameState = GameSnapshot & {
-  //   setInitialState: (snapshot: GameSnapshot) => void;
-  //   updateState: (partial: Partial<GameSnapshot>) => void;
+  setId: (gameId: string) => void;
+  setUsername: (name: string) => void;
+  refreshGameMetadata: () => void;
+
   setPhase: (phase: GamePhases) => void;
   setGameStatus: (gameStatus: GameStatuses) => void;
 
@@ -121,6 +127,8 @@ export type GameState = GameSnapshot & {
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;
   onWsConnected: (event: ConnectedEvent) => void;
+  onWsDisconnected: (event: DisconnectedEvent) => void;
   onGameStart: (event: GameStartedEvent) => void;
   onWsError: (event: GenericErrorEvent) => void;
+  onPlayerJoined: (event: JoinedEvent) => Promise<void>;
 };

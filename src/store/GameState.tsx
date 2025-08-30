@@ -13,14 +13,19 @@ import { devtools } from "zustand/middleware";
 import {
   ChatMessageEvent,
   ConnectedEvent,
+  DisconnectedEvent,
   GameStartedEvent,
   GenericErrorEvent,
+  JoinedEvent,
   ServerMessage,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
+import { fetchGameRoomSummary } from "@/lib/api";
 
 export const useGameStore = create<GameState>()(
   devtools((set, get) => ({
+    id: "",
+    username: "",
     players: [],
     edges: [],
     faces: [],
@@ -35,6 +40,16 @@ export const useGameStore = create<GameState>()(
     chat: [],
     socket: null,
     status: "lobby",
+    setUsername: (username: string) => set({ username }),
+    setId: (gameId: string) => set({ id: gameId }),
+    refreshGameMetadata: async () => {
+      const gameSummary = await fetchGameRoomSummary(get().id);
+      set({
+        status: gameSummary.status,
+        players: gameSummary.players,
+        currentPlayer: get().username,
+      });
+    },
     setGameStatus: (status: GameStatuses) => set({ status }),
     setPlayers: (players: Player[]) => set({ players }),
     setCurrentPlayer: (name: string) => set({ currentPlayer: name }),
@@ -54,11 +69,18 @@ export const useGameStore = create<GameState>()(
     onWsConnected: (event: ConnectedEvent) => {
       toast.success(`${event.username} has joined the lobby`);
     },
+    onWsDisconnected: (event: DisconnectedEvent) => {
+      toast.error(`${event.username} has disconnected`);
+    },
     onGameStart: (data: GameStartedEvent) => {
       set({ status: "active" });
     },
     onWsError: (e: GenericErrorEvent) => {
       toast.error(e.message);
+    },
+    onPlayerJoined: async (e: JoinedEvent) => {
+      toast.success(`${e.username} has joined the game`);
+      get().refreshGameMetadata();
     },
     connect: (ws: WebSocket) => {
       set({ socket: ws });
@@ -73,9 +95,12 @@ export const useGameStore = create<GameState>()(
             get().onChatMessage(data as ChatMessageEvent);
           if (data.type === "CONNECTED")
             get().onWsConnected(data as ConnectedEvent);
+          if (data.type === "DISCONNECTED")
+            get().onWsDisconnected(data as DisconnectedEvent);
           if (data.type === "GAME_STARTED")
             get().onGameStart(data as GameStartedEvent);
           if (data.type === "ERROR") get().onWsError(data as GenericErrorEvent);
+          if (data.type === "JOINED") get().onPlayerJoined(data as JoinedEvent);
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }

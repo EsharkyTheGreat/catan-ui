@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { GameStatuses, Player } from "./types";
 
 export interface GameRoom {
-  id: number;
+  id: string;
   host: string;
   name: string;
   players: Player[];
@@ -25,6 +25,26 @@ export const fetchGameRooms = async (): Promise<GameRoom[]> => {
   } catch (error) {
     console.error("Failed to fetch game rooms:", error);
     return [];
+  }
+};
+
+export const joinGameRoom = async (
+  gameId: string,
+  player_name: string
+): Promise<null> => {
+  try {
+    const resp = await fetch(
+      `${BASE_PATH}/game/${gameId}/join?player_name=${player_name}`,
+      {
+        method: "POST",
+      }
+    );
+    const data = await resp.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to call Join Game Room API", error);
+    toast.error("Failed to call Join Game Room API");
+    return null;
   }
 };
 

@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { createGameRoom, fetchGameRooms, GameRoom } from "@/lib/api";
+import {
+  createGameRoom,
+  fetchGameRooms,
+  GameRoom,
+  joinGameRoom,
+} from "@/lib/api";
 import toast from "react-hot-toast";
 
 export default function Page() {
@@ -34,7 +39,17 @@ export default function Page() {
     }
     const newGameId = await createGameRoom(playerName);
     if (!newGameId) return;
+    await joinGameRoom(newGameId, playerName);
     window.location.href = `/${newGameId}?username=${playerName}`;
+  };
+
+  const joinGameButtonClick = async (gameId: string) => {
+    if (playerName.trim() == "") {
+      toast.error("Please enter your name");
+      return;
+    }
+    await joinGameRoom(gameId, playerName);
+    window.location.href = `/${gameId}?username=${playerName}`;
   };
 
   return (
@@ -88,11 +103,7 @@ export default function Page() {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        if (playerName.trim() == "") {
-                          toast.error("Please enter your name");
-                          return;
-                        }
-                        window.location.href = `/${room.id}?username=${playerName}`;
+                        joinGameButtonClick(room.id);
                       }}
                       disabled={room.players.length >= 4}
                     >
