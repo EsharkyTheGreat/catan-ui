@@ -4,6 +4,7 @@ import {
   Resource,
   CatanEdge,
   CatanVertexPosition,
+  CatanTile,
 } from "@/lib/types";
 
 // Convert q,r,s coordinates to x,y coordinates
@@ -28,7 +29,7 @@ export const generateCatanMap = (dimensions: {
   const centerY = dimensions.height / 2;
 
   // Define available tile types
-  const tileTypes: Resource[] = ["forest", "brick", "stone", "wheat"];
+  const tileTypes: Resource[] = ["TREE", "BRICK", "STONE", "WHEAT"];
 
   // Create a 3x3 grid of hexagons around center
   for (let q = -3; q <= 3; q++) {
@@ -43,7 +44,7 @@ export const generateCatanMap = (dimensions: {
               r,
               s,
               number: Math.floor(Math.random() * 11) + 2, // Random number token 2-12
-              type: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
+              resource: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
             },
             x: centerX + x,
             y: centerY + y,
@@ -53,6 +54,98 @@ export const generateCatanMap = (dimensions: {
     }
   }
   return tiles;
+};
+
+export const getCatanFacePositions = (
+  dimensions: {
+    width: number;
+    height: number;
+  },
+  faces: CatanTile[]
+) => {
+  const tiles: CatanTilePosition[] = [];
+  const centerX = dimensions.width / 2;
+  const centerY = dimensions.height / 2;
+  faces.forEach((face) => {
+    const { x, y } = hexToPixel(face.q, face.r, face.s);
+    tiles.push({
+      data: face,
+      x: centerX + x,
+      y: centerY + y,
+    });
+  });
+
+  return tiles;
+};
+
+// Convert CatanEdge objects to CatanEdgePosition objects
+export const getCatanEdgePositions = (
+  dimensions: {
+    width: number;
+    height: number;
+  },
+  edges: CatanEdge[]
+) => {
+  const edgePositions: CatanEdgePosition[] = [];
+  const centerX = dimensions.width / 2;
+  const centerY = dimensions.height / 2;
+  const size = 30; // Same size as used in hexToPixel
+
+  edges.forEach((edge) => {
+    // Calculate the center points of both hexagons connected by this edge
+    const hex1Center = hexToPixel(edge.q1, edge.r1, edge.s1, size);
+    const hex2Center = hexToPixel(edge.q2, edge.r2, edge.s2, size);
+
+    // Calculate the edge direction (which side of the hexagon this edge represents)
+    // We need to find which of the 6 directions this edge represents
+    const directions = [
+      { q: 1, r: -1, s: 0 }, // Top-Right
+      { q: 1, r: 0, s: -1 }, // Right
+      { q: 0, r: 1, s: -1 }, // Bottom-Right
+      { q: -1, r: 1, s: 0 }, // Bottom-Left
+      { q: -1, r: 0, s: 1 }, // Left
+      { q: 0, r: -1, s: 1 }, // Top-Left
+    ];
+
+    // Find which direction this edge represents
+    let direction = -1;
+    for (let i = 0; i < directions.length; i++) {
+      const dir = directions[i];
+      if (
+        (edge.q2 - edge.q1 === dir.q &&
+          edge.r2 - edge.r1 === dir.r &&
+          edge.s2 - edge.s1 === dir.s) ||
+        (edge.q1 - edge.q2 === dir.q &&
+          edge.r1 - edge.r2 === dir.r &&
+          edge.s1 - edge.s2 === dir.s)
+      ) {
+        direction = i;
+        break;
+      }
+    }
+
+    if (direction !== -1) {
+      // Calculate the two vertices of this edge
+      const angle1 = ((direction * 60 - 90) * Math.PI) / 180;
+      const angle2 = (((direction + 1) * 60 - 90) * Math.PI) / 180;
+
+      const startX = centerX + hex1Center.x + size * Math.cos(angle1);
+      const startY = centerY + hex1Center.y + size * Math.sin(angle1);
+      const endX = centerX + hex1Center.x + size * Math.cos(angle2);
+      const endY = centerY + hex1Center.y + size * Math.sin(angle2);
+
+      edgePositions.push({
+        startX,
+        startY,
+        endX,
+        endY,
+        color: `hsl(${Math.random() * 360}, 70%, 60%)`, // Random HSL color
+        data: edge,
+      });
+    }
+  });
+
+  return edgePositions;
 };
 
 // Calculate all vertex coordinates for the hexagonal tiles

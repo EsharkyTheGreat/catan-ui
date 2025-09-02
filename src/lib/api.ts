@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { GameStatuses, Player } from "./types";
+import { CatanBoardSummary, ChatMessage, GameStatuses, Player } from "./types";
 
 export interface GameRoom {
   id: string;
@@ -8,6 +8,18 @@ export interface GameRoom {
   players: Player[];
   status: GameStatuses;
   createdAt: number;
+  currentTurn?: string;
+  chats: ChatMessage[];
+  game_log: ChatMessage[];
+  turn_order: string[];
+  turn_index: number;
+  phase:
+    | "FIRST_FREE_HOUSE_PLACEMENT"
+    | "SECOND_FREE_HOUSE_PLACEMENT"
+    | "DICE_ROLL"
+    | "ACTION"
+    | "DISCARD_TIMER";
+  board: CatanBoardSummary;
 }
 
 const HOST: string = "localhost";

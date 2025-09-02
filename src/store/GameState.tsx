@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import {
+  CatanEdge,
   CatanEdgePosition,
+  CatanTile,
   CatanTilePosition,
   CatanVertexPosition,
   ChatMessage,
@@ -17,6 +19,7 @@ import {
   GameStartedEvent,
   GenericErrorEvent,
   JoinedEvent,
+  RoadPlacedEvent,
   ServerMessage,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
@@ -27,6 +30,7 @@ export const useGameStore = create<GameState>()(
     id: "",
     username: "",
     players: [],
+    dimensions: { width: 0, height: 0 },
     edges: [],
     faces: [],
     vertices: [],
@@ -48,6 +52,10 @@ export const useGameStore = create<GameState>()(
         status: gameSummary.status,
         players: gameSummary.players,
         currentPlayer: get().username,
+        faces: gameSummary.board.faces,
+        edges: gameSummary.board.edges,
+        gameLog: gameSummary.game_log,
+        chat: gameSummary.chats,
       });
     },
     setGameStatus: (status: GameStatuses) => set({ status }),
@@ -82,6 +90,41 @@ export const useGameStore = create<GameState>()(
       toast.success(`${e.username} has joined the game`);
       get().refreshGameMetadata();
     },
+    onRoadPlaced: (e: RoadPlacedEvent) => {
+      toast.success(`${e.username} has placed a road`);
+      set((state) => {
+        // Find the edge that matches the road placement coordinates
+        // Check both orientations since q1/q2 can be interchanged
+        const updatedEdges = state.edges.map((edge) => {
+          if (
+            (edge.q1 === e.q1 &&
+              edge.r1 === e.r1 &&
+              edge.s1 === e.s1 &&
+              edge.q2 === e.q2 &&
+              edge.r2 === e.r2 &&
+              edge.s2 === e.s2) ||
+            (edge.q1 === e.q2 &&
+              edge.r1 === e.r2 &&
+              edge.s1 === e.s2 &&
+              edge.q2 === e.q1 &&
+              edge.r2 === e.r1 &&
+              edge.s2 === e.s1)
+          ) {
+            return { ...edge, owner: e.username };
+          }
+          return edge;
+        });
+
+        return {
+          ...state,
+          edges: updatedEdges,
+          gameLog: [
+            ...state.gameLog,
+            { player: e.username, message: `${e.username} has placed a road` },
+          ],
+        };
+      });
+    },
     connect: (ws: WebSocket) => {
       set({ socket: ws });
       ws.onopen = () => console.log("Websocket Connection established");
@@ -101,6 +144,8 @@ export const useGameStore = create<GameState>()(
             get().onGameStart(data as GameStartedEvent);
           if (data.type === "ERROR") get().onWsError(data as GenericErrorEvent);
           if (data.type === "JOINED") get().onPlayerJoined(data as JoinedEvent);
+          if (data.type === "ROAD_PLACED")
+            get().onRoadPlaced(data as RoadPlacedEvent);
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
@@ -137,44 +182,10 @@ export const useGameStore = create<GameState>()(
       });
     },
     setPhase: (phase: GamePhases) => set({ phase }),
-    buildRoad: (roadIndex: number) => {
-      set((state) => {
-        // Check if there's a current player
-        if (!state.currentPlayer) {
-          console.warn("No current player to build road");
-          return state;
-        }
-
-        // Check if the road index is valid
-        if (roadIndex < 0 || roadIndex >= state.edges.length) {
-          console.warn("Invalid road index:", roadIndex);
-          return state;
-        }
-
-        // Check if the road is already owned
-        if (state.edges[roadIndex].data.owner !== null) {
-          console.warn("Road is already owned");
-          return state;
-        }
-
-        // Create a new edges array with the updated road
-        const newEdges = [...state.edges];
-        newEdges[roadIndex] = {
-          ...newEdges[roadIndex],
-          data: {
-            ...newEdges[roadIndex].data,
-            owner: state.currentPlayer,
-          },
-        };
-
-        return {
-          ...state,
-          edges: newEdges,
-        };
-      });
-    },
-    setFaces: (faces: CatanTilePosition[]) => set({ faces }),
+    setFaces: (faces: CatanTile[]) => set({ faces }),
     setVertices: (vertices: CatanVertexPosition[]) => set({ vertices }),
-    setEdges: (edges: CatanEdgePosition[]) => set({ edges }),
+    setEdges: (edges: CatanEdge[]) => set({ edges }),
+    setDimensions: (dimensions: { width: number; height: number }) =>
+      set({ dimensions }),
   }))
 );

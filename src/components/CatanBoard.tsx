@@ -5,6 +5,7 @@ import {
   generateCatanMap,
   calculateVertices,
   calculateEdges,
+  getCatanFacePositions,
 } from "@/lib/hexagonUtils";
 import HexagonLayer from "@/components/HexagonLayer";
 import VertexLayer from "@/components/VertexLayer";
@@ -18,13 +19,12 @@ type Props = {
 export default function CatanBoard({ parentRef }: Props) {
   const stageRef = useRef<Konva.Stage>(null);
   const [canvasScale, setCanvasScale] = useState<number>(1.0);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>();
 
-  const { setFaces, setVertices, setEdges } = useGameStore();
+  const { setVertices, dimensions, setDimensions } = useGameStore();
 
   const clampStagePosition = (
     pos: { x: number; y: number },
@@ -112,9 +112,9 @@ export default function CatanBoard({ parentRef }: Props) {
   useEffect(() => {
     if (dimensions.width > 0 && dimensions.height > 0) {
       const tiles = generateCatanMap(dimensions);
-      setFaces(tiles);
+      // setFaces(tiles);
       setVertices(calculateVertices(tiles));
-      setEdges(calculateEdges(tiles));
+      // setEdges(calculateEdges(tiles));
     }
   }, [dimensions]);
 

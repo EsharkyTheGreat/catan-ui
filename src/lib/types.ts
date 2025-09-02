@@ -5,6 +5,7 @@ import {
   GameStartedEvent,
   GenericErrorEvent,
   JoinedEvent,
+  RoadPlacedEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -48,11 +49,17 @@ export interface CatanTile {
   q: number;
   r: number;
   s: number;
-  type: Resource | "desert";
+  resource: Resource | "DESERT";
   number: number;
 }
 
-export type Resource = "forest" | "brick" | "sheep" | "wheat" | "stone";
+export type CatanBoardSummary = {
+  n: number;
+  faces: CatanTile[];
+  edges: CatanEdge[];
+};
+
+export type Resource = "TREE" | "BRICK" | "SHEEP" | "WHEAT" | "STONE";
 
 export type ChatMessage = {
   player: string;
@@ -89,10 +96,11 @@ export type GameSnapshot = {
   id: string;
   username: string;
   chat: ChatMessage[];
+  dimensions: { width: number; height: number };
   gameLog: ChatMessage[];
   players: Player[];
-  faces: CatanTilePosition[];
-  edges: CatanEdgePosition[];
+  faces: CatanTile[];
+  edges: CatanEdge[];
   vertices: CatanVertexPosition[];
   currentPlayer: string | null;
   phase: GamePhases;
@@ -109,11 +117,10 @@ export type GameState = GameSnapshot & {
   setPhase: (phase: GamePhases) => void;
   setGameStatus: (gameStatus: GameStatuses) => void;
 
-  buildRoad: (roadIndex: number) => void;
-
-  setFaces: (faces: CatanTilePosition[]) => void;
+  setFaces: (faces: CatanTile[]) => void;
   setVertices: (vertices: CatanVertexPosition[]) => void;
-  setEdges: (edges: CatanEdgePosition[]) => void;
+  setEdges: (edges: CatanEdge[]) => void;
+  setDimensions: (dimensions: { width: number; height: number }) => void;
 
   setChat: (messages: ChatMessage[]) => void;
   addChat: (message: string) => void;
@@ -131,4 +138,5 @@ export type GameState = GameSnapshot & {
   onGameStart: (event: GameStartedEvent) => void;
   onWsError: (event: GenericErrorEvent) => void;
   onPlayerJoined: (event: JoinedEvent) => Promise<void>;
+  onRoadPlaced: (event: RoadPlacedEvent) => void;
 };

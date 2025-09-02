@@ -28,10 +28,22 @@ export type JoinedEvent = {
   username: string;
 };
 
+export type RoadPlacedEvent = {
+  type: "ROAD_PLACED";
+  q1: number;
+  q2: number;
+  r1: number;
+  r2: number;
+  s1: number;
+  s2: number;
+  username: string;
+};
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
   | DisconnectedEvent
   | GameStartedEvent
   | GenericErrorEvent
-  | JoinedEvent;
+  | JoinedEvent
+  | RoadPlacedEvent;

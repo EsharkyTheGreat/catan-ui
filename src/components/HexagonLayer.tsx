@@ -1,31 +1,36 @@
 import { Layer, RegularPolygon } from "react-konva";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useImage from "use-image";
 import NumberToken from "@/components/NumberToken";
 import { useGameStore } from "@/store/GameState";
+import { getCatanFacePositions } from "@/lib/hexagonUtils";
 
 export default function HexagonLayer() {
-  const { faces } = useGameStore();
+  const { faces, dimensions } = useGameStore();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [brickImage] = useImage("/BrickSprite.png");
   const [stoneImage] = useImage("/StoneSprite.png");
   const [wheatImage] = useImage("/WheatSprite.png");
   const [forestImage] = useImage("/ForestSprite.png");
+  const faceWithPositions = useMemo(
+    () => getCatanFacePositions(dimensions, faces),
+    [dimensions, faces]
+  );
 
   return (
     <Layer>
       {/* Render Catan tiles */}
-      {faces.map((tile) => {
+      {faceWithPositions.map((tile) => {
         const tileKey = `${tile.data.q}-${tile.data.r}-${tile.data.s}`;
-        // Determine which image to use based on tile type
+        // Determine which image to use based on tile resource
         let backgroundImage = brickImage;
-        if (tile.data.type === "brick") {
+        if (tile.data.resource === "BRICK") {
           backgroundImage = brickImage;
-        } else if (tile.data.type === "stone") {
+        } else if (tile.data.resource === "STONE") {
           backgroundImage = stoneImage;
-        } else if (tile.data.type === "wheat") {
+        } else if (tile.data.resource === "WHEAT") {
           backgroundImage = wheatImage;
-        } else if (tile.data.type === "forest") {
+        } else if (tile.data.resource === "TREE") {
           backgroundImage = forestImage;
         }
 
@@ -50,7 +55,7 @@ export default function HexagonLayer() {
           />
         );
       })}
-      {faces.map((tile) => {
+      {faceWithPositions.map((tile) => {
         return (
           <NumberToken
             key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}

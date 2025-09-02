@@ -1,11 +1,19 @@
 import { Layer, Line } from "react-konva";
 import Konva from "konva";
 import { useGameStore } from "@/store/GameState";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { getCatanEdgePositions } from "@/lib/hexagonUtils";
+import { RoadPlacedEvent } from "@/lib/websocket";
 
 export default function EdgeLayer() {
-  const { phase, buildRoad, edges } = useGameStore();
+  const { phase, edges, dimensions, socket, currentPlayer } = useGameStore();
   const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
+
+  const catanEdges = useMemo(
+    () => getCatanEdgePositions(dimensions, edges),
+    [dimensions, edges]
+  );
+  console.log(catanEdges);
 
   // Handle edge hover effects
   const handleEdgeMouseEnter = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -24,22 +32,35 @@ export default function EdgeLayer() {
     const edgeIndex = target.index;
     const originalEdge = edges[edgeIndex];
     if (originalEdge) {
-      target.stroke(originalEdge.color);
+      target.stroke(`hsl(${Math.random() * 360}, 70%, 60%)`);
       target.strokeWidth(2);
     }
     setHoveredEdgeIndex(null);
   };
 
   const handleEdgeMouseClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!currentPlayer) return;
+    if (!socket) return;
     const target = e.target as Konva.Line;
     const edgeIndex = target.index;
-    buildRoad(edgeIndex);
+    const edge = edges[edgeIndex];
+    const data: RoadPlacedEvent = {
+      type: "ROAD_PLACED",
+      q1: edge.q1,
+      q2: edge.q2,
+      r1: edge.r1,
+      r2: edge.r2,
+      s1: edge.s1,
+      s2: edge.s2,
+      username: currentPlayer,
+    };
+    socket.send(JSON.stringify(data));
   };
 
   return (
     <Layer>
       {/* Render edges as lines */}
-      {edges.map((edge, index) => {
+      {catanEdges.map((edge, index) => {
         // Determine opacity based on ownership and hover state
         let opacity = 0;
         if (edge.data.owner !== null) {
