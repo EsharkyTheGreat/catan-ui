@@ -6,14 +6,14 @@ import { getCatanEdgePositions } from "@/lib/hexagonUtils";
 import { RoadPlacedEvent } from "@/lib/websocket";
 
 export default function EdgeLayer() {
-  const { phase, edges, dimensions, socket, currentPlayer } = useGameStore();
+  const { phase, edges, dimensions, socket, currentPlayer, players } =
+    useGameStore();
   const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
 
   const catanEdges = useMemo(
     () => getCatanEdgePositions(dimensions, edges),
     [dimensions, edges]
   );
-  console.log(catanEdges);
 
   // Handle edge hover effects
   const handleEdgeMouseEnter = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -27,14 +27,14 @@ export default function EdgeLayer() {
   };
 
   const handleEdgeMouseLeave = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    const target = e.target as Konva.Line;
-    // Restore the original random color and stroke width
-    const edgeIndex = target.index;
-    const originalEdge = edges[edgeIndex];
-    if (originalEdge) {
-      target.stroke(`hsl(${Math.random() * 360}, 70%, 60%)`);
-      target.strokeWidth(2);
-    }
+    // const target = e.target as Konva.Line;
+    // // Restore the original random color and stroke width
+    // const edgeIndex = target.index;
+    // const originalEdge = edges[edgeIndex];
+    // if (originalEdge) {
+    //   target.stroke(`hsl(${Math.random() * 360}, 70%, 60%)`);
+    //   target.strokeWidth(2);
+    // }
     setHoveredEdgeIndex(null);
   };
 
@@ -63,8 +63,16 @@ export default function EdgeLayer() {
       {catanEdges.map((edge, index) => {
         // Determine opacity based on ownership and hover state
         let opacity = 0;
+        let ownedRoad: boolean = false;
         if (edge.data.owner !== null) {
+          ownedRoad = true;
           opacity = 1; // Full opacity for owned edges
+          const ownerPlayer = players.find((p) => p.name === edge.data.owner);
+          if (!ownerPlayer) {
+            opacity = 0;
+          } else {
+            edge.color = ownerPlayer.color;
+          }
         } else if (hoveredEdgeIndex === index && phase === "road_placement") {
           opacity = 0.7; // 0.7 opacity on hover during road placement phase
         }
@@ -76,10 +84,22 @@ export default function EdgeLayer() {
             points={[edge.startX, edge.startY, edge.endX, edge.endY]}
             stroke={edge.color}
             opacity={opacity}
-            strokeWidth={2}
-            onMouseEnter={handleEdgeMouseEnter}
-            onMouseLeave={handleEdgeMouseLeave}
-            onClick={handleEdgeMouseClick}
+            strokeWidth={3}
+            onMouseEnter={(e) => {
+              if (!ownedRoad) {
+                handleEdgeMouseEnter(e);
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!ownedRoad) {
+                handleEdgeMouseLeave(e);
+              }
+            }}
+            onClick={(e) => {
+              if (!ownedRoad) {
+                handleEdgeMouseClick(e);
+              }
+            }}
           />
         );
       })}

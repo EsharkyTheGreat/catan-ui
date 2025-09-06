@@ -28,8 +28,13 @@ export interface CatanEdge {
 }
 
 export interface CatanVertex {
-  settlement: string | null;
-  city: string | null;
+  q: number;
+  r: number;
+  s: number;
+  direction: 1 | 2 | 3 | 4 | 5 | 6;
+  hasHouse: boolean;
+  hasSettlement: boolean;
+  owner: string | null;
 }
 
 export interface CatanVertexPosition {
@@ -57,6 +62,7 @@ export type CatanBoardSummary = {
   n: number;
   faces: CatanTile[];
   edges: CatanEdge[];
+  vertices: CatanVertex[];
 };
 
 export type Resource = "TREE" | "BRICK" | "SHEEP" | "WHEAT" | "STONE";
@@ -69,6 +75,7 @@ export type ChatMessage = {
 export type Player = {
   id: number;
   name: string;
+  color: "RED" | "YELLOW" | "BLUE" | "GREEN";
   longestRoad: number;
   longestArmy: number;
   developmentCards: number;
@@ -101,7 +108,7 @@ export type GameSnapshot = {
   players: Player[];
   faces: CatanTile[];
   edges: CatanEdge[];
-  vertices: CatanVertexPosition[];
+  vertices: CatanVertex[];
   currentPlayer: string | null;
   phase: GamePhases;
   status: GameStatuses;
@@ -112,13 +119,13 @@ export type GameSnapshot = {
 export type GameState = GameSnapshot & {
   setId: (gameId: string) => void;
   setUsername: (name: string) => void;
-  refreshGameMetadata: () => void;
+  refreshGameMetadata: () => Promise<void>;
 
   setPhase: (phase: GamePhases) => void;
   setGameStatus: (gameStatus: GameStatuses) => void;
 
   setFaces: (faces: CatanTile[]) => void;
-  setVertices: (vertices: CatanVertexPosition[]) => void;
+  setVertices: (vertices: CatanVertex[]) => void;
   setEdges: (edges: CatanEdge[]) => void;
   setDimensions: (dimensions: { width: number; height: number }) => void;
 

@@ -82,5 +82,6 @@ export const fetchGameRoomSummary = async (
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   const data = (await response.json()) as GameRoom;
+  console.log("Game Room: ", data);
   return data;
 };

@@ -5,6 +5,7 @@ import {
   CatanEdge,
   CatanVertexPosition,
   CatanTile,
+  CatanVertex,
 } from "@/lib/types";
 
 // Convert q,r,s coordinates to x,y coordinates
@@ -112,12 +113,9 @@ export const getCatanEdgePositions = (
     for (let i = 0; i < directions.length; i++) {
       const dir = directions[i];
       if (
-        (edge.q2 - edge.q1 === dir.q &&
-          edge.r2 - edge.r1 === dir.r &&
-          edge.s2 - edge.s1 === dir.s) ||
-        (edge.q1 - edge.q2 === dir.q &&
-          edge.r1 - edge.r2 === dir.r &&
-          edge.s1 - edge.s2 === dir.s)
+        edge.q2 - edge.q1 === dir.q &&
+        edge.r2 - edge.r1 === dir.r &&
+        edge.s2 - edge.s1 === dir.s
       ) {
         direction = i;
         break;
@@ -127,7 +125,7 @@ export const getCatanEdgePositions = (
     if (direction !== -1) {
       // Calculate the two vertices of this edge
       const angle1 = ((direction * 60 - 90) * Math.PI) / 180;
-      const angle2 = (((direction + 1) * 60 - 90) * Math.PI) / 180;
+      const angle2 = ((((direction + 1) % 6) * 60 - 90) * Math.PI) / 180;
 
       const startX = centerX + hex1Center.x + size * Math.cos(angle1);
       const startY = centerY + hex1Center.y + size * Math.sin(angle1);
@@ -146,6 +144,38 @@ export const getCatanEdgePositions = (
   });
 
   return edgePositions;
+};
+
+export const getCatanVertexPositions = (
+  dimensions: { width: number; height: number },
+  vertexData: CatanVertex[]
+): CatanVertexPosition[] => {
+  const result: CatanVertexPosition[] = [];
+  const centerX = dimensions.width / 2;
+  const centerY = dimensions.height / 2;
+  const size = 30; // Same size as used in hexToPixel
+  for (const vertex of vertexData) {
+    const hexCenter = hexToPixel(vertex.q, vertex.r, vertex.s, size);
+    const angle = (((vertex.direction - 1) * 60 - 90) * Math.PI) / 180;
+    const vertexX = centerX + hexCenter.x + size * Math.cos(angle);
+    const vertexY = centerY + hexCenter.y + size * Math.sin(angle);
+    const roundedX = Math.round(vertexX * 100000) / 100000;
+    const roundedY = Math.round(vertexY * 100000) / 100000;
+    result.push({
+      data: {
+        direction: vertex.direction,
+        q: vertex.q,
+        r: vertex.r,
+        s: vertex.s,
+        hasHouse: vertex.hasHouse,
+        hasSettlement: vertex.hasSettlement,
+        owner: vertex.owner,
+      },
+      x: roundedX,
+      y: roundedY,
+    });
+  }
+  return result;
 };
 
 // Calculate all vertex coordinates for the hexagonal tiles

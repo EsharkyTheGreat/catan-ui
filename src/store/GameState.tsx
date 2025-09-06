@@ -4,6 +4,7 @@ import {
   CatanEdgePosition,
   CatanTile,
   CatanTilePosition,
+  CatanVertex,
   CatanVertexPosition,
   ChatMessage,
   GamePhases,
@@ -54,6 +55,7 @@ export const useGameStore = create<GameState>()(
         currentPlayer: get().username,
         faces: gameSummary.board.faces,
         edges: gameSummary.board.edges,
+        vertices: gameSummary.board.vertices,
         gameLog: gameSummary.game_log,
         chat: gameSummary.chats,
       });
@@ -88,7 +90,7 @@ export const useGameStore = create<GameState>()(
     },
     onPlayerJoined: async (e: JoinedEvent) => {
       toast.success(`${e.username} has joined the game`);
-      get().refreshGameMetadata();
+      await get().refreshGameMetadata();
     },
     onRoadPlaced: (e: RoadPlacedEvent) => {
       toast.success(`${e.username} has placed a road`);
@@ -183,7 +185,7 @@ export const useGameStore = create<GameState>()(
     },
     setPhase: (phase: GamePhases) => set({ phase }),
     setFaces: (faces: CatanTile[]) => set({ faces }),
-    setVertices: (vertices: CatanVertexPosition[]) => set({ vertices }),
+    setVertices: (vertices: CatanVertex[]) => set({ vertices }),
     setEdges: (edges: CatanEdge[]) => set({ edges }),
     setDimensions: (dimensions: { width: number; height: number }) =>
       set({ dimensions }),

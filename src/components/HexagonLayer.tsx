@@ -45,8 +45,8 @@ export default function HexagonLayer() {
             strokeWidth={1}
             rotation={0}
             fillPatternImage={backgroundImage}
-            fillPatternScaleX={0.07}
-            fillPatternScaleY={0.07}
+            fillPatternScaleX={0.074}
+            fillPatternScaleY={0.074}
             fillPatternOffsetX={500}
             fillPatternOffsetY={500}
             opacity={hoveredKey === tileKey ? 0.7 : 1}
@@ -60,6 +60,7 @@ export default function HexagonLayer() {
           <NumberToken
             key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}
             number={tile.data.number}
+            coords={`q=${tile.data.q},r=${tile.data.r},s=${tile.data.s}`}
             x={tile.x}
             y={tile.y}
           />
