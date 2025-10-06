@@ -39,6 +39,35 @@ export type RoadPlacedEvent = {
   username: string;
 };
 
+export type SettlementPlacedEvent = {
+  type: "SETTLEMENT_PLACED";
+  q1: number;
+  q2: number;
+  q3: number;
+  r1: number;
+  r2: number;
+  r3: number;
+  s1: number;
+  s2: number;
+  s3: number;
+  username: string;
+};
+
+export type HousePlacedEvent = {
+  type: "HOUSE_PLACED";
+  q1: number;
+  q2: number;
+  q3: number;
+  r1: number;
+  r2: number;
+  r3: number;
+  s1: number;
+  s2: number;
+  s3: number;
+  username: string;
+};
+
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
@@ -46,4 +75,6 @@ export type ServerMessage =
   | GameStartedEvent
   | GenericErrorEvent
   | JoinedEvent
-  | RoadPlacedEvent;
+  | RoadPlacedEvent
+  | SettlementPlacedEvent
+  | HousePlacedEvent;

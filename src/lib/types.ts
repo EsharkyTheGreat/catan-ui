@@ -4,8 +4,10 @@ import {
   DisconnectedEvent,
   GameStartedEvent,
   GenericErrorEvent,
+  HousePlacedEvent,
   JoinedEvent,
   RoadPlacedEvent,
+  SettlementPlacedEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -28,10 +30,15 @@ export interface CatanEdge {
 }
 
 export interface CatanVertex {
-  q: number;
-  r: number;
-  s: number;
-  direction: 1 | 2 | 3 | 4 | 5 | 6;
+  q1: number;
+  r1: number;
+  s1: number;
+  q2: number;
+  r2: number;
+  s2: number;
+  q3: number;
+  r3: number;
+  s3: number;
   hasHouse: boolean;
   hasSettlement: boolean;
   owner: string | null;
@@ -146,4 +153,6 @@ export type GameState = GameSnapshot & {
   onWsError: (event: GenericErrorEvent) => void;
   onPlayerJoined: (event: JoinedEvent) => Promise<void>;
   onRoadPlaced: (event: RoadPlacedEvent) => void;
+  onHousePlaced: (event: HousePlacedEvent) => Promise<void>;
+  onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
 };

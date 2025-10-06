@@ -155,18 +155,24 @@ export const getCatanVertexPositions = (
   const centerY = dimensions.height / 2;
   const size = 30; // Same size as used in hexToPixel
   for (const vertex of vertexData) {
-    const hexCenter = hexToPixel(vertex.q, vertex.r, vertex.s, size);
-    const angle = (((vertex.direction - 1) * 60 - 90) * Math.PI) / 180;
-    const vertexX = centerX + hexCenter.x + size * Math.cos(angle);
-    const vertexY = centerY + hexCenter.y + size * Math.sin(angle);
+    const hex1Center = hexToPixel(vertex.q1, vertex.r1, vertex.s1, size);
+    const hex2Center = hexToPixel(vertex.q2, vertex.r2, vertex.s2, size);
+    const hex3Center = hexToPixel(vertex.q3, vertex.r3, vertex.s3, size);
+    const vertexX = centerX + (hex1Center.x + hex2Center.x + hex3Center.x) / 3;
+    const vertexY = centerY + (hex1Center.y + hex2Center.y + hex3Center.y) / 3;
     const roundedX = Math.round(vertexX * 100000) / 100000;
     const roundedY = Math.round(vertexY * 100000) / 100000;
     result.push({
       data: {
-        direction: vertex.direction,
-        q: vertex.q,
-        r: vertex.r,
-        s: vertex.s,
+        q1: vertex.q1,
+        r1: vertex.r1,
+        s1: vertex.s1,
+        q2: vertex.q2,
+        r2: vertex.r2,
+        s2: vertex.s2,
+        q3: vertex.q3,
+        r3: vertex.r3,
+        s3: vertex.s3,
         hasHouse: vertex.hasHouse,
         hasSettlement: vertex.hasSettlement,
         owner: vertex.owner,
@@ -178,117 +184,117 @@ export const getCatanVertexPositions = (
   return result;
 };
 
-// Calculate all vertex coordinates for the hexagonal tiles
-export const calculateVertices = (
-  tiles: CatanTilePosition[]
-): CatanVertexPosition[] => {
-  const vertices = new Set<string>(); // Use Set to avoid duplicates
-  const size = 30; // Same size as used in hexToPixel
+// // Calculate all vertex coordinates for the hexagonal tiles
+// export const calculateVertices = (
+//   tiles: CatanTilePosition[]
+// ): CatanVertexPosition[] => {
+//   const vertices = new Set<string>(); // Use Set to avoid duplicates
+//   const size = 30; // Same size as used in hexToPixel
 
-  tiles.forEach((tile) => {
-    // Calculate the 6 vertices of each hexagon
-    for (let i = 0; i < 6; i++) {
-      const angle = ((i * 60 - 90) * Math.PI) / 180; // 60 degrees per vertex
-      const vertexX = tile.x + size * Math.cos(angle);
-      const vertexY = tile.y + size * Math.sin(angle);
+//   tiles.forEach((tile) => {
+//     // Calculate the 6 vertices of each hexagon
+//     for (let i = 0; i < 6; i++) {
+//       const angle = ((i * 60 - 90) * Math.PI) / 180; // 60 degrees per vertex
+//       const vertexX = tile.x + size * Math.cos(angle);
+//       const vertexY = tile.y + size * Math.sin(angle);
 
-      // Round to avoid floating point precision issues
-      const roundedX = Math.round(vertexX * 100000) / 100000;
-      const roundedY = Math.round(vertexY * 100000) / 100000;
-      vertices.add(`${roundedX},${roundedY}`);
-    }
-  });
+//       // Round to avoid floating point precision issues
+//       const roundedX = Math.round(vertexX * 100000) / 100000;
+//       const roundedY = Math.round(vertexY * 100000) / 100000;
+//       vertices.add(`${roundedX},${roundedY}`);
+//     }
+//   });
 
-  // Convert back to array of coordinate objects
-  return Array.from(vertices).map((coord) => {
-    const [x, y] = coord.split(",").map(Number);
-    return {
-      x,
-      y,
-      data: {
-        city: null,
-        settlement: null,
-      },
-    };
-  });
-};
+//   // Convert back to array of coordinate objects
+//   return Array.from(vertices).map((coord) => {
+//     const [x, y] = coord.split(",").map(Number);
+//     return {
+//       x,
+//       y,
+//       data: {
+//         city: null,
+//         settlement: null,
+//       },
+//     };
+//   });
+// };
 
-// Calculate all edges between vertices
-export const calculateEdges = (
-  tiles: CatanTilePosition[]
-): CatanEdgePosition[] => {
-  const edges = new Map<string, CatanEdgePosition>(); // Use Map to store edge data
-  const size = 30; // Same size as used in hexToPixel
+// // Calculate all edges between vertices
+// export const calculateEdges = (
+//   tiles: CatanTilePosition[]
+// ): CatanEdgePosition[] => {
+//   const edges = new Map<string, CatanEdgePosition>(); // Use Map to store edge data
+//   const size = 30; // Same size as used in hexToPixel
 
-  // Helper function to get adjacent hexagon coordinates
-  const getAdjacentHexes = (q: number, r: number, s: number) => {
-    return [
-      { q: q + 1, r: r - 1, s: s }, // Top-Right
-      { q: q + 1, r: r, s: s - 1 }, // Right
-      { q: q, r: r + 1, s: s - 1 }, // Bottom-Right
-      { q: q - 1, r: r + 1, s: s }, // Bottom-Left
-      { q: q - 1, r: r, s: s + 1 }, // left
-      { q: q, r: r - 1, s: s + 1 }, // Top-left
-    ];
-  };
+//   // Helper function to get adjacent hexagon coordinates
+//   const getAdjacentHexes = (q: number, r: number, s: number) => {
+//     return [
+//       { q: q + 1, r: r - 1, s: s }, // Top-Right
+//       { q: q + 1, r: r, s: s - 1 }, // Right
+//       { q: q, r: r + 1, s: s - 1 }, // Bottom-Right
+//       { q: q - 1, r: r + 1, s: s }, // Bottom-Left
+//       { q: q - 1, r: r, s: s + 1 }, // left
+//       { q: q, r: r - 1, s: s + 1 }, // Top-left
+//     ];
+//   };
 
-  // Helper function to create a consistent edge key between two faces
-  const createEdgeKey = (
-    face1: { q: number; r: number; s: number },
-    face2: { q: number; r: number; s: number }
-  ) => {
-    // Sort the faces to ensure consistent key generation
-    const sorted = [face1, face2].sort((a, b) => {
-      if (a.q !== b.q) return a.q - b.q;
-      if (a.r !== b.r) return a.r - b.r;
-      return a.s - b.s;
-    });
-    return `${sorted[0].q},${sorted[0].r},${sorted[0].s}-${sorted[1].q},${sorted[1].r},${sorted[1].s}`;
-  };
+//   // Helper function to create a consistent edge key between two faces
+//   const createEdgeKey = (
+//     face1: { q: number; r: number; s: number },
+//     face2: { q: number; r: number; s: number }
+//   ) => {
+//     // Sort the faces to ensure consistent key generation
+//     const sorted = [face1, face2].sort((a, b) => {
+//       if (a.q !== b.q) return a.q - b.q;
+//       if (a.r !== b.r) return a.r - b.r;
+//       return a.s - b.s;
+//     });
+//     return `${sorted[0].q},${sorted[0].r},${sorted[0].s}-${sorted[1].q},${sorted[1].r},${sorted[1].s}`;
+//   };
 
-  tiles.forEach((tile) => {
-    const { q, r, s } = tile.data;
-    const adjacentHexes = getAdjacentHexes(q, r, s);
+//   tiles.forEach((tile) => {
+//     const { q, r, s } = tile.data;
+//     const adjacentHexes = getAdjacentHexes(q, r, s);
 
-    // Check each adjacent position for a tile
-    adjacentHexes.forEach((adjacent, direction) => {
-      // Create edge key between these two faces
-      const edgeKey = createEdgeKey(
-        { q, r, s },
-        { q: adjacent.q, r: adjacent.r, s: adjacent.s }
-      );
+//     // Check each adjacent position for a tile
+//     adjacentHexes.forEach((adjacent, direction) => {
+//       // Create edge key between these two faces
+//       const edgeKey = createEdgeKey(
+//         { q, r, s },
+//         { q: adjacent.q, r: adjacent.r, s: adjacent.s }
+//       );
 
-      if (!edges.has(edgeKey)) {
-        const vertices = calculateVertices([tile]);
+//       if (!edges.has(edgeKey)) {
+//         const vertices = calculateVertices([tile]);
 
-        const startX = vertices[direction].x;
-        const startY = vertices[direction].y;
+//         const startX = vertices[direction].x;
+//         const startY = vertices[direction].y;
 
-        const endX = vertices[(direction + 1) % 6].x;
-        const endY = vertices[(direction + 1) % 6].y;
+//         const endX = vertices[(direction + 1) % 6].x;
+//         const endY = vertices[(direction + 1) % 6].y;
 
-        // Create the edge data
-        const edgeData: CatanEdge = {
-          q1: q,
-          r1: r,
-          s1: s,
-          q2: adjacent.q,
-          r2: adjacent.r,
-          s2: adjacent.s,
-          owner: null,
-        };
+//         // Create the edge data
+//         const edgeData: CatanEdge = {
+//           q1: q,
+//           r1: r,
+//           s1: s,
+//           q2: adjacent.q,
+//           r2: adjacent.r,
+//           s2: adjacent.s,
+//           owner: null,
+//         };
 
-        edges.set(edgeKey, {
-          startX,
-          startY,
-          endX,
-          endY,
-          color: `hsl(${Math.random() * 360}, 70%, 60%)`, // Random HSL color
-          data: edgeData,
-        });
-      }
-    });
-  });
+//         edges.set(edgeKey, {
+//           startX,
+//           startY,
+//           endX,
+//           endY,
+//           color: `hsl(${Math.random() * 360}, 70%, 60%)`, // Random HSL color
+//           data: edgeData,
+//         });
+//       }
+//     });
+//   });
 
-  return Array.from(edges.values());
-};
+//   return Array.from(edges.values());
+// };

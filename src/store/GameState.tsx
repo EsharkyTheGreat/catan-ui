@@ -19,9 +19,11 @@ import {
   DisconnectedEvent,
   GameStartedEvent,
   GenericErrorEvent,
+  HousePlacedEvent,
   JoinedEvent,
   RoadPlacedEvent,
   ServerMessage,
+  SettlementPlacedEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 import { fetchGameRoomSummary } from "@/lib/api";
@@ -92,6 +94,16 @@ export const useGameStore = create<GameState>()(
       toast.success(`${e.username} has joined the game`);
       await get().refreshGameMetadata();
     },
+    onHousePlaced: async (e: HousePlacedEvent) => {
+      toast.success(`${e.username} has placed a house`)
+      await get().refreshGameMetadata()
+      //TODO Write Logic to just update state in memory instead of refetching everything
+    },
+    onSettlementPlaced: async (e: SettlementPlacedEvent) => {
+      toast.success(`${e.username} has placed a settlement`)
+      await get().refreshGameMetadata()
+      //TODO Write Logic to just update state in memory instead of refetching everything
+    },
     onRoadPlaced: (e: RoadPlacedEvent) => {
       toast.success(`${e.username} has placed a road`);
       set((state) => {
@@ -148,6 +160,8 @@ export const useGameStore = create<GameState>()(
           if (data.type === "JOINED") get().onPlayerJoined(data as JoinedEvent);
           if (data.type === "ROAD_PLACED")
             get().onRoadPlaced(data as RoadPlacedEvent);
+          if (data.type === "HOUSE_PLACED") get().onHousePlaced(data as HousePlacedEvent)
+          if (data.type === "SETTLEMENT_PLACED") get().onSettlementPlaced(data as SettlementPlacedEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
