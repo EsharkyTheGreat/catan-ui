@@ -123,6 +123,7 @@ export type GameSnapshot = {
   lastRoll: {die1: number, die2: number};
   socket: WebSocket | null;
   playerResources: Record<Resource,number>
+  bankResources: Record<Resource,number>
 };
 
 export type GameState = GameSnapshot & {
@@ -149,6 +150,7 @@ export type GameState = GameSnapshot & {
   setLastRoll: (roll: {die1: number, die2: number}) => void;
   setPlayerResources: (newResources: Record<Resource,number>) => void;
   addPlayerResource: (resourceType: Resource, resourceCount: number) => void;
+  setBankResources: (newResources: Record<Resource,number>) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;

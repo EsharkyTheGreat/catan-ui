@@ -50,6 +50,7 @@ export const useGameStore = create<GameState>()(
     chat: [],
     socket: null,
     status: "lobby",
+    bankResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
     refreshGameMetadata: async () => {
@@ -67,6 +68,7 @@ export const useGameStore = create<GameState>()(
         gameLog: gameSummary.game_log,
         chat: gameSummary.chats,
         playerResources: playerSummary?.resourceCount,
+        bankResources: gameSummary.bank_resources
       });
     },
     setGameStatus: (status: GameStatuses) => set({ status }),
@@ -210,6 +212,7 @@ export const useGameStore = create<GameState>()(
         }
       })
     },
+    setBankResources: (newResources: Record<Resource,number>) => set({bankResources: newResources}),
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
     addChat: (message: string) => {
       set((state) => {

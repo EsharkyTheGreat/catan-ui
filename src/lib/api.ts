@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { CatanBoardSummary, ChatMessage, GameStatuses, Player } from "./types";
+import { CatanBoardSummary, ChatMessage, GameStatuses, Player, Resource } from "./types";
 
 export interface GameRoom {
   id: string;
@@ -20,6 +20,7 @@ export interface GameRoom {
     | "ACTION"
     | "DISCARD_TIMER";
   board: CatanBoardSummary;
+  bank_resources: Record<Resource,number>
 }
 
 export interface PlayerDetailedSummary {
