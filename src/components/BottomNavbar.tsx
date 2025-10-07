@@ -27,7 +27,7 @@ import {
 import { DiceRollRequestEvent } from "@/lib/websocket";
 
 export default function BottomNavbar() {
-  const { setPhase, socket, currentPlayer, lastRoll } = useGameStore();
+  const { setPhase, socket, currentPlayer, lastRoll, playerResources } = useGameStore();
 
   const diceComponentMap: Record<number, any> = {
     1: Dice1,
@@ -51,7 +51,7 @@ export default function BottomNavbar() {
   return (
     <div className="flex h-full gap-1">
       <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">
-        <div className="transition-transform duration-200 hover:scale-110">
+        <div className="transition-transform duration-200 hover:scale-110 relative">
           <Image
             className=""
             src={"/ForestResourceCard.png"}
@@ -59,8 +59,11 @@ export default function BottomNavbar() {
             height={90}
             alt="ForestResourceCard"
           />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[75%] text-white text-[12px] font-bold drop-shadow-sm select-none">
+            {playerResources.TREE}
+          </div>
         </div>
-        <div className="transition-transform duration-200 hover:scale-110">
+        <div className="transition-transform duration-200 hover:scale-110 relative">
           <Image
             className=""
             src={"/BrickResourceCard.png"}
@@ -68,8 +71,11 @@ export default function BottomNavbar() {
             height={90}
             alt="BrickResourceCard"
           />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[75%] text-white text-[12px] font-bold drop-shadow-sm select-none">
+            {playerResources.BRICK}
+          </div>
         </div>
-        <div className="transition-transform duration-200 hover:scale-110">
+        <div className="transition-transform duration-200 hover:scale-110 relative">
           <Image
             className=""
             src={"/WheatResourceCard.png"}
@@ -77,8 +83,11 @@ export default function BottomNavbar() {
             height={90}
             alt="WheatResourceCard"
           />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[75%] text-white text-[12px] font-bold drop-shadow-sm select-none">
+            {playerResources.WHEAT}
+          </div>
         </div>
-        <div className="transition-transform duration-200 hover:scale-110">
+        <div className="transition-transform duration-200 hover:scale-110 relative">
           <Image
             className=""
             src={"/SheepResourceCard.png"}
@@ -86,8 +95,11 @@ export default function BottomNavbar() {
             height={90}
             alt="SheepResourceCard"
           />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[75%] text-white text-[12px] font-bold drop-shadow-sm select-none">
+            {playerResources.SHEEP}
+          </div>
         </div>
-        <div className="transition-transform duration-200 hover:scale-110">
+        <div className="transition-transform duration-200 hover:scale-110 relative">
           <Image
             className=""
             src={"/StoneResourceCard.png"}
@@ -95,6 +107,9 @@ export default function BottomNavbar() {
             height={90}
             alt="StoneResourceCard"
           />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[75%] text-white text-[12px] font-bold drop-shadow-sm select-none">
+            {playerResources.STONE}
+          </div>
         </div>
       </div>
       <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">

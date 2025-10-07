@@ -11,6 +11,7 @@ import {
   GameState,
   GameStatuses,
   Player,
+  Resource,
 } from "@/lib/types";
 import { devtools } from "zustand/middleware";
 import {
@@ -27,7 +28,7 @@ import {
   SettlementPlacedEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
-import { fetchGameRoomSummary } from "@/lib/api";
+import { fetchGameRoomSummary, fetchPlayerSummary } from "@/lib/api";
 
 export const useGameStore = create<GameState>()(
   devtools((set, get) => ({
@@ -41,6 +42,7 @@ export const useGameStore = create<GameState>()(
     currentPlayer: null,
     phase: "dice",
     lastRoll: {die1: 1, die2: 1},
+    playerResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
     gameLog: Array.from({ length: 12 }, () => ({
       player: "Esharky",
       message: "Hello",
@@ -51,7 +53,10 @@ export const useGameStore = create<GameState>()(
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
     refreshGameMetadata: async () => {
+      const username = get().username
+      if (!username) return;
       const gameSummary = await fetchGameRoomSummary(get().id);
+      const playerSummary = await fetchPlayerSummary(get().id,username);
       set({
         status: gameSummary.status,
         players: gameSummary.players,
@@ -61,6 +66,7 @@ export const useGameStore = create<GameState>()(
         vertices: gameSummary.board.vertices,
         gameLog: gameSummary.game_log,
         chat: gameSummary.chats,
+        playerResources: playerSummary?.resourceCount,
       });
     },
     setGameStatus: (status: GameStatuses) => set({ status }),
@@ -193,6 +199,17 @@ export const useGameStore = create<GameState>()(
       });
     },
     setLastRoll: (roll: {die1: number, die2: number}) => set({lastRoll: roll}),
+    setPlayerResources: (newResources: Record<Resource,number>) => set({playerResources: newResources}),
+    addPlayerResource: (resourceType: Resource, resourceCount: number) => {
+      set((state)=>{
+        const newPlayerResources = get().playerResources
+        newPlayerResources[resourceType] += resourceCount
+        return {
+          ...state,
+          playerResources: newPlayerResources
+        }
+      })
+    },
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
     addChat: (message: string) => {
       set((state) => {
