@@ -1,9 +1,13 @@
 import { useGameStore } from "@/store/GameState";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function GameLog() {
   const { gameLog } = useGameStore();
   const endMessageRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    endMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [gameLog]);
   return (
     <div className="h-1/4 bg-green-200 border-b border-gray-300 flex flex-col">
       {/* Chat messages area - scrollable */}

@@ -4,6 +4,18 @@ export type ChatMessageEvent = {
   player: string;
 };
 
+export type DiceRollRequestEvent = {
+  type: "DICE_ROLL_REQUEST";
+  username: string;
+}
+
+export type DiceRollResponseEvent = {
+  type: "DICE_ROLL_RESPONSE";
+  username: string;
+  die1: number;
+  die2: number;
+}
+
 export type ConnectedEvent = {
   type: "CONNECTED";
   username: string;
@@ -77,4 +89,6 @@ export type ServerMessage =
   | JoinedEvent
   | RoadPlacedEvent
   | SettlementPlacedEvent
-  | HousePlacedEvent;
+  | HousePlacedEvent
+  | DiceRollRequestEvent
+  | DiceRollResponseEvent;

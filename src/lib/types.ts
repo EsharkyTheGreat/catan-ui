@@ -1,6 +1,7 @@
 import {
   ChatMessageEvent,
   ConnectedEvent,
+  DiceRollResponseEvent,
   DisconnectedEvent,
   GameStartedEvent,
   GenericErrorEvent,
@@ -119,7 +120,7 @@ export type GameSnapshot = {
   currentPlayer: string | null;
   phase: GamePhases;
   status: GameStatuses;
-  lastRoll: number | null;
+  lastRoll: {die1: number, die2: number};
   socket: WebSocket | null;
 };
 
@@ -144,6 +145,7 @@ export type GameState = GameSnapshot & {
 
   setCurrentPlayer: (name: string) => void;
   setPlayers: (players: Player[]) => void;
+  setLastRoll: (roll: {die1: number, die2: number}) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;
@@ -155,4 +157,5 @@ export type GameState = GameSnapshot & {
   onRoadPlaced: (event: RoadPlacedEvent) => void;
   onHousePlaced: (event: HousePlacedEvent) => Promise<void>;
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
+  onDiceRoll: (event: DiceRollResponseEvent) => void;
 };

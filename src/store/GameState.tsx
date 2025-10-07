@@ -16,6 +16,7 @@ import { devtools } from "zustand/middleware";
 import {
   ChatMessageEvent,
   ConnectedEvent,
+  DiceRollResponseEvent,
   DisconnectedEvent,
   GameStartedEvent,
   GenericErrorEvent,
@@ -39,7 +40,7 @@ export const useGameStore = create<GameState>()(
     vertices: [],
     currentPlayer: null,
     phase: "dice",
-    lastRoll: null,
+    lastRoll: {die1: 1, die2: 1},
     gameLog: Array.from({ length: 12 }, () => ({
       player: "Esharky",
       message: "Hello",
@@ -139,6 +140,19 @@ export const useGameStore = create<GameState>()(
         };
       });
     },
+    onDiceRoll: (event: DiceRollResponseEvent) => {
+      const roll = { die1: event.die1, die2: event.die2}
+      get().setLastRoll(roll)
+      set((state)=>{
+        return {
+          ...state,
+          gameLog: [
+            ...state.gameLog,
+            {player: event.username, message: `${event.username} rolled a ${event.die1} and ${event.die2}`}
+          ]
+        }
+      })
+    },
     connect: (ws: WebSocket) => {
       set({ socket: ws });
       ws.onopen = () => console.log("Websocket Connection established");
@@ -162,6 +176,7 @@ export const useGameStore = create<GameState>()(
             get().onRoadPlaced(data as RoadPlacedEvent);
           if (data.type === "HOUSE_PLACED") get().onHousePlaced(data as HousePlacedEvent)
           if (data.type === "SETTLEMENT_PLACED") get().onSettlementPlaced(data as SettlementPlacedEvent)
+          if (data.type === "DICE_ROLL_RESPONSE") get().onDiceRoll(data as DiceRollResponseEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
@@ -177,6 +192,7 @@ export const useGameStore = create<GameState>()(
         };
       });
     },
+    setLastRoll: (roll: {die1: number, die2: number}) => set({lastRoll: roll}),
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
     addChat: (message: string) => {
       set((state) => {
