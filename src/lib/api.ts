@@ -46,7 +46,7 @@ export const joinGameRoom = async (
 ): Promise<null> => {
   try {
     const resp = await fetch(
-      `${BASE_PATH}/game/${gameId}/join?player_name=${player_name}`,
+      `${BASE_PATH}/game/join?game_id=${gameId}&player_name=${player_name}`,
       {
         method: "POST",
       }
@@ -77,7 +77,7 @@ export const createGameRoom = async (host: string): Promise<string | null> => {
 export const fetchGameRoomSummary = async (
   game_id: string
 ): Promise<GameRoom> => {
-  const response = await fetch(`${BASE_PATH}/game/${game_id}`);
+  const response = await fetch(`${BASE_PATH}/game?game_id=${game_id}`);
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
