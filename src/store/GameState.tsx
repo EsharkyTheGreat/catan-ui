@@ -127,15 +127,21 @@ export const useGameStore = create<GameState>()(
           playerResources[event.resource_taking] += event.resource_taking_count
           return {
             ...state,
+            playerResources: playerResources,
           }
         })
       }
       set((state)=>{
+        const playerMetadata = get().players
+        const targetPlayer = playerMetadata.find(p => p.name === event.username)
+        if (!targetPlayer) return {...state}
+        targetPlayer.cardCount += event.resource_taking_count - event.resource_giving_count
         const bankResources = get().bankResources
         bankResources[event.resource_giving] += event.resource_giving_count
         bankResources[event.resource_taking] -= event.resource_taking_count
         return {
           ...state,
+          players: playerMetadata,
           bankResources: bankResources,
           gameLog: [...state.gameLog, {player: event.username,message: `Got ${event.resource_taking_count}x${event.resource_taking} from the bank`}]
         }
