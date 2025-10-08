@@ -1,4 +1,5 @@
 import {
+  BankTradeResponseEvent,
   ChatMessageEvent,
   ConnectedEvent,
   DiceRollResponseEvent,
@@ -163,4 +164,5 @@ export type GameState = GameSnapshot & {
   onHousePlaced: (event: HousePlacedEvent) => Promise<void>;
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
   onDiceRoll: (event: DiceRollResponseEvent) => void;
+  onBankTradeResponse: (event: BankTradeResponseEvent) => void;
 };

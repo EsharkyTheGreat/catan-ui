@@ -1,3 +1,5 @@
+import { Resource } from "./types";
+
 export type ChatMessageEvent = {
   type: "CHAT_MESSAGE";
   message: string;
@@ -79,6 +81,25 @@ export type HousePlacedEvent = {
   username: string;
 };
 
+export type BankTradeRequestEvent = {
+  type: "BANK_TRADE_REQUEST"
+  username: string;
+  resource_giving: Resource
+  resource_giving_count: number
+  resource_taking: Resource
+  resource_taking_count: number
+}
+
+export type BankTradeResponseEvent = {
+  type: "BANK_TRADE_RESPONSE";
+  success: boolean;
+  username: string;
+  resource_giving: Resource
+  resource_giving_count: number
+  resource_taking: Resource
+  resource_taking_count: number
+}
+
 
 export type ServerMessage =
   | ChatMessageEvent
@@ -91,4 +112,6 @@ export type ServerMessage =
   | SettlementPlacedEvent
   | HousePlacedEvent
   | DiceRollRequestEvent
-  | DiceRollResponseEvent;
+  | DiceRollResponseEvent
+  | BankTradeRequestEvent
+  | BankTradeResponseEvent;

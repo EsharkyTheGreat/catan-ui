@@ -15,6 +15,7 @@ import {
 } from "@/lib/types";
 import { devtools } from "zustand/middleware";
 import {
+  BankTradeResponseEvent,
   ChatMessageEvent,
   ConnectedEvent,
   DiceRollResponseEvent,
@@ -113,6 +114,33 @@ export const useGameStore = create<GameState>()(
       await get().refreshGameMetadata()
       //TODO Write Logic to just update state in memory instead of refetching everything
     },
+    onBankTradeResponse: (event: BankTradeResponseEvent) => {
+      if (!event.success) {
+        toast.error(`Invalid Bank Trade sent by ${event.username}`)
+        return
+      }
+      toast.success(`Bank Trade Made Successfully by ${event.username} and got ${event.resource_taking_count}x${event.resource_taking}`)
+      if (get().currentPlayer == event.username) {
+        set((state)=> {
+          const playerResources = get().playerResources
+          playerResources[event.resource_giving] -= event.resource_giving_count
+          playerResources[event.resource_taking] += event.resource_taking_count
+          return {
+            ...state,
+          }
+        })
+      }
+      set((state)=>{
+        const bankResources = get().bankResources
+        bankResources[event.resource_giving] += event.resource_giving_count
+        bankResources[event.resource_taking] -= event.resource_taking_count
+        return {
+          ...state,
+          bankResources: bankResources,
+          gameLog: [...state.gameLog, {player: event.username,message: `Got ${event.resource_taking_count}x${event.resource_taking} from the bank`}]
+        }
+      })
+    },
     onRoadPlaced: (e: RoadPlacedEvent) => {
       toast.success(`${e.username} has placed a road`);
       set((state) => {
@@ -185,6 +213,7 @@ export const useGameStore = create<GameState>()(
           if (data.type === "HOUSE_PLACED") get().onHousePlaced(data as HousePlacedEvent)
           if (data.type === "SETTLEMENT_PLACED") get().onSettlementPlaced(data as SettlementPlacedEvent)
           if (data.type === "DICE_ROLL_RESPONSE") get().onDiceRoll(data as DiceRollResponseEvent)
+          if (data.type === "BANK_TRADE_RESPONSE") get().onBankTradeResponse(data as BankTradeResponseEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
