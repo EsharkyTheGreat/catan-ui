@@ -11,7 +11,8 @@ import {
   GameState,
   GameStatuses,
   Player,
-  Resource,
+  CatanResource,
+  DevelopmentCardType,
 } from "@/lib/types";
 import { devtools } from "zustand/middleware";
 import {
@@ -44,6 +45,7 @@ export const useGameStore = create<GameState>()(
     phase: "dice",
     lastRoll: {die1: 1, die2: 1},
     playerResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
+    playerDevelopmentCards: {"Road Building":0,"Victory Point":0,"Year of Plenty":0,"Knight":0,"Monopoly":0},
     gameLog: Array.from({ length: 12 }, () => ({
       player: "Esharky",
       message: "Hello",
@@ -59,6 +61,7 @@ export const useGameStore = create<GameState>()(
       if (!username) return;
       const gameSummary = await fetchGameRoomSummary(get().id);
       const playerSummary = await fetchPlayerSummary(get().id,username);
+      if (!playerSummary) return
       set({
         status: gameSummary.status,
         players: gameSummary.players,
@@ -68,8 +71,9 @@ export const useGameStore = create<GameState>()(
         vertices: gameSummary.board.vertices,
         gameLog: gameSummary.game_log,
         chat: gameSummary.chats,
-        playerResources: playerSummary?.resourceCount,
-        bankResources: gameSummary.bank_resources
+        playerResources: playerSummary.resourceCount,
+        bankResources: gameSummary.bank_resources,
+        playerDevelopmentCards: playerSummary.developmentCards
       });
     },
     setGameStatus: (status: GameStatuses) => set({ status }),
@@ -236,8 +240,8 @@ export const useGameStore = create<GameState>()(
       });
     },
     setLastRoll: (roll: {die1: number, die2: number}) => set({lastRoll: roll}),
-    setPlayerResources: (newResources: Record<Resource,number>) => set({playerResources: newResources}),
-    addPlayerResource: (resourceType: Resource, resourceCount: number) => {
+    setPlayerResources: (newResources: Record<CatanResource,number>) => set({playerResources: newResources}),
+    addPlayerResource: (resourceType: CatanResource, resourceCount: number) => {
       set((state)=>{
         const newPlayerResources = get().playerResources
         newPlayerResources[resourceType] += resourceCount
@@ -247,7 +251,8 @@ export const useGameStore = create<GameState>()(
         }
       })
     },
-    setBankResources: (newResources: Record<Resource,number>) => set({bankResources: newResources}),
+    setBankResources: (newResources: Record<CatanResource,number>) => set({bankResources: newResources}),
+    setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => set({playerDevelopmentCards:newCards}),
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
     addChat: (message: string) => {
       set((state) => {

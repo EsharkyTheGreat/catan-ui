@@ -27,6 +27,7 @@ import {
 import { DiceRollRequestEvent } from "@/lib/websocket";
 import ResourceCount from "./ResourceCount";
 import TradePopup from "./TradePopup";
+import DevelopmentCardShop from "./DevelopmentCardShop";
 
 export default function BottomNavbar() {
   const { setPhase, socket, currentPlayer, lastRoll } = useGameStore();
@@ -60,17 +61,7 @@ export default function BottomNavbar() {
       </div>
       <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Hammer size={88} stroke="black" className="" />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Buy Development Card</DialogTitle>
-                <DialogDescription>Buy Development Card</DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <DevelopmentCardShop />
         </div>
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">

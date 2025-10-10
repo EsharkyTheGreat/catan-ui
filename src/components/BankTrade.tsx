@@ -1,10 +1,10 @@
-import { Resource } from "@/lib/types"
+import { CatanResource } from "@/lib/types"
 import { BankTradeRequestEvent } from "@/lib/websocket";
 import { useGameStore } from "@/store/GameState";
 import { ArrowRightLeft } from "lucide-react";
 import { useState } from "react"
 
-const RESOURCES: { id: string, name: Resource, color: string, icon: string }[] = [
+const RESOURCES: { id: string, name: CatanResource, color: string, icon: string }[] = [
     { id: 'wood', name: 'TREE', color: 'bg-amber-700', icon: '🌲' },
     { id: 'brick', name: "BRICK", color: 'bg-red-700', icon: '🧱' },
     { id: 'sheep', name: 'SHEEP', color: 'bg-green-600', icon: "🐑" },
@@ -15,8 +15,8 @@ const RESOURCES: { id: string, name: Resource, color: string, icon: string }[] =
 export default function BankTrade() {
     const { playerResources, socket, currentPlayer } = useGameStore()
 
-    const [bankGiving, setBankGiving] = useState<Resource | "">("")
-    const [bankGetting, setBankGetting] = useState<Resource | "">("")
+    const [bankGiving, setBankGiving] = useState<CatanResource | "">("")
+    const [bankGetting, setBankGetting] = useState<CatanResource | "">("")
 
     const getBankRate = () => {
         return 4;
@@ -37,9 +37,9 @@ export default function BankTrade() {
         setBankGetting('');
         const data: BankTradeRequestEvent = {
             type: "BANK_TRADE_REQUEST",
-            resource_giving: bankGiving as Resource,
+            resource_giving: bankGiving as CatanResource,
             resource_giving_count: 4,
-            resource_taking: bankGetting as Resource,
+            resource_taking: bankGetting as CatanResource,
             resource_taking_count: 1,
             username: currentPlayer
         }
@@ -60,7 +60,7 @@ export default function BankTrade() {
                         </label>
                         <select
                             value={bankGiving}
-                            onChange={(e) => setBankGiving(e.target.value as Resource)}
+                            onChange={(e) => setBankGiving(e.target.value as CatanResource)}
                             className="w-full p-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-600"
                         >
                             <option value="">Select resource</option>
@@ -81,7 +81,7 @@ export default function BankTrade() {
                         <label className="block text-sm font-medium text-amber-900 mb-2">You Get (1)</label>
                         <select
                             value={bankGetting}
-                            onChange={(e) => setBankGetting(e.target.value as Resource)}
+                            onChange={(e) => setBankGetting(e.target.value as CatanResource)}
                             className="w-full p-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-600"
                         >
                             <option value="">Select resource</option>

@@ -1,7 +1,7 @@
 import {
   CatanEdgePosition,
   CatanTilePosition,
-  Resource,
+  CatanResource,
   CatanEdge,
   CatanVertexPosition,
   CatanTile,
@@ -30,7 +30,7 @@ export const generateCatanMap = (dimensions: {
   const centerY = dimensions.height / 2;
 
   // Define available tile types
-  const tileTypes: Resource[] = ["TREE", "BRICK", "STONE", "WHEAT"];
+  const tileTypes: CatanResource[] = ["TREE", "BRICK", "STONE", "WHEAT"];
 
   // Create a 3x3 grid of hexagons around center
   for (let q = -3; q <= 3; q++) {

@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { CatanBoardSummary, ChatMessage, GameStatuses, Player, Resource } from "./types";
+import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType } from "./types";
 
 export interface GameRoom {
   id: string;
@@ -20,7 +20,7 @@ export interface GameRoom {
     | "ACTION"
     | "DISCARD_TIMER";
   board: CatanBoardSummary;
-  bank_resources: Record<Resource,number>
+  bank_resources: Record<CatanResource,number>
 }
 
 export interface PlayerDetailedSummary {
@@ -28,7 +28,7 @@ export interface PlayerDetailedSummary {
   name: string;
   longestRoad: number;
   longestArmy: number;
-  victoryPoints: number;
+  developmentCards: Record<DevelopmentCardType,number>;
   color: "RED" | "YELLOW" | "BLUE" | "GREEN";
   resourceCount: Record<"WHEAT" | "BRICK" | "TREE" | "SHEEP" | "STONE", number>;
 }

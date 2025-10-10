@@ -1,4 +1,4 @@
-import { Resource } from "./types";
+import { CatanResource } from "./types";
 
 export type ChatMessageEvent = {
   type: "CHAT_MESSAGE";
@@ -84,9 +84,9 @@ export type HousePlacedEvent = {
 export type BankTradeRequestEvent = {
   type: "BANK_TRADE_REQUEST"
   username: string;
-  resource_giving: Resource
+  resource_giving: CatanResource
   resource_giving_count: number
-  resource_taking: Resource
+  resource_taking: CatanResource
   resource_taking_count: number
 }
 
@@ -94,9 +94,9 @@ export type BankTradeResponseEvent = {
   type: "BANK_TRADE_RESPONSE";
   success: boolean;
   username: string;
-  resource_giving: Resource
+  resource_giving: CatanResource
   resource_giving_count: number
-  resource_taking: Resource
+  resource_taking: CatanResource
   resource_taking_count: number
 }
 

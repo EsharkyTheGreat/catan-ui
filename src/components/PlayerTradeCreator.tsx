@@ -1,9 +1,9 @@
-import { Resource } from "@/lib/types";
+import { CatanResource } from "@/lib/types";
 import { useGameStore } from "@/store/GameState";
 import { Send, X } from "lucide-react";
 import { useState } from "react";
 
-const RESOURCES: {id: string, name: Resource, color: string, icon: string}[] = [
+const RESOURCES: {id: string, name: CatanResource, color: string, icon: string}[] = [
     { id: 'wood', name: 'TREE', color: 'bg-amber-700', icon: '🌲' },
     { id: 'brick', name: "BRICK", color: 'bg-red-700', icon: '🧱' },
     { id: 'sheep', name: 'SHEEP', color: 'bg-green-600', icon: "🐑" },
@@ -12,8 +12,8 @@ const RESOURCES: {id: string, name: Resource, color: string, icon: string}[] = [
 ];
 
 export default function PlayerTradeCreator() {
-    const [offering, setOffering] = useState<Record<Resource,number>>({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
-    const [requesting, setRequesting] = useState<Record<Resource,number>>({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
+    const [offering, setOffering] = useState<Record<CatanResource,number>>({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
+    const [requesting, setRequesting] = useState<Record<CatanResource,number>>({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
     const { playerResources } = useGameStore();
 
     const clearPlayerTrade = () => {
@@ -21,7 +21,7 @@ export default function PlayerTradeCreator() {
         setRequesting({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
     };
 
-    const updateOffering = (resource: Resource, delta: number) => {
+    const updateOffering = (resource: CatanResource, delta: number) => {
         const newAmount = (offering[resource] || 0) + delta;
         if (newAmount < 0 || newAmount > playerResources[resource]) return;
         
@@ -31,7 +31,7 @@ export default function PlayerTradeCreator() {
         }));
     };
 
-    const updateRequesting = (resource: Resource, delta: number) => {
+    const updateRequesting = (resource: CatanResource, delta: number) => {
         const newAmount = (requesting[resource] || 0) + delta;
         if (newAmount < 0) return;
         

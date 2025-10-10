@@ -63,7 +63,7 @@ export interface CatanTile {
   q: number;
   r: number;
   s: number;
-  resource: Resource | "DESERT";
+  resource: CatanResource | "DESERT";
   number: number;
 }
 
@@ -74,7 +74,8 @@ export type CatanBoardSummary = {
   vertices: CatanVertex[];
 };
 
-export type Resource = "TREE" | "BRICK" | "SHEEP" | "WHEAT" | "STONE";
+export type CatanResource = "TREE" | "BRICK" | "SHEEP" | "WHEAT" | "STONE";
+export type DevelopmentCardType = "Knight" | "Victory Point" | "Road Building" | "Year of Plenty" | "Monopoly";
 
 export type ChatMessage = {
   player: string;
@@ -94,7 +95,7 @@ export type Player = {
 
 export type Tile = {
   id: string;
-  type: Resource | "desert";
+  type: CatanResource | "desert";
   number: number;
   hasRobber: boolean;
 };
@@ -123,8 +124,9 @@ export type GameSnapshot = {
   status: GameStatuses;
   lastRoll: {die1: number, die2: number};
   socket: WebSocket | null;
-  playerResources: Record<Resource,number>
-  bankResources: Record<Resource,number>
+  playerResources: Record<CatanResource,number>;
+  bankResources: Record<CatanResource,number>;
+  playerDevelopmentCards: Record<DevelopmentCardType,number>;
 };
 
 export type GameState = GameSnapshot & {
@@ -149,9 +151,10 @@ export type GameState = GameSnapshot & {
   setCurrentPlayer: (name: string) => void;
   setPlayers: (players: Player[]) => void;
   setLastRoll: (roll: {die1: number, die2: number}) => void;
-  setPlayerResources: (newResources: Record<Resource,number>) => void;
-  addPlayerResource: (resourceType: Resource, resourceCount: number) => void;
-  setBankResources: (newResources: Record<Resource,number>) => void;
+  setPlayerResources: (newResources: Record<CatanResource,number>) => void;
+  addPlayerResource: (resourceType: CatanResource, resourceCount: number) => void;
+  setBankResources: (newResources: Record<CatanResource,number>) => void;
+  setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;

@@ -1,12 +1,12 @@
-import { Resource } from "@/lib/types"
+import { CatanResource } from "@/lib/types"
 import Image from "next/image"
 
 type Props = {
-    resourceType: Resource
+    resourceType: CatanResource
     count: number
 }
 
-const imagePathMap: Record<Resource,string> = {
+const imagePathMap: Record<CatanResource,string> = {
     BRICK: "/BrickResourceCard.png",
     TREE: "/ForestResourceCard.png",
     SHEEP: "/SheepResourceCard.png",
@@ -14,7 +14,7 @@ const imagePathMap: Record<Resource,string> = {
     WHEAT: "/WheatResourceCard.png",
 }
 
-const altNameMap: Record<Resource,string> = {
+const altNameMap: Record<CatanResource,string> = {
     BRICK: "BrickResourceCard",
     TREE: "ForestResourceCard",
     SHEEP: "SheepResourceCard",
