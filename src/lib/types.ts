@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import {
   BankTradeResponseEvent,
   ChatMessageEvent,
@@ -10,6 +11,10 @@ import {
   JoinedEvent,
   RoadPlacedEvent,
   SettlementPlacedEvent,
+  TradeAcceptEvent,
+  TradeBroadcastEvent,
+  TradeCreateEvent,
+  TradeDeclineEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -74,6 +79,18 @@ export type CatanBoardSummary = {
   vertices: CatanVertex[];
 };
 
+export type Trade = {
+  trade_id: UUID;
+  username: string;
+  player_sentiment: Record<string, TradeResponse>
+  giving: Record<CatanResource, number>
+  taking: Record<CatanResource, number>
+
+  toast_id: string;
+}
+
+export type TradeResponse = "ACCEPT" | "NO_RESPONSE" | "DECLINE"
+export type TradeStatus = "COMPLETED" | "CREATED" | "IN_PROGRESS" | "EXPIRED"
 export type CatanResource = "TREE" | "BRICK" | "SHEEP" | "WHEAT" | "STONE";
 export type DevelopmentCardType = "Knight" | "Victory Point" | "Road Building" | "Year of Plenty" | "Monopoly";
 
@@ -127,6 +144,7 @@ export type GameSnapshot = {
   playerResources: Record<CatanResource,number>;
   bankResources: Record<CatanResource,number>;
   playerDevelopmentCards: Record<DevelopmentCardType,number>;
+  activeOpenTrade: Record<UUID,Trade>;
 };
 
 export type GameState = GameSnapshot & {
@@ -155,6 +173,7 @@ export type GameState = GameSnapshot & {
   addPlayerResource: (resourceType: CatanResource, resourceCount: number) => void;
   setBankResources: (newResources: Record<CatanResource,number>) => void;
   setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => void;
+  setActiveOpenTrades: (newTrades: Record<UUID,Trade>) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;
@@ -168,4 +187,10 @@ export type GameState = GameSnapshot & {
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
   onDiceRoll: (event: DiceRollResponseEvent) => void;
   onBankTradeResponse: (event: BankTradeResponseEvent) => void;
+
+  onTradeBroadcast: (event: TradeBroadcastEvent) => void;
+  onTradeCreated: (event: TradeBroadcastEvent) => void;
+  onTradeUpdate: (event: TradeBroadcastEvent) => void;
+  onTradeExpire: (event: TradeBroadcastEvent) => void;
+  onTradeCompletion: (event: TradeBroadcastEvent) => void;
 };

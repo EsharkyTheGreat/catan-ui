@@ -1,4 +1,5 @@
-import { CatanResource } from "./types";
+import { UUID } from "crypto";
+import { CatanResource, TradeResponse, TradeStatus } from "./types";
 
 export type ChatMessageEvent = {
   type: "CHAT_MESSAGE";
@@ -100,6 +101,43 @@ export type BankTradeResponseEvent = {
   resource_taking_count: number
 }
 
+export type TradeCreateEvent = {
+    type: "TRADE_CREATE";
+    username: string;
+    offering: Record<CatanResource, number>;
+    receiving: Record<CatanResource, number>;
+} 
+
+export type TradeBroadcastEvent = {
+  type: "TRADE_BROADCAST";
+  username: string;
+  id: UUID;
+  offering: Record<CatanResource, number>;
+  receiving: Record<CatanResource, number>;
+  player_sentiment: Record<string, TradeResponse>;
+  accepter: string|null;
+  status: TradeStatus
+}
+
+export type TradeAcceptEvent = {
+    type: "TRADE_ACCEPTED";
+    id: UUID
+    username: string;
+}
+
+export type TradeDeclineEvent = {
+    type: "TRADE_DECLINED";
+    id: UUID
+    username: string;
+}
+
+export type TradeAcceptOfferEvent = {
+    type: "TRADE_ACCEPT_OFFER";
+    id: UUID
+    username: string;
+    accepting_offer_of: string;
+}
+
 
 export type ServerMessage =
   | ChatMessageEvent
@@ -114,4 +152,9 @@ export type ServerMessage =
   | DiceRollRequestEvent
   | DiceRollResponseEvent
   | BankTradeRequestEvent
-  | BankTradeResponseEvent;
+  | BankTradeResponseEvent
+  | TradeCreateEvent
+  | TradeAcceptEvent
+  | TradeAcceptOfferEvent
+  | TradeBroadcastEvent
+  | TradeDeclineEvent;

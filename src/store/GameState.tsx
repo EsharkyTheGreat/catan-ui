@@ -13,6 +13,7 @@ import {
   Player,
   CatanResource,
   DevelopmentCardType,
+  Trade,
 } from "@/lib/types";
 import { devtools } from "zustand/middleware";
 import {
@@ -28,9 +29,12 @@ import {
   RoadPlacedEvent,
   ServerMessage,
   SettlementPlacedEvent,
+  TradeBroadcastEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 import { fetchGameRoomSummary, fetchPlayerSummary } from "@/lib/api";
+import { UUID } from "crypto";
+import PlayerTradePopup from "@/components/PlayerTradePopup";
 
 export const useGameStore = create<GameState>()(
   devtools((set, get) => ({
@@ -54,6 +58,7 @@ export const useGameStore = create<GameState>()(
     socket: null,
     status: "lobby",
     bankResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
+    activeOpenTrade: {},
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
     refreshGameMetadata: async () => {
@@ -73,7 +78,8 @@ export const useGameStore = create<GameState>()(
         chat: gameSummary.chats,
         playerResources: playerSummary.resourceCount,
         bankResources: gameSummary.bank_resources,
-        playerDevelopmentCards: playerSummary.developmentCards
+        playerDevelopmentCards: playerSummary.developmentCards,
+        activeOpenTrade: gameSummary.active_open_trades,
       });
     },
     setGameStatus: (status: GameStatuses) => set({ status }),
@@ -199,6 +205,114 @@ export const useGameStore = create<GameState>()(
         }
       })
     },
+    onTradeBroadcast: (event: TradeBroadcastEvent) => {
+      if (event.status == "CREATED") {
+        get().onTradeCreated(event)
+      } else if (event.status == "IN_PROGRESS") {
+        get().onTradeUpdate(event)
+      } else if (event.status == "COMPLETED") {
+        get().onTradeCompletion(event)
+      } else if (event.status == "EXPIRED") {
+        get().onTradeExpire(event)
+      }
+    },
+    onTradeCreated: (event: TradeBroadcastEvent) => {
+      set((state)=>{
+        const newTrades = state.activeOpenTrade
+        const newTrade: Trade = {
+          trade_id: event.id,
+          giving: event.offering,
+          player_sentiment: event.player_sentiment,
+          taking: event.receiving,
+          username: event.username,
+          toast_id: "",
+        }
+        newTrade.toast_id = toast.custom((t)=>
+          <PlayerTradePopup trade={newTrade} toast_id={t.id} />
+        ,{duration: 35*1000,position: "top-left"})
+        newTrades[event.id] = newTrade
+        return {
+          activeOpenTrades: newTrades,
+          ...state,
+        }
+      })
+    },
+    onTradeUpdate: (event: TradeBroadcastEvent) => {
+      set((state)=> {
+        const newTrades = state.activeOpenTrade
+        const newTrade = newTrades[event.id]
+        newTrade.player_sentiment = event.player_sentiment
+        newTrades[event.id] = newTrade
+        return {
+          activeOpenTrades: newTrades,
+          ...state
+        }
+      })
+    },
+    onTradeExpire: (event: TradeBroadcastEvent) => {
+      const trades = get().activeOpenTrade
+      const trade = trades[event.id]
+      toast.dismiss(trade.toast_id)
+      set((state)=>{
+        const {[event.id]: _, ...filteredTrades } = trades
+        return {
+          ...state,
+          activeOpenTrade: filteredTrades
+        }
+      })
+    },
+    onTradeCompletion: (event: TradeBroadcastEvent) => {
+      const trade = get().activeOpenTrade[event.id]
+      if (!event.accepter) return;
+      const players = get().players
+      const offeringPlayer = players.find(p => p.name === event.username)
+      if (!offeringPlayer) return
+      const acceptingPlayer = players.find(p => p.name === event.accepter)
+      if (!acceptingPlayer) return;
+      const me = get().currentPlayer
+      const myResources = get().playerResources
+      if (!me) return;
+      //Giver Part
+      if (event.username == me) {
+        for (const [resource, count] of Object.entries(event.offering)) {
+          myResources[resource as CatanResource] -= count
+        }
+        for (const [resource, count] of Object.entries(event.receiving)) {
+          myResources[resource as CatanResource] += count
+        }
+      } else {
+        for (const [resource, count] of Object.entries(event.offering)) {
+          offeringPlayer.cardCount -= count
+        }
+        for (const [resource, count] of Object.entries(event.receiving)) {
+          offeringPlayer.cardCount += count
+        }
+      }
+      // Accepter Part
+      if (event.accepter == me) {
+        for (const [resource, count] of Object.entries(event.offering)) {
+          myResources[resource as CatanResource] += count
+        }
+        for (const [resource, count] of Object.entries(event.receiving)) {
+          myResources[resource as CatanResource] -= count
+        }
+      } else {
+        for (const [resource, count] of Object.entries(event.offering)) {
+          acceptingPlayer.cardCount += count
+        }
+        for (const [resource, count] of Object.entries(event.receiving)) {
+          acceptingPlayer.cardCount -= count
+        }
+      }
+      toast.dismiss(trade.toast_id)
+      set((state)=>{
+        const {[event.id]: _, ...filteredTrades } = get().activeOpenTrade
+        return {
+          ...state,
+          activeOpenTrade: filteredTrades
+        }
+      })
+    },
     connect: (ws: WebSocket) => {
       set({ socket: ws });
       ws.onopen = () => console.log("Websocket Connection established");
@@ -224,6 +338,7 @@ export const useGameStore = create<GameState>()(
           if (data.type === "SETTLEMENT_PLACED") get().onSettlementPlaced(data as SettlementPlacedEvent)
           if (data.type === "DICE_ROLL_RESPONSE") get().onDiceRoll(data as DiceRollResponseEvent)
           if (data.type === "BANK_TRADE_RESPONSE") get().onBankTradeResponse(data as BankTradeResponseEvent)
+          if (data.type === "TRADE_BROADCAST") get().onTradeBroadcast(data as TradeBroadcastEvent) 
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
@@ -254,6 +369,7 @@ export const useGameStore = create<GameState>()(
     setBankResources: (newResources: Record<CatanResource,number>) => set({bankResources: newResources}),
     setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => set({playerDevelopmentCards:newCards}),
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
+    setActiveOpenTrades: (newTrades: Record<UUID,Trade>) => set({activeOpenTrade: newTrades}),
     addChat: (message: string) => {
       set((state) => {
         if (!state.currentPlayer) return state;

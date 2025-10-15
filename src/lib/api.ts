@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
-import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType } from "./types";
+import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType, Trade } from "./types";
+import { UUID } from "crypto";
 
 export interface GameRoom {
   id: string;
@@ -21,6 +22,7 @@ export interface GameRoom {
     | "DISCARD_TIMER";
   board: CatanBoardSummary;
   bank_resources: Record<CatanResource,number>
+  active_open_trades: Record<UUID, Trade>
 }
 
 export interface PlayerDetailedSummary {

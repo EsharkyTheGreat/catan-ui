@@ -15,9 +15,9 @@ export default function TradePopup() {
             <DialogTrigger asChild>
                 <Handshake size={88} stroke="black" className="" />
             </DialogTrigger>
-            <DialogContent>
-                <DialogTitle>Trade</DialogTitle>
-                <DialogContent>
+            <DialogContent className="max-h-[80vh] overflow-y-scroll">
+                <DialogTitle />
+                <div>
                     {/* Header */}
                     <div className="bg-white rounded-lg shadow-lg p-6">
                         <h1 className="text-3xl font-bold text-amber-900 text-center">Catan Trade Center</h1>
@@ -34,7 +34,7 @@ export default function TradePopup() {
                     {tradeMode === 'bank' && <BankTrade />}
                     {/* Player Trade */}
                     {tradeMode === 'player' && <PlayerTradeCreator />}
-                </DialogContent>
+                </div>
             </DialogContent>
         </Dialog>
     )

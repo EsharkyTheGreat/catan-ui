@@ -39,7 +39,7 @@ export default function DevelopmentCardShop() {
             <DialogTrigger asChild>
                 <Hammer size={88} stroke="black" className="" />
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>
                     <DialogTitle className="text-4xl font-bold text-gray-800 mb-2 text-center">Development Cards</DialogTitle>
                     <DialogDescription className="text-gray-600 mb-8 text-center">Play your cards when available</DialogDescription>

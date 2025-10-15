@@ -1,4 +1,5 @@
 import { CatanResource } from "@/lib/types";
+import { TradeCreateEvent } from "@/lib/websocket";
 import { useGameStore } from "@/store/GameState";
 import { Send, X } from "lucide-react";
 import { useState } from "react";
@@ -14,7 +15,7 @@ const RESOURCES: {id: string, name: CatanResource, color: string, icon: string}[
 export default function PlayerTradeCreator() {
     const [offering, setOffering] = useState<Record<CatanResource,number>>({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
     const [requesting, setRequesting] = useState<Record<CatanResource,number>>({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
-    const { playerResources } = useGameStore();
+    const { playerResources, socket, currentPlayer } = useGameStore();
 
     const clearPlayerTrade = () => {
         setOffering({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
@@ -48,8 +49,16 @@ export default function PlayerTradeCreator() {
     };
 
     const sendTradeOffer = () => {
+        if (!currentPlayer) return;
         if (!canSendTrade()) return;
-        alert('Trade offer sent to all players!');
+        // alert('Trade offer sent to all players!');
+        const data: TradeCreateEvent = {
+            type: "TRADE_CREATE",
+            offering: offering,
+            receiving: requesting,
+            username: currentPlayer
+        }
+        socket?.send(JSON.stringify(data))
         setOffering({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
         setRequesting({BRICK:0,SHEEP:0,STONE:0,TREE:0,WHEAT:0});
     };
