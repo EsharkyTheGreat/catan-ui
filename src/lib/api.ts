@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType, Trade } from "./types";
+import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType, Trade, CatanVertex } from "./types";
 import { UUID } from "crypto";
 
 export interface GameRoom {
@@ -33,6 +33,10 @@ export interface PlayerDetailedSummary {
   developmentCards: Record<DevelopmentCardType,number>;
   color: "RED" | "YELLOW" | "BLUE" | "GREEN";
   resourceCount: Record<"WHEAT" | "BRICK" | "TREE" | "SHEEP" | "STONE", number>;
+}
+
+export interface ValidHousePlacementPositions {
+  vertices: CatanVertex[]
 }
 
 const HOST: string = "localhost";
@@ -118,3 +122,20 @@ export const fetchPlayerSummary = async (
     return null;
   }
 };
+
+export const fetchValidHousePlacementPositions = async (game_id: string, player_name: string): Promise<ValidHousePlacementPositions | null> => {
+  try {
+    const response = await fetch(
+      `${BASE_PATH}/game/player/valid-house-positions?game_id=${encodeURIComponent(game_id)}&player_name=${encodeURIComponent(player_name)}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = (await response.json()) as ValidHousePlacementPositions;
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch valid house placement positions:", error);
+    toast.error("Failed to fetch valid house placement positions:");
+    return null;
+  }
+}

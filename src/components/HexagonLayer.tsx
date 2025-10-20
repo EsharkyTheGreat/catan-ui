@@ -60,7 +60,7 @@ export default function HexagonLayer() {
           <NumberToken
             key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}
             number={tile.data.number}
-            coords={`q=${tile.data.q},r=${tile.data.r},s=${tile.data.s}`}
+            // coords={`q=${tile.data.q},r=${tile.data.r},s=${tile.data.s}`}
             x={tile.x}
             y={tile.y}
           />
