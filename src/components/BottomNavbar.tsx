@@ -32,6 +32,7 @@ import { HoverCard, HoverCardContent } from "./ui/hover-card";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 import ResourceCard from "./ResourceCard";
 import BuyDevelopmentCardButton from "./BuyDevelopmentCardButton";
+import PlaceRoadButton from "./PlaceRoadButton";
 
 export default function BottomNavbar() {
   const { phase, setPhase, socket, currentPlayer, lastRoll, playerResources } = useGameStore();
@@ -70,28 +71,8 @@ export default function BottomNavbar() {
           <div className="text-[10px] text-center leading-tight">Play Development Card</div>
         </div>
       </div>
-      <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
-        <div className="transition-transform duration-200 hover:scale-110">
-          <HoverCard openDelay={10} closeDelay={10}>
-            <HoverCardTrigger>
-              <Minus
-                size={88}
-                stroke="black"
-                className=""
-                onClick={() => {
-                  setPhase("road_placement");
-                }}
-              />
-              <div className="text-[10px] text-center leading-tight">Road</div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-fit">
-              <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="BRICK" count={1} size={60} hidden={playerResources.BRICK < 1}/>
-                <ResourceCard resourceType="TREE" count={1} size={60} hidden={playerResources.TREE < 1}/>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
+      <div className=" flex px-2 items-center h-full bg-amber-50 rounded-xl">
+        <PlaceRoadButton />
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">

@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { DevelopmentCardType } from "@/lib/types";
 import Image from "next/image";
 import { useGameStore } from "@/store/GameState";
+import { UseTwoFreeRoadsEvent } from "@/lib/websocket";
 
 const getCardColor = (name: DevelopmentCardType) => {
     const colors = {
@@ -26,12 +27,22 @@ const developmentCardsDescriptions: Record<DevelopmentCardType,string> = {
 const allDevelopmentCards: DevelopmentCardType[] = ["Road Building","Victory Point","Knight","Monopoly","Year of Plenty"]
 
 export default function DevelopmentCardShop() {
-    const { playerDevelopmentCards, setPlayerDevelopmentCards } = useGameStore()
+    const { playerDevelopmentCards, socket, currentPlayer } = useGameStore()
+
+    const playRoadBuildingCard = () => {
+        if (!socket) return;
+        if (!currentPlayer) return;
+        const data: UseTwoFreeRoadsEvent = {
+            type : "PLACE_TWO_FREE_ROADS",
+            username: currentPlayer
+        }
+        socket.send(JSON.stringify(data))
+    }
 
     const handlePlayCard = (cardId: DevelopmentCardType) => {
-        const newDevelopmentCards = playerDevelopmentCards
-        newDevelopmentCards[cardId] -= 1
-        setPlayerDevelopmentCards(newDevelopmentCards)
+        if (cardId === "Road Building") {
+            playRoadBuildingCard()
+        }
     };
 
     return (

@@ -33,6 +33,7 @@ export interface PlayerDetailedSummary {
   developmentCards: Record<DevelopmentCardType,number>;
   color: "RED" | "YELLOW" | "BLUE" | "GREEN";
   resourceCount: Record<"WHEAT" | "BRICK" | "TREE" | "SHEEP" | "STONE", number>;
+  free_road_count: number;
 }
 
 export interface ValidHousePlacementPositions {

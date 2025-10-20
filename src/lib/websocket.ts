@@ -150,6 +150,10 @@ export type BuyDevelopmentCardResponseEvent = {
     card: DevelopmentCardType;
 }
 
+export type UseTwoFreeRoadsEvent = {
+  type: "PLACE_TWO_FREE_ROADS"
+  username: string;
+}
 
 export type ServerMessage =
   | ChatMessageEvent
@@ -171,4 +175,5 @@ export type ServerMessage =
   | TradeBroadcastEvent
   | TradeDeclineEvent
   | BuyDevelopmentCardEvent
-  | BuyDevelopmentCardResponseEvent;
+  | BuyDevelopmentCardResponseEvent
+  | UseTwoFreeRoadsEvent;

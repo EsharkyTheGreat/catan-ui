@@ -5,6 +5,7 @@ import HexagonLayer from "@/components/HexagonLayer";
 import VertexLayer from "@/components/VertexLayer";
 import EdgeLayer from "@/components/EdgeLayer";
 import { useGameStore } from "@/store/GameState";
+import PhaseIndicator from "./PhaseIndicator";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement | null>;
@@ -116,60 +117,77 @@ export default function CatanBoard({ parentRef }: Props) {
     "M62.79,29.172l-28-28C34.009,0.391,32.985,0,31.962,0s-2.047,0.391-2.828,1.172l-28,28 c-1.562,1.566-1.484,4.016,0.078,5.578c1.566,1.57,3.855,1.801,5.422,0.234L8,33.617V60c0,2.211,1.789,4,4,4h16V48h8v16h16 c2.211,0,4-1.789,4-4V33.695l1.195,1.195c1.562,1.562,3.949,1.422,5.516-0.141C64.274,33.188,64.356,30.734,62.79,29.172z";
 
   return (
-    <Stage
-      width={dimensions.width}
-      height={dimensions.height}
-      ref={stageRef}
-      scaleX={canvasScale}
-      scaleY={canvasScale}
-      onWheel={canvasOnWheel}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      x={canvasPosition.x}
-      y={canvasPosition.y}
-    >
-      <Layer>
-        {/* eslint-disable-next-line jsx-a11y/alt-text */}
-        {bgImg && (
-          <Image
-            image={bgImg}
-            width={dimensions.width}
-            height={dimensions.height}
+    <div>
+      <Stage
+        width={dimensions.width}
+        height={dimensions.height}
+        ref={stageRef}
+        scaleX={canvasScale}
+        scaleY={canvasScale}
+        onWheel={canvasOnWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        x={canvasPosition.x}
+        y={canvasPosition.y}
+      >
+        <Layer>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          {bgImg && (
+            <Image
+              image={bgImg}
+              width={dimensions.width}
+              height={dimensions.height}
+            />
+          )}
+        </Layer>
+        {/* Render Catan tiles */}
+        <HexagonLayer />
+        {/* Render edges */}
+        <EdgeLayer />
+        {/* Render vertices */}
+        <VertexLayer />
+        <Layer>
+          <Text text="Try to drag shapes" fontSize={15} />
+          <Rect
+            x={20}
+            y={50}
+            width={100}
+            height={100}
+            fill="red"
+            shadowBlur={10}
+            draggable
           />
-        )}
-      </Layer>
-      {/* Render Catan tiles */}
-      <HexagonLayer />
-      {/* Render edges */}
-      <EdgeLayer />
-      {/* Render vertices */}
-      <VertexLayer />
-      <Layer>
-        <Text text="Try to drag shapes" fontSize={15} />
-        <Rect
-          x={20}
-          y={50}
-          width={100}
-          height={100}
-          fill="red"
-          shadowBlur={10}
-          draggable
-        />
-      </Layer>
-      <Layer>
-        <Path
-          data={pathData}
-          fill="blue" // your SVG fill
-          stroke="#000" // optional stroke
-          strokeWidth={4} // optional stroke width
-          x={5} // position on the canvas
-          y={5}
-          scaleX={0.25} // scale it up/down to fit your Stage
-          scaleY={0.25}
-          draggable
-        />
-      </Layer>
-    </Stage>
+        </Layer>
+        <Layer>
+          <Path
+            data={pathData}
+            fill="blue" // your SVG fill
+            stroke="#000" // optional stroke
+            strokeWidth={4} // optional stroke width
+            x={5} // position on the canvas
+            y={5}
+            scaleX={0.25} // scale it up/down to fit your Stage
+            scaleY={0.25}
+            draggable
+          />
+        </Layer>
+      </Stage>
+      <div
+        style={{
+          position: "absolute",
+          top: dimensions.height - 100,
+          left: dimensions.width - 200,
+          background: "white",
+          border: "2px solid black",
+          borderRadius: "8px",
+          padding: "8px 12px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+        }}
+      >
+        <PhaseIndicator />
+      </div>
+    </div>
+
   );
 }

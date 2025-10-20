@@ -16,6 +16,7 @@ import {
   TradeBroadcastEvent,
   TradeCreateEvent,
   TradeDeclineEvent,
+  UseTwoFreeRoadsEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -147,6 +148,7 @@ export type GameSnapshot = {
   bankResources: Record<CatanResource,number>;
   playerDevelopmentCards: Record<DevelopmentCardType,number>;
   activeOpenTrade: Record<UUID,Trade>;
+  freeRoadCount: number;
 };
 
 export type GameState = GameSnapshot & {
@@ -176,6 +178,7 @@ export type GameState = GameSnapshot & {
   setBankResources: (newResources: Record<CatanResource,number>) => void;
   setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => void;
   setActiveOpenTrades: (newTrades: Record<UUID,Trade>) => void;
+  setFreeRoadCount: (count: number) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;
@@ -184,12 +187,14 @@ export type GameState = GameSnapshot & {
   onGameStart: (event: GameStartedEvent) => void;
   onWsError: (event: GenericErrorEvent) => void;
   onPlayerJoined: (event: JoinedEvent) => Promise<void>;
-  onRoadPlaced: (event: RoadPlacedEvent) => void;
+  onRoadPlaced: (event: RoadPlacedEvent) => Promise<void>;
   onHousePlaced: (event: HousePlacedEvent) => Promise<void>;
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
   onDiceRoll: (event: DiceRollResponseEvent) => void;
   onBankTradeResponse: (event: BankTradeResponseEvent) => void;
+
   onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => void;
+  onFreeTwoRoadsPlayed: (event: UseTwoFreeRoadsEvent) => Promise<void>;
 
   onTradeBroadcast: (event: TradeBroadcastEvent) => void;
   onTradeCreated: (event: TradeBroadcastEvent) => void;

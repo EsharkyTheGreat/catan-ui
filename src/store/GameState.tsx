@@ -31,6 +31,7 @@ import {
   ServerMessage,
   SettlementPlacedEvent,
   TradeBroadcastEvent,
+  UseTwoFreeRoadsEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 import { fetchGameRoomSummary, fetchPlayerSummary } from "@/lib/api";
@@ -60,6 +61,8 @@ export const useGameStore = create<GameState>()(
     status: "lobby",
     bankResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
     activeOpenTrade: {},
+    freeRoadCount: 0,
+
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
     refreshGameMetadata: async () => {
@@ -81,8 +84,10 @@ export const useGameStore = create<GameState>()(
         bankResources: gameSummary.bank_resources,
         playerDevelopmentCards: playerSummary.developmentCards,
         activeOpenTrade: gameSummary.active_open_trades,
+        freeRoadCount: playerSummary.free_road_count
       });
     },
+    setFreeRoadCount: (count: number) => set({freeRoadCount: count}),
     setGameStatus: (status: GameStatuses) => set({ status }),
     setPlayers: (players: Player[]) => set({ players }),
     setCurrentPlayer: (name: string) => set({ currentPlayer: name }),
@@ -188,40 +193,19 @@ export const useGameStore = create<GameState>()(
         }
       })
     },
-    onRoadPlaced: (e: RoadPlacedEvent) => {
+    onFreeTwoRoadsPlayed: async (event: UseTwoFreeRoadsEvent) => {
+      const me = get().currentPlayer
+      if (!me) return;
+      if (event.username === me) {
+        toast.success("You have played the Place Two Free Roads Development Card")
+      } else {
+        toast.success(`${event.username} has played the Place Two Free Roads Development Card"`)
+      }
+      await get().refreshGameMetadata()
+    },
+    onRoadPlaced: async (e: RoadPlacedEvent) => {
       toast.success(`${e.username} has placed a road`);
-      set((state) => {
-        // Find the edge that matches the road placement coordinates
-        // Check both orientations since q1/q2 can be interchanged
-        const updatedEdges = state.edges.map((edge) => {
-          if (
-            (edge.q1 === e.q1 &&
-              edge.r1 === e.r1 &&
-              edge.s1 === e.s1 &&
-              edge.q2 === e.q2 &&
-              edge.r2 === e.r2 &&
-              edge.s2 === e.s2) ||
-            (edge.q1 === e.q2 &&
-              edge.r1 === e.r2 &&
-              edge.s1 === e.s2 &&
-              edge.q2 === e.q1 &&
-              edge.r2 === e.r1 &&
-              edge.s2 === e.s1)
-          ) {
-            return { ...edge, owner: e.username };
-          }
-          return edge;
-        });
-
-        return {
-          ...state,
-          edges: updatedEdges,
-          gameLog: [
-            ...state.gameLog,
-            { player: e.username, message: `${e.username} has placed a road` },
-          ],
-        };
-      });
+      await get().refreshGameMetadata()
     },
     onDiceRoll: (event: DiceRollResponseEvent) => {
       const roll = { die1: event.die1, die2: event.die2}
@@ -371,6 +355,7 @@ export const useGameStore = create<GameState>()(
           if (data.type === "BANK_TRADE_RESPONSE") get().onBankTradeResponse(data as BankTradeResponseEvent)
           if (data.type === "TRADE_BROADCAST") get().onTradeBroadcast(data as TradeBroadcastEvent) 
           if (data.type == "DEVELOPMENT_CARD_BUY_RESPONSE") get().onDevelopmentCardBuyEvent(data as BuyDevelopmentCardResponseEvent)
+          if (data.type == "PLACE_TWO_FREE_ROADS") get().onFreeTwoRoadsPlayed(data as UseTwoFreeRoadsEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
