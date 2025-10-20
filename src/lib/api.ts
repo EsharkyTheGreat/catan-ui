@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType, Trade, CatanVertex } from "./types";
+import { CatanBoardSummary, ChatMessage, GameStatuses, Player, CatanResource, DevelopmentCardType, Trade, CatanVertex, CatanEdge } from "./types";
 import { UUID } from "crypto";
 
 export interface GameRoom {
@@ -37,6 +37,10 @@ export interface PlayerDetailedSummary {
 
 export interface ValidHousePlacementPositions {
   vertices: CatanVertex[]
+}
+
+export interface ValidRoadPlacementPositions {
+  edges: CatanEdge[]
 }
 
 const HOST: string = "localhost";
@@ -136,6 +140,23 @@ export const fetchValidHousePlacementPositions = async (game_id: string, player_
   } catch (error) {
     console.error("Failed to fetch valid house placement positions:", error);
     toast.error("Failed to fetch valid house placement positions:");
+    return null;
+  }
+}
+
+export const fetchValidRoadPlacementPositions = async (game_id: string, player_name: string): Promise<ValidRoadPlacementPositions | null> => {
+  try {
+    const response = await fetch(
+      `${BASE_PATH}/game/player/valid-road-positions?game_id=${encodeURIComponent(game_id)}&player_name=${encodeURIComponent(player_name)}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = (await response.json()) as ValidRoadPlacementPositions;
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch valid road placement positions:", error);
+    toast.error("Failed to fetch valid road placement positions:");
     return null;
   }
 }
