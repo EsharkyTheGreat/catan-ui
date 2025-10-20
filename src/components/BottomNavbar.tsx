@@ -28,6 +28,9 @@ import { DiceRollRequestEvent } from "@/lib/websocket";
 import ResourceCount from "./ResourceCount";
 import TradePopup from "./TradePopup";
 import DevelopmentCardShop from "./DevelopmentCardShop";
+import { HoverCard, HoverCardContent } from "./ui/hover-card";
+import { HoverCardTrigger } from "@radix-ui/react-hover-card";
+import ResourceCard from "./ResourceCard";
 
 export default function BottomNavbar() {
   const { setPhase, socket, currentPlayer, lastRoll } = useGameStore();
@@ -54,58 +57,107 @@ export default function BottomNavbar() {
   return (
     <div className="flex h-full gap-1">
       <ResourceCount />
-      <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">
+      <div className="flex gap-1 px-2 items-center h-full bg-amber-900 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
           <TradePopup />
+          <div className="text-[10px] text-center leading-tight">Trade</div>
         </div>
       </div>
       <div className="flex gap-1 px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
           <DevelopmentCardShop />
+          <div className="text-[10px] text-center leading-tight">Play Development Card</div>
         </div>
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
-          <Minus
-            size={88}
-            stroke="black"
-            className=""
-            onClick={() => {
-              setPhase("road_placement");
-            }}
-          />
+          <HoverCard openDelay={10} closeDelay={10}>
+            <HoverCardTrigger>
+              <Minus
+                size={88}
+                stroke="black"
+                className=""
+                onClick={() => {
+                  setPhase("road_placement");
+                }}
+              />
+              <div className="text-[10px] text-center leading-tight">Road</div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-fit">
+              <div className="flex items-center h-full bg-amber-50 rounded-xl">
+                <ResourceCard resourceType="BRICK" count={1} size={60} />
+                <ResourceCard resourceType="TREE" count={1} size={60} />
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
-          <House
-            size={88}
-            stroke="black"
-            className=""
-            onClick={() => {
-              setPhase("house_placement");
-            }}
-          />
+          <HoverCard openDelay={10} closeDelay={10}>
+            <HoverCardTrigger>
+              <House
+                size={88}
+                stroke="black"
+                className=""
+                onClick={() => {
+                  setPhase("house_placement");
+                }}
+              />
+              <div className="text-[10px] text-center leading-tight">House</div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-fit">
+              <div className="flex items-center h-full bg-amber-50 rounded-xl">
+                <ResourceCard resourceType="BRICK" count={1} size={60} />
+                <ResourceCard resourceType="TREE" count={1} size={60} />
+                <ResourceCard resourceType="SHEEP" count={1} size={60} />
+                <ResourceCard resourceType="WHEAT" count={1} size={60} />
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
-          <Building
-            size={88}
-            stroke="black"
-            className=""
-            onClick={() => {
-              setPhase("settlement_placement");
-            }}
-          />
+          <HoverCard openDelay={10} closeDelay={10}>
+            <HoverCardTrigger>
+              <Building
+                size={88}
+                stroke="black"
+                className=""
+                onClick={() => {
+                  setPhase("settlement_placement");
+                }}
+              />
+              <div className="text-[10px] text-center leading-tight">Settlement</div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-fit">
+              <div className="flex items-center h-full bg-amber-50 rounded-xl">
+                <ResourceCard resourceType="STONE" count={3} size={60} />
+                <ResourceCard resourceType="WHEAT" count={2} size={60} />
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       </div>
       <div className=" flex px-2 items-center h-full bg-amber-50 rounded-xl">
         <div className="transition-transform duration-200 hover:scale-110">
-          <Spade size={88} stroke="black" className="" />
+          <HoverCard openDelay={10} closeDelay={10}>
+            <HoverCardTrigger>
+              <Spade size={64} stroke="black" className="" />
+              <div className="text-[10px] text-center leading-tight">Buy Development Card</div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-fit">
+              <div className="flex items-center h-full bg-amber-50 rounded-xl">
+                <ResourceCard resourceType="STONE" count={1} size={60} />
+                <ResourceCard resourceType="WHEAT" count={1} size={60} />
+                <ResourceCard resourceType="SHEEP" count={1} size={60} />
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       </div>
-      <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl hover:cursor-pointer" onClick={()=>diceRoll()}>
+      <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl hover:cursor-pointer" onClick={() => diceRoll()}>
         {(() => {
           const DieLeft = diceComponentMap[lastRoll?.die1 ?? 1] ?? Dice1;
           const DieRight = diceComponentMap[lastRoll?.die2 ?? 1] ?? Dice1;
