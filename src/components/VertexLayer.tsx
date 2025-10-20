@@ -11,9 +11,19 @@ const houseSvg = "M62.79,29.172l-28-28C34.009,0.391,32.985,0,31.962,0s-2.047,0.3
 
 
 export default function VertexLayer() {
-  const { id, username, vertices, dimensions, phase, currentPlayer, socket, setPhase } = useGameStore();
+  const { id, username, vertices, dimensions, phase, currentPlayer, socket, setPhase, players } = useGameStore();
 
   const [allowedVertices, setAllowedVertices] = useState<CatanVertex[]>([]);
+
+  const getPlayerColor = (player_name: string|null) => {
+    if (!player_name) {return ""}
+    const player = players.find(p => p.name == player_name)
+    if (!player) {
+      return "red"
+    } else {
+      return player.color
+    }
+  }
 
   // positions of all board vertices (for rendering houses already placed)
   const allVertexPositions = useMemo(() => {
@@ -102,7 +112,7 @@ export default function VertexLayer() {
             <Path
               key={`vertex-${index}`}
               data={houseSvg}
-              fill="blue" // your SVG fill
+              fill={getPlayerColor(vertex.data.owner)} // your SVG fill
               stroke="#000" // optional stroke
               strokeWidth={4} // optional stroke width
               x={vertex.x - 7} // position on the canvas
