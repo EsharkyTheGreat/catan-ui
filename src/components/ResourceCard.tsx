@@ -5,6 +5,7 @@ type Props = {
     resourceType: CatanResource
     count: number
     size: number
+    hidden: boolean
 }
 
 const imagePathMap: Record<CatanResource,string> = {
@@ -23,9 +24,9 @@ const altNameMap: Record<CatanResource,string> = {
     WHEAT: "WheatResourceCard",
 }
 
-export default function ResourceCard({resourceType,count,size}:Props) {
+export default function ResourceCard({resourceType, count, size, hidden}:Props) {
     return (
-        <div className="transition-transform duration-200 hover:scale-110 relative">
+        <div className={`transition-transform duration-200 hover:scale-110 relative ${hidden ? "opacity-25":""}`}>
           <Image
             className=""
             src={imagePathMap[resourceType]}

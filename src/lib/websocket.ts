@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { CatanResource, TradeResponse, TradeStatus } from "./types";
+import { CatanResource, DevelopmentCardType, TradeResponse, TradeStatus } from "./types";
 
 export type ChatMessageEvent = {
   type: "CHAT_MESSAGE";
@@ -138,6 +138,18 @@ export type TradeAcceptOfferEvent = {
     accepting_offer_of: string;
 }
 
+export type BuyDevelopmentCardEvent = {
+  type: "DEVELOPMENT_CARD_BUY_REQUEST";
+  username: string;
+}
+
+export type BuyDevelopmentCardResponseEvent = {
+    type: "DEVELOPMENT_CARD_BUY_RESPONSE";
+    success: boolean;
+    username: string;
+    card: DevelopmentCardType;
+}
+
 
 export type ServerMessage =
   | ChatMessageEvent
@@ -157,4 +169,6 @@ export type ServerMessage =
   | TradeAcceptEvent
   | TradeAcceptOfferEvent
   | TradeBroadcastEvent
-  | TradeDeclineEvent;
+  | TradeDeclineEvent
+  | BuyDevelopmentCardEvent
+  | BuyDevelopmentCardResponseEvent;

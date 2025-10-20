@@ -31,9 +31,10 @@ import DevelopmentCardShop from "./DevelopmentCardShop";
 import { HoverCard, HoverCardContent } from "./ui/hover-card";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 import ResourceCard from "./ResourceCard";
+import BuyDevelopmentCardButton from "./BuyDevelopmentCardButton";
 
 export default function BottomNavbar() {
-  const { setPhase, socket, currentPlayer, lastRoll } = useGameStore();
+  const { phase, setPhase, socket, currentPlayer, lastRoll, playerResources } = useGameStore();
 
   const diceComponentMap: Record<number, any> = {
     1: Dice1,
@@ -85,8 +86,8 @@ export default function BottomNavbar() {
             </HoverCardTrigger>
             <HoverCardContent className="w-fit">
               <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="BRICK" count={1} size={60} />
-                <ResourceCard resourceType="TREE" count={1} size={60} />
+                <ResourceCard resourceType="BRICK" count={1} size={60} hidden={playerResources.BRICK < 1}/>
+                <ResourceCard resourceType="TREE" count={1} size={60} hidden={playerResources.TREE < 1}/>
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -101,17 +102,18 @@ export default function BottomNavbar() {
                 stroke="black"
                 className=""
                 onClick={() => {
-                  setPhase("house_placement");
+                  if (phase !== "house_placement") setPhase("house_placement");
+                  else setPhase(null);
                 }}
               />
               <div className="text-[10px] text-center leading-tight">House</div>
             </HoverCardTrigger>
             <HoverCardContent className="w-fit">
               <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="BRICK" count={1} size={60} />
-                <ResourceCard resourceType="TREE" count={1} size={60} />
-                <ResourceCard resourceType="SHEEP" count={1} size={60} />
-                <ResourceCard resourceType="WHEAT" count={1} size={60} />
+                <ResourceCard resourceType="BRICK" count={1} size={60} hidden={playerResources.BRICK < 1}/>
+                <ResourceCard resourceType="TREE" count={1} size={60} hidden={playerResources.TREE < 1} />
+                <ResourceCard resourceType="SHEEP" count={1} size={60} hidden={playerResources.SHEEP < 1}/>
+                <ResourceCard resourceType="WHEAT" count={1} size={60} hidden={playerResources.WHEAT < 1}/>
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -126,36 +128,23 @@ export default function BottomNavbar() {
                 stroke="black"
                 className=""
                 onClick={() => {
-                  setPhase("settlement_placement");
+                  if (phase !== "settlement_placement") setPhase("settlement_placement");
+                  else setPhase(null)
                 }}
               />
               <div className="text-[10px] text-center leading-tight">Settlement</div>
             </HoverCardTrigger>
             <HoverCardContent className="w-fit">
               <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="STONE" count={3} size={60} />
-                <ResourceCard resourceType="WHEAT" count={2} size={60} />
+                <ResourceCard resourceType="STONE" count={3} size={60} hidden={playerResources.STONE < 3}/>
+                <ResourceCard resourceType="WHEAT" count={2} size={60} hidden={playerResources.WHEAT < 2}/>
               </div>
             </HoverCardContent>
           </HoverCard>
         </div>
       </div>
       <div className=" flex px-2 items-center h-full bg-amber-50 rounded-xl">
-        <div className="transition-transform duration-200 hover:scale-110">
-          <HoverCard openDelay={10} closeDelay={10}>
-            <HoverCardTrigger>
-              <Spade size={64} stroke="black" className="" />
-              <div className="text-[10px] text-center leading-tight">Buy Development Card</div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-fit">
-              <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="STONE" count={1} size={60} />
-                <ResourceCard resourceType="WHEAT" count={1} size={60} />
-                <ResourceCard resourceType="SHEEP" count={1} size={60} />
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
+        <BuyDevelopmentCardButton />
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl hover:cursor-pointer" onClick={() => diceRoll()}>
         {(() => {

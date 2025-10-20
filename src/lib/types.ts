@@ -1,6 +1,7 @@
 import { UUID } from "crypto";
 import {
   BankTradeResponseEvent,
+  BuyDevelopmentCardResponseEvent,
   ChatMessageEvent,
   ConnectedEvent,
   DiceRollResponseEvent,
@@ -122,7 +123,8 @@ export type GamePhases =
   | "road_placement"
   | "house_placement"
   | "settlement_placement"
-  | "robber";
+  | "robber"
+  | null;
 
 export type GameStatuses = "active" | "lobby" | "finished";
 
@@ -187,6 +189,7 @@ export type GameState = GameSnapshot & {
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
   onDiceRoll: (event: DiceRollResponseEvent) => void;
   onBankTradeResponse: (event: BankTradeResponseEvent) => void;
+  onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => void;
 
   onTradeBroadcast: (event: TradeBroadcastEvent) => void;
   onTradeCreated: (event: TradeBroadcastEvent) => void;

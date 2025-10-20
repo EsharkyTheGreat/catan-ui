@@ -18,6 +18,7 @@ import {
 import { devtools } from "zustand/middleware";
 import {
   BankTradeResponseEvent,
+  BuyDevelopmentCardResponseEvent,
   ChatMessageEvent,
   ConnectedEvent,
   DiceRollResponseEvent,
@@ -123,6 +124,36 @@ export const useGameStore = create<GameState>()(
       toast.success(`${e.username} has placed a settlement`)
       await get().refreshGameMetadata()
       //TODO Write Logic to just update state in memory instead of refetching everything
+    },
+    onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => {
+      set((state)=> {
+        const me = get().currentPlayer
+        if (event.username === me) {
+          const myDevelopmentCards = get().playerDevelopmentCards
+          myDevelopmentCards[event.card] += 1
+          const myCards = get().playerResources
+          myCards.SHEEP -= 1
+          myCards.WHEAT -= 1
+          myCards.STONE -= 1
+          toast.success(`You have received a ${event.card} - Development Card`)
+          return {
+            ...state,
+            playerResources: myCards,
+            playerDevelopmentCards: myDevelopmentCards
+          }
+        } else {
+          const allPlayers = get().players
+          const otherPlayer = get().players.find(p=>p.name === event.username)
+          if (!otherPlayer) return {...state}
+          otherPlayer.developmentCards += 1
+          otherPlayer.cardCount -= 3
+          toast.success(`Player: ${event.username} has bought a Development Card`)
+          return {
+            ...state,
+            players: allPlayers
+          }
+        }
+      })
     },
     onBankTradeResponse: (event: BankTradeResponseEvent) => {
       if (!event.success) {
@@ -339,6 +370,7 @@ export const useGameStore = create<GameState>()(
           if (data.type === "DICE_ROLL_RESPONSE") get().onDiceRoll(data as DiceRollResponseEvent)
           if (data.type === "BANK_TRADE_RESPONSE") get().onBankTradeResponse(data as BankTradeResponseEvent)
           if (data.type === "TRADE_BROADCAST") get().onTradeBroadcast(data as TradeBroadcastEvent) 
+          if (data.type == "DEVELOPMENT_CARD_BUY_RESPONSE") get().onDevelopmentCardBuyEvent(data as BuyDevelopmentCardResponseEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
