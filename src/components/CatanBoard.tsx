@@ -18,6 +18,7 @@ export default function CatanBoard({ parentRef }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>();
+  const [testImg, setTestImg] = useState<HTMLImageElement | null>();
 
   const { setVertices, dimensions, setDimensions } = useGameStore();
 
@@ -101,6 +102,12 @@ export default function CatanBoard({ parentRef }: Props) {
     image.onload = () => {
       setBgImg(image);
     };
+
+    const testImg = new window.Image();
+    testImg.src = "/RedSettlement.png"
+    testImg.onload = () => {
+      setTestImg(testImg);
+    }
   }, [parentRef]);
 
   // // Generate catan tiles when dimensions change
@@ -171,6 +178,13 @@ export default function CatanBoard({ parentRef }: Props) {
             scaleY={0.25}
             draggable
           />
+          {testImg && <Image
+              image={testImg}
+              width={20}
+              height={20}
+              draggable
+            />
+          }
         </Layer>
       </Stage>
       <div

@@ -116,7 +116,11 @@ export default function EdgeLayer() {
             target.strokeWidth(4);
             target.getStage()?.container().style && (target.getStage()!.container().style.cursor = "default");
           }}
-          onClick={() => handleAllowedEdgeClick(edge.data)}
+          onClick={(e) => {
+            const target = e.target as Konva.Line;
+            target.getStage()?.container().style && (target.getStage()!.container().style.cursor = "default");
+            handleAllowedEdgeClick(edge.data)
+          }}
         />
       ))}
     </Layer>
