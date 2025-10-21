@@ -12,6 +12,8 @@ export default function HexagonLayer() {
   const [stoneImage] = useImage("/StoneSprite.png");
   const [wheatImage] = useImage("/WheatSprite.png");
   const [forestImage] = useImage("/ForestSprite.png");
+  const [sheepImage] = useImage("/SheepSprite.png")
+  const [dessertImage] = useImage("/DessertSprite.png")
   const faceWithPositions = useMemo(
     () => getCatanFacePositions(dimensions, faces),
     [dimensions, faces]
@@ -32,6 +34,10 @@ export default function HexagonLayer() {
           backgroundImage = wheatImage;
         } else if (tile.data.resource === "TREE") {
           backgroundImage = forestImage;
+        } else if (tile.data.resource === "SHEEP") {
+          backgroundImage = sheepImage;
+        } else if (tile.data.resource === "DESERT") {
+          backgroundImage = dessertImage;
         }
 
         return (
