@@ -71,7 +71,7 @@ export interface CatanTile {
   r: number;
   s: number;
   resource: CatanResource | "DESERT";
-  number: number;
+  number: number | null;
 }
 
 export type CatanBoardSummary = {
@@ -190,7 +190,7 @@ export type GameState = GameSnapshot & {
   onRoadPlaced: (event: RoadPlacedEvent) => Promise<void>;
   onHousePlaced: (event: HousePlacedEvent) => Promise<void>;
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
-  onDiceRoll: (event: DiceRollResponseEvent) => void;
+  onDiceRoll: (event: DiceRollResponseEvent) => Promise<void>;
   onBankTradeResponse: (event: BankTradeResponseEvent) => void;
 
   onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => void;

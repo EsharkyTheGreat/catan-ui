@@ -62,6 +62,7 @@ export default function HexagonLayer() {
         );
       })}
       {faceWithPositions.map((tile) => {
+        if (tile.data.number === null) return;
         return (
           <NumberToken
             key={`${tile.data.q}-${tile.data.r}-${tile.data.s}`}

@@ -207,18 +207,10 @@ export const useGameStore = create<GameState>()(
       toast.success(`${e.username} has placed a road`);
       await get().refreshGameMetadata()
     },
-    onDiceRoll: (event: DiceRollResponseEvent) => {
+    onDiceRoll: async (event: DiceRollResponseEvent) => {
       const roll = { die1: event.die1, die2: event.die2}
       get().setLastRoll(roll)
-      set((state)=>{
-        return {
-          ...state,
-          gameLog: [
-            ...state.gameLog,
-            {player: event.username, message: `${event.username} rolled a ${event.die1} and ${event.die2}`}
-          ]
-        }
-      })
+      await get().refreshGameMetadata()
     },
     onTradeBroadcast: (event: TradeBroadcastEvent) => {
       if (event.status == "CREATED") {
