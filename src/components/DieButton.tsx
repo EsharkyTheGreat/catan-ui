@@ -10,7 +10,7 @@ import {
   } from "lucide-react";
 
 export default function DieButton() {
-    const { socket, username, lastRoll, currentPlayer } = useGameStore();
+    const { socket, username, lastRoll, currentPlayer, dieRolledThisTurn } = useGameStore();
     const myTurn = username === currentPlayer;
 
     const diceComponentMap: Record<number, any> = {
@@ -26,6 +26,7 @@ export default function DieButton() {
         if (!username) return;
         if (!socket) return;
         if (!myTurn) return;
+        if (dieRolledThisTurn) return;
         const data: DiceRollRequestEvent = {
             type: "DICE_ROLL_REQUEST",
             username: username,
@@ -34,7 +35,7 @@ export default function DieButton() {
     }
 
     return (
-        <div className={"flex px-2 items-center h-full bg-amber-50 rounded-xl" + (myTurn ? " hover:cursor-pointer" : " hover:cursor-not-allowed")} onClick={() => diceRoll()}>
+        <div className={"flex px-2 items-center h-full bg-amber-50 rounded-xl" + (myTurn && !dieRolledThisTurn ? " hover:cursor-pointer" : " hover:cursor-not-allowed")} onClick={() => diceRoll()}>
             {(() => {
             const DieLeft = diceComponentMap[lastRoll?.die1 ?? 1] ?? Dice1;
             const DieRight = diceComponentMap[lastRoll?.die2 ?? 1] ?? Dice1;

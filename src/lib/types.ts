@@ -155,6 +155,7 @@ export type GameSnapshot = {
   myHouseCounts: number;
   mySettlementCounts: number;
   myRoadCounts: number;
+  dieRolledThisTurn: boolean;
 };
 
 export type GameState = GameSnapshot & {

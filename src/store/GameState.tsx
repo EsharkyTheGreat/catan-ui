@@ -68,6 +68,7 @@ export const useGameStore = create<GameState>()(
     myHouseCounts: 0,
     mySettlementCounts: 0,
     myRoadCounts: 0,
+    dieRolledThisTurn: false,
 
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
@@ -94,6 +95,7 @@ export const useGameStore = create<GameState>()(
         myHouseCounts: playerSummary.houses_placed,
         mySettlementCounts: playerSummary.settlements_placed,
         myRoadCounts: playerSummary.roads_placed,
+        dieRolledThisTurn: gameSummary.die_rolled_this_turn,
       });
     },
     setFreeRoadCount: (count: number) => set({freeRoadCount: count}),
