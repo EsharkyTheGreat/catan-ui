@@ -31,7 +31,9 @@ import {
   ServerMessage,
   SettlementPlacedEvent,
   TradeBroadcastEvent,
+  UseMonopolyEvent,
   UseTwoFreeRoadsEvent,
+  UseYearOfPlentyEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 import { fetchGameRoomSummary, fetchPlayerSummary } from "@/lib/api";
@@ -203,6 +205,26 @@ export const useGameStore = create<GameState>()(
       }
       await get().refreshGameMetadata()
     },
+    onUseMonopolyCard: async (event: UseMonopolyEvent) => {
+      const me = get().currentPlayer
+      if (!me) return;
+      if (event.username === me) {
+        toast.success(`You have played the Monopoly Development Card and taken all resources of the ${event.resource} type`)
+      } else {
+        toast.success(`${event.username} has played the Monopoly Development Card and taken all resources of the ${event.resource} type`)
+      }
+      await get().refreshGameMetadata()
+    },
+    onUseYearOfPlentyCard: async (event: UseYearOfPlentyEvent) => {
+      const me = get().currentPlayer
+      if (!me) return;
+      if (event.username === me) {
+        toast.success(`You have played the Year of Plenty Development Card and taken ${event.resource1} and ${event.resource2} from the bank`)
+      } else {
+        toast.success(`${event.username} has played the Year of Plenty Development Card and taken ${event.resource1} and ${event.resource2} from the bank`)
+      }
+      await get().refreshGameMetadata()
+    },
     onRoadPlaced: async (e: RoadPlacedEvent) => {
       toast.success(`${e.username} has placed a road`);
       await get().refreshGameMetadata()
@@ -348,6 +370,8 @@ export const useGameStore = create<GameState>()(
           if (data.type === "TRADE_BROADCAST") get().onTradeBroadcast(data as TradeBroadcastEvent) 
           if (data.type == "DEVELOPMENT_CARD_BUY_RESPONSE") get().onDevelopmentCardBuyEvent(data as BuyDevelopmentCardResponseEvent)
           if (data.type == "PLACE_TWO_FREE_ROADS") get().onFreeTwoRoadsPlayed(data as UseTwoFreeRoadsEvent)
+          if (data.type == "USE_MONOPOLY_CARD") get().onUseMonopolyCard(data as UseMonopolyEvent)
+          if (data.type == "USE_YEAR_OF_PLENTY_CARD") get().onUseYearOfPlentyCard(data as UseYearOfPlentyEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }

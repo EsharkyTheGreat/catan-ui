@@ -155,6 +155,19 @@ export type UseTwoFreeRoadsEvent = {
   username: string;
 }
 
+export type UseMonopolyEvent = {
+  type: "USE_MONOPOLY_CARD"
+  username: string;
+  resource: CatanResource;
+}
+
+export type UseYearOfPlentyEvent = {
+  type: "USE_YEAR_OF_PLENTY_CARD"
+  username: string;
+  resource1: CatanResource;
+  resource2: CatanResource;
+}
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
@@ -176,4 +189,6 @@ export type ServerMessage =
   | TradeDeclineEvent
   | BuyDevelopmentCardEvent
   | BuyDevelopmentCardResponseEvent
-  | UseTwoFreeRoadsEvent;
+  | UseTwoFreeRoadsEvent
+  | UseMonopolyEvent
+  | UseYearOfPlentyEvent;

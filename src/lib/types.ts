@@ -16,7 +16,9 @@ import {
   TradeBroadcastEvent,
   TradeCreateEvent,
   TradeDeclineEvent,
+  UseMonopolyEvent,
   UseTwoFreeRoadsEvent,
+  UseYearOfPlentyEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -195,6 +197,8 @@ export type GameState = GameSnapshot & {
 
   onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => void;
   onFreeTwoRoadsPlayed: (event: UseTwoFreeRoadsEvent) => Promise<void>;
+  onUseMonopolyCard: (event: UseMonopolyEvent) => Promise<void>;
+  onUseYearOfPlentyCard: (event: UseYearOfPlentyEvent) => Promise<void>;
 
   onTradeBroadcast: (event: TradeBroadcastEvent) => void;
   onTradeCreated: (event: TradeBroadcastEvent) => void;
