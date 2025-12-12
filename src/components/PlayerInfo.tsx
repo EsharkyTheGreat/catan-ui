@@ -10,9 +10,9 @@ export default function PlayerInfo({ player }: Props) {
       <div className="p-4">
         <h3 className="font-bold text-lg">{player.name}</h3>
         <div className="flex flex-row gap-5 w-full">
-          <div> {player.id}</div>
-          <div>{player.victoryPoints}</div>
-          <div>{player.cardCount}</div>
+          <div>ID-{player.id}</div>
+          <div>VP-{player.victoryPoints}</div>
+          <div>Cards-{player.cardCount}</div>
         </div>
       </div>
     </div>
