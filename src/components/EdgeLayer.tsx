@@ -8,7 +8,7 @@ import { fetchValidRoadPlacementPositions } from "@/lib/api";
 import { CatanEdge } from "@/lib/types";
 
 export default function EdgeLayer() {
-  const { id, username, phase, edges, dimensions, socket, currentPlayer, players, setPhase } =
+  const { id, phase, edges, dimensions, socket, username, players, setPhase } =
     useGameStore();
   const [allowedEdges, setAllowedEdges] = useState<CatanEdge[]>([]);
   const [blinkOn, setBlinkOn] = useState<boolean>(true);
@@ -52,7 +52,7 @@ export default function EdgeLayer() {
   }, [phase]);
 
   const handleAllowedEdgeClick = (edge: CatanEdge) => {
-    if (!currentPlayer) return;
+    if (!username) return;
     if (!socket) return;
     setPhase(null)
     const data: RoadPlacedEvent = {
@@ -63,7 +63,7 @@ export default function EdgeLayer() {
       r2: edge.r2,
       s1: edge.s1,
       s2: edge.s2,
-      username: currentPlayer,
+      username: username,
     };
     socket.send(JSON.stringify(data));
   };

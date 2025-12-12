@@ -36,7 +36,8 @@ const RESOURCES: {id: string, name: CatanResource, color: string, icon: string}[
 ];
 
 export default function DevelopmentCardShop() {
-    const { playerDevelopmentCards, socket, currentPlayer } = useGameStore()
+    const { playerDevelopmentCards, socket, username, currentPlayer } = useGameStore()
+    const myTurn = username === currentPlayer
     const [monopolyDialogOpen, setMonopolyDialogOpen] = useState(false);
     const [yearOfPlentyDialogOpen, setYearOfPlentyDialogOpen] = useState(false);
     const [selectedMonopolyResource, setSelectedMonopolyResource] = useState<CatanResource | null>(null);
@@ -46,15 +47,16 @@ export default function DevelopmentCardShop() {
 
     const playRoadBuildingCard = () => {
         if (!socket) return;
-        if (!currentPlayer) return;
+        if (!username) return;
         const data: UseTwoFreeRoadsEvent = {
             type : "PLACE_TWO_FREE_ROADS",
-            username: currentPlayer
+            username: username
         }
         socket.send(JSON.stringify(data))
     }
 
     const handlePlayCard = (cardId: DevelopmentCardType) => {
+        if (!myTurn) return;
         if (cardId === "Road Building") {
             playRoadBuildingCard()
         } else if (cardId === "Monopoly") {
@@ -65,10 +67,10 @@ export default function DevelopmentCardShop() {
     };
 
     const handleMonopolyConfirm = () => {
-        if (!selectedMonopolyResource || !socket || !currentPlayer) return;
+        if (!selectedMonopolyResource || !socket || !username) return;
         const data: UseMonopolyEvent = {
             type: "USE_MONOPOLY_CARD",
-            username: currentPlayer,
+            username: username,
             resource: selectedMonopolyResource
         };
         socket.send(JSON.stringify(data));
@@ -79,14 +81,14 @@ export default function DevelopmentCardShop() {
     const handleYearOfPlentyConfirm = () => {
         const selectedResources = {...selectedYearOfPlentyResources};
         const totalSelected = Object.values(selectedYearOfPlentyResources).reduce((sum, count) => sum + count, 0);
-        if (totalSelected !== 2 || !socket || !currentPlayer) return;
+        if (totalSelected !== 2 || !socket || !username) return;
         const resource1 = Object.keys(selectedResources).find(key => selectedResources[key as CatanResource] >= 1);
         selectedResources[resource1 as CatanResource] -= 1;
         const resource2 = Object.keys(selectedResources).find(key => selectedResources[key as CatanResource] === 1);
         selectedResources[resource2 as CatanResource] -= 1;
         const data: UseYearOfPlentyEvent = {
             type: "USE_YEAR_OF_PLENTY_CARD",
-            username: currentPlayer,
+            username: username,
             resource1: resource1 as CatanResource,
             resource2: resource2 as CatanResource
         };
@@ -111,7 +113,7 @@ export default function DevelopmentCardShop() {
         <>
         <Dialog>
             <DialogTrigger asChild>
-                <Hammer size={88} stroke="black" className="" />
+                <Hammer size={88} stroke="black" className={myTurn ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} />
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>

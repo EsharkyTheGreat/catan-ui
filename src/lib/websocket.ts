@@ -168,6 +168,11 @@ export type UseYearOfPlentyEvent = {
   resource2: CatanResource;
 }
 
+export type TurnEndEvent = {
+  type: "TURN_END";
+  username: string;
+}
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
@@ -191,4 +196,5 @@ export type ServerMessage =
   | BuyDevelopmentCardResponseEvent
   | UseTwoFreeRoadsEvent
   | UseMonopolyEvent
-  | UseYearOfPlentyEvent;
+  | UseYearOfPlentyEvent
+  | TurnEndEvent;

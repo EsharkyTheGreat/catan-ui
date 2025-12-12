@@ -16,6 +16,7 @@ import {
   TradeBroadcastEvent,
   TradeCreateEvent,
   TradeDeclineEvent,
+  TurnEndEvent,
   UseMonopolyEvent,
   UseTwoFreeRoadsEvent,
   UseYearOfPlentyEvent,
@@ -151,6 +152,9 @@ export type GameSnapshot = {
   playerDevelopmentCards: Record<DevelopmentCardType,number>;
   activeOpenTrade: Record<UUID,Trade>;
   freeRoadCount: number;
+  myHouseCounts: number;
+  mySettlementCounts: number;
+  myRoadCounts: number;
 };
 
 export type GameState = GameSnapshot & {
@@ -205,4 +209,6 @@ export type GameState = GameSnapshot & {
   onTradeUpdate: (event: TradeBroadcastEvent) => void;
   onTradeExpire: (event: TradeBroadcastEvent) => void;
   onTradeCompletion: (event: TradeBroadcastEvent) => void;
+
+  onTurnEnd: (event: TurnEndEvent) => Promise<void>;
 };

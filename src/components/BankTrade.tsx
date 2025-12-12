@@ -13,7 +13,7 @@ const RESOURCES: { id: string, name: CatanResource, color: string, icon: string 
 ];
 
 export default function BankTrade() {
-    const { playerResources, socket, currentPlayer } = useGameStore()
+    const { playerResources, socket, username } = useGameStore()
 
     const [bankGiving, setBankGiving] = useState<CatanResource | "">("")
     const [bankGetting, setBankGetting] = useState<CatanResource | "">("")
@@ -31,7 +31,7 @@ export default function BankTrade() {
     };
 
     const executeBankTrade = () => {
-        if (!currentPlayer) return;
+        if (!username) return;
         if (!canExecuteBankTrade()) return;
         setBankGiving('');
         setBankGetting('');
@@ -41,7 +41,7 @@ export default function BankTrade() {
             resource_giving_count: 4,
             resource_taking: bankGetting as CatanResource,
             resource_taking_count: 1,
-            username: currentPlayer
+            username: username
         }
         socket?.send(JSON.stringify(data))
     };

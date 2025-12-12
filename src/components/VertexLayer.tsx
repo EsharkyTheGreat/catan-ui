@@ -2,7 +2,7 @@ import { Layer, Circle, Path } from "react-konva";
 import Konva from "konva";
 import { useGameStore } from "@/store/GameState";
 import { getCatanVertexPositions } from "@/lib/hexagonUtils";
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { CatanVertex } from "@/lib/types";
 import { HousePlacedEvent, SettlementPlacedEvent } from "@/lib/websocket";
 import { fetchValidHousePlacementPositions } from "@/lib/api";
@@ -12,7 +12,7 @@ const houseSvg = "M62.79,29.172l-28-28C34.009,0.391,32.985,0,31.962,0s-2.047,0.3
 
 
 export default function VertexLayer() {
-  const { id, username, vertices, dimensions, phase, currentPlayer, socket, setPhase, players } = useGameStore();
+  const { id, username, vertices, dimensions, phase, socket, setPhase, players } = useGameStore();
 
   const [allowedVertices, setAllowedVertices] = useState<CatanVertex[]>([]);
 
@@ -68,7 +68,7 @@ export default function VertexLayer() {
   };
 
   const handleVertexMouseClick = (vertex: CatanVertex, housePlaced: boolean, settlementPlaced: boolean) => {
-    if (!currentPlayer) return;
+    if (!username) return;
     setPhase(null)
     if (housePlaced) {
       const data: HousePlacedEvent = {
@@ -82,7 +82,7 @@ export default function VertexLayer() {
         s2: vertex.s2,
         s3: vertex.s3,
         type: "HOUSE_PLACED",
-        username: currentPlayer
+        username: username
       }
       return socket?.send(JSON.stringify(data))
     }
@@ -98,7 +98,7 @@ export default function VertexLayer() {
         s2: vertex.s2,
         s3: vertex.s3,
         type: "SETTLEMENT_PLACED",
-        username: currentPlayer
+        username: username
       }
       return socket?.send(JSON.stringify(data))
     }
@@ -121,7 +121,7 @@ export default function VertexLayer() {
               scaleX={0.25} // scale it up/down to fit your Stage
               scaleY={0.25}
               onClick={(e) => {
-                if (phase === "settlement_placement" && vertex.data.owner === currentPlayer) {
+                if (phase === "settlement_placement" && vertex.data.owner === username) {
                   const target = e.target as Konva.Path;
                   target.getStage()?.container().style && (target.getStage()!.container().style.cursor = "default");
                   handleVertexMouseClick(vertex.data, false, true)

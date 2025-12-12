@@ -10,37 +10,37 @@ type Props = {
 }
 
 export default function PlayerTradePopup(props: Props) {
-    const { currentPlayer, players, socket } = useGameStore()
-    const isMyTrade = props.trade.username === currentPlayer;
-    const hasResponded = Object.entries(props.trade.player_sentiment).find(p => p[0] === currentPlayer)?.[1] !== "NO_RESPONSE";
+    const { username, players, socket } = useGameStore()
+    const isMyTrade = props.trade.username === username;
+    const hasResponded = Object.entries(props.trade.player_sentiment).find(p => p[0] === username)?.[1] !== "NO_RESPONSE";
     const someoneAcceptedMyTrade = isMyTrade && Object.entries(props.trade.player_sentiment).some(
-        ([name, resp]) => name !== currentPlayer && resp === "ACCEPT"
+        ([name, resp]) => name !== username && resp === "ACCEPT"
     );
 
     const acceptTrade = (trade: Trade) => {
-        if (!currentPlayer) return;
+        if (!username) return;
         if (!socket) return;
         const data: TradeAcceptEvent = {
             type: "TRADE_ACCEPTED",
             id: trade.trade_id,
-            username: currentPlayer
+            username: username
         }
         socket.send(JSON.stringify(data))
     }
 
     const declineTrade = (trade: Trade) => {
-        if (!currentPlayer) return;
+        if (!username) return;
         if (!socket) return;
         const data: TradeDeclineEvent = {
             type: "TRADE_DECLINED",
             id: trade.trade_id,
-            username: currentPlayer
+            username: username
         }
         socket.send(JSON.stringify(data))
     }
 
     const confirmTrade = (accepting_offer_of: string, trade: Trade) => {
-        if (!currentPlayer) return;
+        if (!username) return;
         if (!socket) return;
         const data: TradeAcceptOfferEvent = {
             type: "TRADE_ACCEPT_OFFER",
@@ -77,7 +77,7 @@ export default function PlayerTradePopup(props: Props) {
             <div className="mb-3">
                 <p className="text-sm text-gray-600 mb-2">
                     {isMyTrade ? (
-                        <>Offered to <span className="font-medium text-gray-900">{players.filter(p => p.name != currentPlayer).map(p => p.name).join(',')}</span></>
+                        <>Offered to <span className="font-medium text-gray-900">{players.filter(p => p.name != username).map(p => p.name).join(',')}</span></>
                     ) : (
                         <>From <span className="font-medium text-gray-900">{props.trade.username}</span></>
                     )}
@@ -132,7 +132,7 @@ export default function PlayerTradePopup(props: Props) {
                         className="flex items-center justify-between p-2 rounded bg-gray-50"
                     >
                         <span className="text-sm text-gray-700">
-                            {participant === currentPlayer ? 'You' : participant}
+                            {participant === username ? 'You' : participant}
                         </span>
                         <div className="flex items-center gap-1">
                             {response === "ACCEPT" ? (
@@ -178,7 +178,7 @@ export default function PlayerTradePopup(props: Props) {
                     </p>
                     <div className="space-y-2">
                         {Object.entries(props.trade.player_sentiment)
-                            .filter(([name, resp]) => name !== currentPlayer && resp === "ACCEPT")
+                            .filter(([name, resp]) => name !== username && resp === "ACCEPT")
                             .map(([name, resp], idx) => (
                                 <button
                                     key={idx}

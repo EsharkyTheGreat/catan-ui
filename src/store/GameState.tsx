@@ -31,6 +31,7 @@ import {
   ServerMessage,
   SettlementPlacedEvent,
   TradeBroadcastEvent,
+  TurnEndEvent,
   UseMonopolyEvent,
   UseTwoFreeRoadsEvent,
   UseYearOfPlentyEvent,
@@ -64,6 +65,9 @@ export const useGameStore = create<GameState>()(
     bankResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
     activeOpenTrade: {},
     freeRoadCount: 0,
+    myHouseCounts: 0,
+    mySettlementCounts: 0,
+    myRoadCounts: 0,
 
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
@@ -76,7 +80,7 @@ export const useGameStore = create<GameState>()(
       set({
         status: gameSummary.status,
         players: gameSummary.players,
-        currentPlayer: get().username,
+        currentPlayer: gameSummary.current_turn ?? null,
         faces: gameSummary.board.faces,
         edges: gameSummary.board.edges,
         vertices: gameSummary.board.vertices,
@@ -86,7 +90,10 @@ export const useGameStore = create<GameState>()(
         bankResources: gameSummary.bank_resources,
         playerDevelopmentCards: playerSummary.developmentCards,
         activeOpenTrade: gameSummary.active_open_trades,
-        freeRoadCount: playerSummary.free_road_count
+        freeRoadCount: playerSummary.free_road_count,
+        myHouseCounts: playerSummary.houses_placed,
+        mySettlementCounts: playerSummary.settlements_placed,
+        myRoadCounts: playerSummary.roads_placed,
       });
     },
     setFreeRoadCount: (count: number) => set({freeRoadCount: count}),
@@ -134,7 +141,7 @@ export const useGameStore = create<GameState>()(
     },
     onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => {
       set((state)=> {
-        const me = get().currentPlayer
+        const me = get().username
         if (event.username === me) {
           const myDevelopmentCards = get().playerDevelopmentCards
           myDevelopmentCards[event.card] += 1
@@ -168,7 +175,7 @@ export const useGameStore = create<GameState>()(
         return
       }
       toast.success(`Bank Trade Made Successfully by ${event.username} and got ${event.resource_taking_count}x${event.resource_taking}`)
-      if (get().currentPlayer == event.username) {
+      if (get().username == event.username) {
         set((state)=> {
           const playerResources = get().playerResources
           playerResources[event.resource_giving] -= event.resource_giving_count
@@ -196,8 +203,7 @@ export const useGameStore = create<GameState>()(
       })
     },
     onFreeTwoRoadsPlayed: async (event: UseTwoFreeRoadsEvent) => {
-      const me = get().currentPlayer
-      if (!me) return;
+      const me = get().username
       if (event.username === me) {
         toast.success("You have played the Place Two Free Roads Development Card")
       } else {
@@ -206,8 +212,7 @@ export const useGameStore = create<GameState>()(
       await get().refreshGameMetadata()
     },
     onUseMonopolyCard: async (event: UseMonopolyEvent) => {
-      const me = get().currentPlayer
-      if (!me) return;
+      const me = get().username
       if (event.username === me) {
         toast.success(`You have played the Monopoly Development Card and taken all resources of the ${event.resource} type`)
       } else {
@@ -216,8 +221,7 @@ export const useGameStore = create<GameState>()(
       await get().refreshGameMetadata()
     },
     onUseYearOfPlentyCard: async (event: UseYearOfPlentyEvent) => {
-      const me = get().currentPlayer
-      if (!me) return;
+      const me = get().username
       if (event.username === me) {
         toast.success(`You have played the Year of Plenty Development Card and taken ${event.resource1} and ${event.resource2} from the bank`)
       } else {
@@ -372,6 +376,7 @@ export const useGameStore = create<GameState>()(
           if (data.type == "PLACE_TWO_FREE_ROADS") get().onFreeTwoRoadsPlayed(data as UseTwoFreeRoadsEvent)
           if (data.type == "USE_MONOPOLY_CARD") get().onUseMonopolyCard(data as UseMonopolyEvent)
           if (data.type == "USE_YEAR_OF_PLENTY_CARD") get().onUseYearOfPlentyCard(data as UseYearOfPlentyEvent)
+          if (data.type == "TURN_END") get().onTurnEnd(data as TurnEndEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
@@ -421,6 +426,15 @@ export const useGameStore = create<GameState>()(
           chat: newMessages,
         };
       });
+    },
+    onTurnEnd: async (event: TurnEndEvent) => {
+      const me = get().username
+      if (event.username === me) {
+        toast.success("You have ended your turn")
+      } else {
+        toast.success(`${event.username} has ended their turn and it is now your turn`)
+      }
+      await get().refreshGameMetadata()
     },
     setPhase: (phase: GamePhases) => set({ phase }),
     setFaces: (faces: CatanTile[]) => set({ faces }),

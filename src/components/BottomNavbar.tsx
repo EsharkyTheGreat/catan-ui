@@ -33,29 +33,12 @@ import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 import ResourceCard from "./ResourceCard";
 import BuyDevelopmentCardButton from "./BuyDevelopmentCardButton";
 import PlaceRoadButton from "./PlaceRoadButton";
+import PlaceHouseButton from "./PlaceHouseButton";
+import PlaceSettlementButton from "./PlaceSettlementButton";
+import DieButton from "./DieButton";
+import EndTurnButton from "./EndTurnButton";
 
 export default function BottomNavbar() {
-  const { phase, setPhase, socket, currentPlayer, lastRoll, playerResources } = useGameStore();
-
-  const diceComponentMap: Record<number, any> = {
-    1: Dice1,
-    2: Dice2,
-    3: Dice3,
-    4: Dice4,
-    5: Dice5,
-    6: Dice6,
-  };
-
-  const diceRoll = () => {
-    if (!currentPlayer) return;
-    if (!socket) return;
-    const data: DiceRollRequestEvent = {
-      type: "DICE_ROLL_REQUEST",
-      username: currentPlayer,
-    }
-    socket.send(JSON.stringify(data))
-  }
-
   return (
     <div className="flex h-full gap-1">
       <ResourceCount />
@@ -75,74 +58,17 @@ export default function BottomNavbar() {
         <PlaceRoadButton />
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
-        <div className="transition-transform duration-200 hover:scale-110">
-          <HoverCard openDelay={10} closeDelay={10}>
-            <HoverCardTrigger>
-              <House
-                size={88}
-                stroke="black"
-                className=""
-                onClick={() => {
-                  if (phase !== "house_placement") setPhase("house_placement");
-                  else setPhase(null);
-                }}
-              />
-              <div className="text-[10px] text-center leading-tight">House</div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-fit">
-              <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="BRICK" count={1} size={60} hidden={playerResources.BRICK < 1}/>
-                <ResourceCard resourceType="TREE" count={1} size={60} hidden={playerResources.TREE < 1} />
-                <ResourceCard resourceType="SHEEP" count={1} size={60} hidden={playerResources.SHEEP < 1}/>
-                <ResourceCard resourceType="WHEAT" count={1} size={60} hidden={playerResources.WHEAT < 1}/>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
+        <PlaceHouseButton />
       </div>
       <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl">
-        <div className="transition-transform duration-200 hover:scale-110">
-          <HoverCard openDelay={10} closeDelay={10}>
-            <HoverCardTrigger>
-              <Building
-                size={88}
-                stroke="black"
-                className=""
-                onClick={() => {
-                  if (phase !== "settlement_placement") setPhase("settlement_placement");
-                  else setPhase(null)
-                }}
-              />
-              <div className="text-[10px] text-center leading-tight">Settlement</div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-fit">
-              <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="STONE" count={3} size={60} hidden={playerResources.STONE < 3}/>
-                <ResourceCard resourceType="WHEAT" count={2} size={60} hidden={playerResources.WHEAT < 2}/>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
+        <PlaceSettlementButton />
       </div>
       <div className=" flex px-2 items-center h-full bg-amber-50 rounded-xl">
         <BuyDevelopmentCardButton />
       </div>
-      <div className="flex px-2 items-center h-full bg-amber-50 rounded-xl hover:cursor-pointer" onClick={() => diceRoll()}>
-        {(() => {
-          const DieLeft = diceComponentMap[lastRoll?.die1 ?? 1] ?? Dice1;
-          const DieRight = diceComponentMap[lastRoll?.die2 ?? 1] ?? Dice1;
-          return (
-            <>
-              <DieLeft size={88} stroke="black" className="" />
-              <DieRight size={88} stroke="black" className="" />
-            </>
-          );
-        })()}
-      </div>
+      <DieButton />
       <div className=" flex px-2 items-center h-full bg-amber-50 rounded-xl">
-        <div className="transition-transform duration-200 hover:scale-110">
-          <Check size={88} stroke="black" className="" />
-        </div>
+        <EndTurnButton />
       </div>
     </div>
   );

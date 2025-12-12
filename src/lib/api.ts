@@ -9,7 +9,7 @@ export interface GameRoom {
   players: Player[];
   status: GameStatuses;
   createdAt: number;
-  currentTurn?: string;
+  current_turn?: string;
   chats: ChatMessage[];
   game_log: ChatMessage[];
   turn_order: string[];
@@ -34,6 +34,9 @@ export interface PlayerDetailedSummary {
   color: "RED" | "YELLOW" | "BLUE" | "GREEN";
   resourceCount: Record<"WHEAT" | "BRICK" | "TREE" | "SHEEP" | "STONE", number>;
   free_road_count: number;
+  houses_placed: number;
+  settlements_placed: number;
+  roads_placed: number;
 }
 
 export interface ValidHousePlacementPositions {
