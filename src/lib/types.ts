@@ -6,6 +6,8 @@ import {
   ConnectedEvent,
   DiceRollResponseEvent,
   DisconnectedEvent,
+  DiscardEvent,
+  DiscardEndEvent,
   GameStartedEvent,
   GenericErrorEvent,
   HousePlacedEvent,
@@ -156,6 +158,9 @@ export type GameSnapshot = {
   mySettlementCounts: number;
   myRoadCounts: number;
   dieRolledThisTurn: boolean;
+  mustDiscardCards: boolean;
+  initialCardCountForDiscard: number;
+  discardInProgress: boolean;
 };
 
 export type GameState = GameSnapshot & {
@@ -186,6 +191,7 @@ export type GameState = GameSnapshot & {
   setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => void;
   setActiveOpenTrades: (newTrades: Record<UUID,Trade>) => void;
   setFreeRoadCount: (count: number) => void;
+  setMustDiscardCards: (mustDiscard: boolean) => void;
 
   connect: (ws: WebSocket) => void;
   onChatMessage: (event: ChatMessageEvent) => void;
@@ -212,4 +218,7 @@ export type GameState = GameSnapshot & {
   onTradeCompletion: (event: TradeBroadcastEvent) => void;
 
   onTurnEnd: (event: TurnEndEvent) => Promise<void>;
+
+  onDiscard: (event: DiscardEvent) => void;
+  onDiscardEnd: (event: DiscardEndEvent) => void;
 };

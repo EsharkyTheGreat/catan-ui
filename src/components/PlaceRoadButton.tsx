@@ -4,7 +4,7 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceRoadButton() {
-    const {phase, setPhase, playerResources, freeRoadCount, username, currentPlayer, myRoadCounts} = useGameStore()
+    const {phase, setPhase, playerResources, freeRoadCount, username, currentPlayer, myRoadCounts, discardInProgress} = useGameStore()
 
     const canBuyRoad = ((playerResources.BRICK >= 1 && playerResources.TREE >= 1) || freeRoadCount > 0) || myRoadCounts < 2;
     const myTurn = username === currentPlayer
@@ -16,9 +16,9 @@ export default function PlaceRoadButton() {
               <Minus
                 size={88}
                 stroke="black"
-                className={canBuyRoad && myTurn ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
+                className={canBuyRoad && myTurn && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
                 onClick={() => {
-                  if (phase !== "road_placement" && canBuyRoad ) setPhase("road_placement");
+                  if (phase !== "road_placement" && canBuyRoad && !discardInProgress) setPhase("road_placement");
                   else setPhase(null)
                 }}
               />

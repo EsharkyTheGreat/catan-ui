@@ -4,7 +4,7 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceHouseButton() {
-    const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts } = useGameStore()
+    const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, discardInProgress } = useGameStore()
     const canBuyHouse = (playerResources.BRICK >= 1 && playerResources.TREE >= 1 && playerResources.SHEEP >= 1 && playerResources.WHEAT >= 1) || myHouseCounts < 2;
     const myTurn = username === currentPlayer
 
@@ -15,9 +15,9 @@ export default function PlaceHouseButton() {
               <House
                 size={88}
                 stroke="black"
-                className={myTurn && canBuyHouse ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
+                className={myTurn && canBuyHouse && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
                 onClick={() => {
-                  if (phase !== "house_placement" && myTurn && canBuyHouse) setPhase("house_placement");
+                  if (phase !== "house_placement" && myTurn && canBuyHouse && !discardInProgress) setPhase("house_placement");
                   else setPhase(null);
                 }}
               />

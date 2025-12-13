@@ -173,6 +173,15 @@ export type TurnEndEvent = {
   username: string;
 }
 
+export type DiscardEvent = {
+  type: "DISCARD";
+  usernames: string[];
+}
+
+export type DiscardEndEvent = {
+  type: "DISCARD_END";
+}
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
@@ -197,4 +206,13 @@ export type ServerMessage =
   | UseTwoFreeRoadsEvent
   | UseMonopolyEvent
   | UseYearOfPlentyEvent
-  | TurnEndEvent;
+  | TurnEndEvent
+  | DiscardEvent
+  | DiscardEndEvent;
+
+// Client-to-server events
+export type DiscardCardsEvent = {
+  type: "DISCARD_CARDS";
+  username: string;
+  resources: Record<CatanResource, number>;
+}

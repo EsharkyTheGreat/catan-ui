@@ -24,6 +24,7 @@ export interface GameRoom {
   bank_resources: Record<CatanResource,number>
   active_open_trades: Record<UUID, Trade>
   die_rolled_this_turn: boolean;
+  discard_counter?: number;
 }
 
 export interface PlayerDetailedSummary {

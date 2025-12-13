@@ -5,7 +5,7 @@ import { useGameStore } from "@/store/GameState";
 import { BuyDevelopmentCardEvent } from "@/lib/websocket";
 
 export default function BuyDevelopmentCardButton() {
-    const { playerResources, username, socket, currentPlayer } = useGameStore()
+    const { playerResources, username, socket, currentPlayer, discardInProgress } = useGameStore()
 
     const canBuyDevelopmentCard = playerResources.SHEEP >= 1 && playerResources.STONE >= 1 && playerResources.WHEAT >= 1
     const myTurn = username === currentPlayer
@@ -15,6 +15,7 @@ export default function BuyDevelopmentCardButton() {
         if (!socket) return;
         if (!canBuyDevelopmentCard) return;
         if (!myTurn) return;
+        if (discardInProgress) return;
         const data: BuyDevelopmentCardEvent = {
           type: "DEVELOPMENT_CARD_BUY_REQUEST",
           username: username
@@ -28,7 +29,7 @@ export default function BuyDevelopmentCardButton() {
             <HoverCardTrigger>
               <Spade size={64} 
                 stroke="black"
-                className={canBuyDevelopmentCard && myTurn ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
+                className={canBuyDevelopmentCard && myTurn && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
                  onClick={()=>buyDevelopmentCard()}
               />
               <div className="text-[10px] text-center leading-tight">Buy Development Card</div>

@@ -5,7 +5,7 @@ import { useGameStore } from "@/store/GameState";
 
 export default function PlaceSettlementButton() {
 
-    const { phase, setPhase, playerResources, username, currentPlayer } = useGameStore()
+    const { phase, setPhase, playerResources, username, currentPlayer, discardInProgress } = useGameStore()
     const canBuySettlement = playerResources.STONE >= 3 && playerResources.WHEAT >= 2
     const myTurn = username === currentPlayer
     
@@ -16,9 +16,9 @@ export default function PlaceSettlementButton() {
               <Building
                 size={88}
                 stroke="black"
-                className={myTurn && canBuySettlement ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
+                className={myTurn && canBuySettlement && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
                 onClick={() => {
-                  if (phase !== "settlement_placement" && myTurn && canBuySettlement) setPhase("settlement_placement");
+                  if (phase !== "settlement_placement" && myTurn && canBuySettlement && !discardInProgress) setPhase("settlement_placement");
                   else setPhase(null)
                 }}
               />

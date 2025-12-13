@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import CatanBoard from "@/components/CatanBoard";
 import BottomNavbar from "@/components/BottomNavbar";
 import RightNavbar from "@/components/RightNavbar";
+import DiscardCardsDialog from "@/components/DiscardCardsDialog";
 import { useGameStore } from "@/store/GameState";
 import { fetchGameRoomSummary } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,6 +106,9 @@ export default function Home() {
       <div className="absolute bottom-0 left-0 w-4/5 h-2/16 bg-black">
         <BottomNavbar />
       </div>
+
+      {/* Discard Cards Dialog */}
+      <DiscardCardsDialog />
     </div>
   );
 }

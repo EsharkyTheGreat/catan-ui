@@ -3,12 +3,13 @@ import { useGameStore } from "@/store/GameState";
 import { TurnEndEvent } from "@/lib/websocket";
 
 export default function EndTurnButton() {
-    const { username, currentPlayer, socket } = useGameStore();
+    const { username, currentPlayer, socket, discardInProgress } = useGameStore();
     const myTurn = username === currentPlayer;
 
     const endTurn = () => {
         if (!username) return;
         if (!socket) return;
+        if (discardInProgress) return;
         const data: TurnEndEvent= {
             type: "TURN_END",
             username: username
@@ -19,7 +20,7 @@ export default function EndTurnButton() {
         <div className="transition-transform duration-200 hover:scale-110">
             <Check size={88} 
                 stroke="black" 
-                className={myTurn ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} 
+                className={myTurn && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} 
                 onClick={endTurn}
              />
         </div>
