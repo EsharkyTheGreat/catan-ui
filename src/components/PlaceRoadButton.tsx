@@ -4,10 +4,13 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceRoadButton() {
-    const {phase, setPhase, playerResources, freeRoadCount, username, currentPlayer, myRoadCounts, discardInProgress} = useGameStore()
+    const {phase, setPhase, playerResources, freeRoadCount, username, currentPlayer, myRoadCounts, discardInProgress, playerTurnCount, roadsPlacedThisTurn, housesPlacedThisTurn} = useGameStore()
 
     const canBuyRoad = ((playerResources.BRICK >= 1 && playerResources.TREE >= 1) || freeRoadCount > 0) || myRoadCounts < 2;
     const myTurn = username === currentPlayer
+    const setupPhaseRoadCriteria = playerTurnCount[username] in [0,1] ? roadsPlacedThisTurn === 0 && housesPlacedThisTurn === 1 : true;
+
+    const canPlaceRoad = canBuyRoad && myTurn && !discardInProgress && setupPhaseRoadCriteria;
 
     return (
         <div className="transition-transform duration-200 hover:scale-110">
@@ -16,9 +19,9 @@ export default function PlaceRoadButton() {
               <Minus
                 size={88}
                 stroke="black"
-                className={canBuyRoad && myTurn && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
+                className={canPlaceRoad ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"}
                 onClick={() => {
-                  if (phase !== "road_placement" && canBuyRoad && !discardInProgress) setPhase("road_placement");
+                  if (phase !== "road_placement" && canBuyRoad) setPhase("road_placement");
                   else setPhase(null)
                 }}
               />

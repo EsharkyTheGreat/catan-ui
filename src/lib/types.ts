@@ -77,6 +77,7 @@ export interface CatanTile {
   s: number;
   resource: CatanResource | "DESERT";
   number: number | null;
+  hasRobber: boolean;
 }
 
 export type CatanBoardSummary = {
@@ -161,6 +162,9 @@ export type GameSnapshot = {
   mustDiscardCards: boolean;
   initialCardCountForDiscard: number;
   discardInProgress: boolean;
+  housesPlacedThisTurn: number;
+  roadsPlacedThisTurn: number;
+  playerTurnCount: Record<string, number>;
 };
 
 export type GameState = GameSnapshot & {
@@ -219,6 +223,6 @@ export type GameState = GameSnapshot & {
 
   onTurnEnd: (event: TurnEndEvent) => Promise<void>;
 
-  onDiscard: (event: DiscardEvent) => void;
-  onDiscardEnd: (event: DiscardEndEvent) => void;
+  onDiscard: (event: DiscardEvent) => Promise<void>;
+  onDiscardEnd: (event: DiscardEndEvent) => Promise<void>;
 };

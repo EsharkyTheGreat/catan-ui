@@ -20,42 +20,42 @@ export const hexToPixel = (
   return { x, y };
 };
 
-// Generate Catan map tiles in q,r,s coordinate system
-export const generateCatanMap = (dimensions: {
-  width: number;
-  height: number;
-}) => {
-  const tiles: CatanTilePosition[] = [];
-  const centerX = dimensions.width / 2;
-  const centerY = dimensions.height / 2;
+// // Generate Catan map tiles in q,r,s coordinate system
+// export const generateCatanMap = (dimensions: {
+//   width: number;
+//   height: number;
+// }) => {
+//   const tiles: CatanTilePosition[] = [];
+//   const centerX = dimensions.width / 2;
+//   const centerY = dimensions.height / 2;
 
-  // Define available tile types
-  const tileTypes: CatanResource[] = ["TREE", "BRICK", "STONE", "WHEAT"];
+//   // Define available tile types
+//   const tileTypes: CatanResource[] = ["TREE", "BRICK", "STONE", "WHEAT"];
 
-  // Create a 3x3 grid of hexagons around center
-  for (let q = -3; q <= 3; q++) {
-    for (let r = -3; r <= 3; r++) {
-      for (let s = -3; s <= 3; s++) {
-        // q + r + s must equal 0 for valid hex coordinates
-        if (q + r + s === 0) {
-          const { x, y } = hexToPixel(q, r, s);
-          tiles.push({
-            data: {
-              q,
-              r,
-              s,
-              number: Math.floor(Math.random() * 11) + 2, // Random number token 2-12
-              resource: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
-            },
-            x: centerX + x,
-            y: centerY + y,
-          });
-        }
-      }
-    }
-  }
-  return tiles;
-};
+//   // Create a 3x3 grid of hexagons around center
+//   for (let q = -3; q <= 3; q++) {
+//     for (let r = -3; r <= 3; r++) {
+//       for (let s = -3; s <= 3; s++) {
+//         // q + r + s must equal 0 for valid hex coordinates
+//         if (q + r + s === 0) {
+//           const { x, y } = hexToPixel(q, r, s);
+//           tiles.push({
+//             data: {
+//               q,
+//               r,
+//               s,
+//               number: Math.floor(Math.random() * 11) + 2, // Random number token 2-12
+//               resource: tileTypes[Math.floor(Math.random() * tileTypes.length)], // Randomize tile type
+//             },
+//             x: centerX + x,
+//             y: centerY + y,
+//           });
+//         }
+//       }
+//     }
+//   }
+//   return tiles;
+// };
 
 export const getCatanFacePositions = (
   dimensions: {

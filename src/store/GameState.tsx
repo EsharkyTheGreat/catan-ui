@@ -90,34 +90,13 @@ export const useGameStore = create<GameState>()(
       // Check if discard is needed: discard_counter > 0 indicates discard phase is active
       const isDiscardPhase = gameSummary.discard_counter && gameSummary.discard_counter > 0;
       
-      // Get current discard state to preserve initial count if already set
-      const currentState = get();
-      const existingInitialCount = currentState.initialCardCountForDiscard;
-      
-      let initialCardCountForDiscard = 0;
       let mustDiscardCards = false;
       
-      if (isDiscardPhase) {
-        // If we're entering discard phase for the first time (no initial count set yet),
-        // use current total cards as the initial count
-        if (existingInitialCount === 0 && totalCards > 0) {
-          initialCardCountForDiscard = totalCards;
-        } else if (existingInitialCount > 0) {
-          // Preserve the existing initial count (don't reset it on refresh)
-          initialCardCountForDiscard = existingInitialCount;
-        }
-        
-        // Check if player still needs to discard (must discard half of current cards rounded up)
-        // If current cards > 0, need to discard Math.ceil(currentCards / 2)
-        if (totalCards > 0) {
-          const cardsToDiscardRequired = Math.ceil(totalCards / 2);
-          // Player needs to discard if they have cards (discard_counter > 0 means discard phase is active)
+      if (isDiscardPhase) {        
+        if (totalCards >= 7) {
           mustDiscardCards = true;
         }
-      } else {
-        // Discard phase ended, reset initial count
-        initialCardCountForDiscard = 0;
-      }
+      } 
       
       set({
         status: gameSummary.status,
@@ -137,10 +116,12 @@ export const useGameStore = create<GameState>()(
         mySettlementCounts: playerSummary.settlements_placed,
         myRoadCounts: playerSummary.roads_placed,
         dieRolledThisTurn: gameSummary.die_rolled_this_turn,
+        playerTurnCount: gameSummary.player_turn_count,
+        housesPlacedThisTurn: gameSummary.houses_placed_this_turn,
+        roadsPlacedThisTurn: gameSummary.roads_placed_this_turn,
         // Handle discard state based on discard_counter
         discardInProgress: isDiscardPhase || false,
         mustDiscardCards: mustDiscardCards,
-        initialCardCountForDiscard: initialCardCountForDiscard,
       });
     },
     setFreeRoadCount: (count: number) => set({freeRoadCount: count}),
@@ -486,34 +467,11 @@ export const useGameStore = create<GameState>()(
       }
       await get().refreshGameMetadata()
     },
-    onDiscard: (event: DiscardEvent) => {
-      const username = get().username;
-      if (!username) return;
-      
-      // Check if current user needs to discard
-      if (event.usernames.includes(username)) {
-        // Calculate current card count
-        const playerResources = get().playerResources;
-        const currentCount = Object.values(playerResources).reduce((sum, count) => sum + count, 0);
-        
-        set({
-          mustDiscardCards: true,
-          initialCardCountForDiscard: currentCount, // Store current count for reference
-          discardInProgress: true
-        });
-        
-        toast.success("You must discard cards!");
-      } else {
-        // Other players are discarding, set flag to prevent actions
-        set({ discardInProgress: true });
-      }
+    onDiscard: async (event: DiscardEvent) => {
+      await get().refreshGameMetadata()
     },
-    onDiscardEnd: (event: DiscardEndEvent) => {
-      set({
-        discardInProgress: false,
-        mustDiscardCards: false,
-        initialCardCountForDiscard: 0
-      });
+    onDiscardEnd: async (event: DiscardEndEvent) => {
+      await get().refreshGameMetadata()
     },
     setPhase: (phase: GamePhases) => set({ phase }),
     setFaces: (faces: CatanTile[]) => set({ faces }),

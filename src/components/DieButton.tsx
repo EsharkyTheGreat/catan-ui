@@ -10,7 +10,7 @@ import {
   } from "lucide-react";
 
 export default function DieButton() {
-    const { socket, username, lastRoll, currentPlayer, dieRolledThisTurn, discardInProgress } = useGameStore();
+    const { socket, username, lastRoll, currentPlayer, dieRolledThisTurn, discardInProgress, playerTurnCount } = useGameStore();
     const myTurn = username === currentPlayer;
 
     const diceComponentMap: Record<number, any> = {
@@ -34,15 +34,17 @@ export default function DieButton() {
         socket.send(JSON.stringify(data))
     }
 
+    const canRollDie: boolean = myTurn && !dieRolledThisTurn && !discardInProgress && !(playerTurnCount[username] in [0,1]);
+
     return (
-        <div className={"flex px-2 items-center h-full bg-amber-50 rounded-xl" + (myTurn && !dieRolledThisTurn && !discardInProgress ? " hover:cursor-pointer" : " hover:cursor-not-allowed")} onClick={() => diceRoll()}>
+        <div className={"flex px-2 items-center h-full bg-amber-50 rounded-xl" + (canRollDie ? " hover:cursor-pointer" : " hover:cursor-not-allowed")} onClick={() => diceRoll()}>
             {(() => {
             const DieLeft = diceComponentMap[lastRoll?.die1 ?? 1] ?? Dice1;
             const DieRight = diceComponentMap[lastRoll?.die2 ?? 1] ?? Dice1;
             return (
                 <>
-                <DieLeft size={88} stroke="black" className="" />
-                <DieRight size={88} stroke="black" className="" />
+                <DieLeft size={88} stroke="black" className={canRollDie ? "" : "opacity-50"} />
+                <DieRight size={88} stroke="black" className={canRollDie ? "" : "opacity-50"} />
                 </>
             );
             })()}

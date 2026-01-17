@@ -8,6 +8,8 @@ export default function PlaceSettlementButton() {
     const { phase, setPhase, playerResources, username, currentPlayer, discardInProgress } = useGameStore()
     const canBuySettlement = playerResources.STONE >= 3 && playerResources.WHEAT >= 2
     const myTurn = username === currentPlayer
+
+    const canPlaceSettlement: boolean = myTurn && canBuySettlement && !discardInProgress
     
     return (
         <div className="transition-transform duration-200 hover:scale-110">
@@ -16,9 +18,9 @@ export default function PlaceSettlementButton() {
               <Building
                 size={88}
                 stroke="black"
-                className={myTurn && canBuySettlement && !discardInProgress ? "hover:cursor-pointer" : "hover:cursor-not-allowed"}
+                className={canPlaceSettlement ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"}
                 onClick={() => {
-                  if (phase !== "settlement_placement" && myTurn && canBuySettlement && !discardInProgress) setPhase("settlement_placement");
+                  if (phase !== "settlement_placement" && canPlaceSettlement) setPhase("settlement_placement");
                   else setPhase(null)
                 }}
               />

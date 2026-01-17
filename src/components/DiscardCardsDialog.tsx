@@ -17,7 +17,6 @@ const RESOURCES: { id: string, name: CatanResource, color: string, icon: string 
 export default function DiscardCardsDialog() {
     const { 
         mustDiscardCards, 
-        initialCardCountForDiscard, 
         playerResources,
         setMustDiscardCards,
         socket,

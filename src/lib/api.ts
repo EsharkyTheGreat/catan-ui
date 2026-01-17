@@ -14,6 +14,7 @@ export interface GameRoom {
   game_log: ChatMessage[];
   turn_order: string[];
   turn_index: number;
+  player_turn_count: Record<string, number>;
   phase:
     | "FIRST_FREE_HOUSE_PLACEMENT"
     | "SECOND_FREE_HOUSE_PLACEMENT"
@@ -24,6 +25,8 @@ export interface GameRoom {
   bank_resources: Record<CatanResource,number>
   active_open_trades: Record<UUID, Trade>
   die_rolled_this_turn: boolean;
+  houses_placed_this_turn: number;
+  roads_placed_this_turn: number;
   discard_counter?: number;
 }
 
