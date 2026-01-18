@@ -10,5 +10,5 @@
 - [x] Robber cannot be placed on same tile
 - [ ] Improve tile showing current phase
 - [ ] When free roads are available in the popup of roads don't show cost but show that you have 2 free roads available
-- [ ] Allow trade popup to open only if it is your turn
-- [ ] Give blinking effect to all hexagon tiles when phase is place_robber
+- [x] Allow trade popup to open only if it is your turn
+- [x] Give blinking effect to all hexagon tiles when phase is place_robber

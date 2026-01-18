@@ -1,5 +1,5 @@
 import { Image, Layer, RegularPolygon } from "react-konva";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import useImage from "use-image";
 import NumberToken from "@/components/NumberToken";
 import { useGameStore } from "@/store/GameState";
@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 
 export default function HexagonLayer() {
   const { faces, dimensions, phase, socket, username } = useGameStore();
+  const [blink, setBlink] = useState(true);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [brickImage] = useImage("/BrickSprite.png");
   const [stoneImage] = useImage("/StoneSprite.png");
@@ -22,6 +23,18 @@ export default function HexagonLayer() {
     () => getCatanFacePositions(dimensions, faces),
     [dimensions, faces]
   );
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (phase === "place_robber") {
+      interval = setInterval(() => {
+        setBlink((prev) => !prev);
+      }, 500);
+    } else {
+      setBlink(true);
+    }
+    return () => clearInterval(interval);
+  }, [phase]);
 
   const handleTileClick = (tile: CatanTilePosition) => {
     if (phase === "place_robber") {
@@ -77,9 +90,19 @@ export default function HexagonLayer() {
             fillPatternScaleY={0.074}
             fillPatternOffsetX={500}
             fillPatternOffsetY={500}
-            opacity={hoveredKey === tileKey ? 0.7 : 1}
-            onMouseEnter={() => setHoveredKey(tileKey)}
-            onMouseLeave={() => setHoveredKey(null)}
+            opacity={phase === "place_robber" ? (blink ? 1 : 0.6) : (hoveredKey === tileKey ? 0.7 : 1)}
+            onMouseEnter={(e) => {
+                setHoveredKey(tileKey);
+                if (phase === "place_robber") {
+                    const container = e.target.getStage()?.container();
+                    if (container) container.style.cursor = "pointer";
+                }
+            }}
+            onMouseLeave={(e) => {
+                setHoveredKey(null);
+                const container = e.target.getStage()?.container();
+                if (container) container.style.cursor = "default";
+            }}
             onClick={() => handleTileClick(tile)}
           />
         );
