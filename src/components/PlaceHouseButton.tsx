@@ -4,11 +4,11 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceHouseButton() {
-    const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, discardInProgress, housesPlacedThisTurn, playerTurnCount } = useGameStore()
+    const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, discardInProgress, housesPlacedThisTurn, playerTurnCount, dieRolledThisTurn } = useGameStore()
     const canBuyHouse = (playerResources.BRICK >= 1 && playerResources.TREE >= 1 && playerResources.SHEEP >= 1 && playerResources.WHEAT >= 1) || myHouseCounts < 2;
     const myTurn = username === currentPlayer
 
-    const canPlaceHouse: boolean = myTurn && canBuyHouse && !discardInProgress && (playerTurnCount[username] in [0,1] ? housesPlacedThisTurn < 1 : true);
+    const canPlaceHouse: boolean = myTurn && canBuyHouse && !discardInProgress && (playerTurnCount[username] in [0,1] ? housesPlacedThisTurn < 1 : dieRolledThisTurn);
 
     return (
         <div className="transition-transform duration-200 hover:scale-110">

@@ -5,11 +5,11 @@ import { useGameStore } from "@/store/GameState";
 
 export default function PlaceSettlementButton() {
 
-    const { phase, setPhase, playerResources, username, currentPlayer, discardInProgress } = useGameStore()
+    const { phase, setPhase, playerResources, username, currentPlayer, discardInProgress, dieRolledThisTurn } = useGameStore()
     const canBuySettlement = playerResources.STONE >= 3 && playerResources.WHEAT >= 2
     const myTurn = username === currentPlayer
 
-    const canPlaceSettlement: boolean = myTurn && canBuySettlement && !discardInProgress
+    const canPlaceSettlement: boolean = myTurn && canBuySettlement && !discardInProgress && dieRolledThisTurn;
     
     return (
         <div className="transition-transform duration-200 hover:scale-110">

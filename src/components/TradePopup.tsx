@@ -8,12 +8,19 @@ import BankTrade from "./BankTrade";
 import PlayerTradeCreator from "./PlayerTradeCreator";
 
 export default function TradePopup() {
+    const { dieRolledThisTurn, username, currentPlayer } = useGameStore()
+    const myTurn = username === currentPlayer
+    const canOpenPopup = myTurn && dieRolledThisTurn;
     const [tradeMode, setTradeMode] = useState<'bank' | 'player'>('bank');
+    const [openPopup, setOpenPopup] = useState(false);
 
     return (
-        <Dialog>
+        <Dialog open={openPopup} onOpenChange={(e)=>{
+            if (e && canOpenPopup) setOpenPopup(e);
+            else if (!e) setOpenPopup(e);
+        }}>
             <DialogTrigger asChild>
-                <Handshake size={88} stroke="black" className="" />
+                <Handshake size={88} stroke="black" className={canOpenPopup ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"} />
             </DialogTrigger>
             <DialogContent className="max-h-[80vh] overflow-y-scroll">
                 <DialogTitle />

@@ -2,6 +2,7 @@ import { Hammer, Play } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DevelopmentCardType, CatanResource } from "@/lib/types";
 import Image from "next/image";
+import toast from "react-hot-toast"
 import { useGameStore } from "@/store/GameState";
 import { UseMonopolyEvent, UseTwoFreeRoadsEvent, UseYearOfPlentyEvent } from "@/lib/websocket";
 import { useState } from "react";
@@ -35,10 +36,8 @@ const RESOURCES: {id: string, name: CatanResource, color: string, icon: string}[
     { id: 'ore', name: 'STONE', color: 'bg-gray-600', icon: '⛰️' }
 ];
 
-import toast from "react-hot-toast";
-
 export default function DevelopmentCardShop() {
-    const { playerDevelopmentCards, socket, username, currentPlayer, setPhase } = useGameStore()
+    const { playerDevelopmentCards, socket, username, currentPlayer, setPhase, dieRolledThisTurn } = useGameStore()
     const myTurn = username === currentPlayer
     const [mainOpen, setMainOpen] = useState(false);
     const [monopolyDialogOpen, setMonopolyDialogOpen] = useState(false);
@@ -47,6 +46,8 @@ export default function DevelopmentCardShop() {
     const [selectedYearOfPlentyResources, setSelectedYearOfPlentyResources] = useState<Record<CatanResource, number>>({
         BRICK: 0, SHEEP: 0, STONE: 0, TREE: 0, WHEAT: 0
     });
+    
+    const canOpenPopup = myTurn && dieRolledThisTurn;
 
     const playRoadBuildingCard = () => {
         if (!socket) return;
@@ -118,9 +119,12 @@ export default function DevelopmentCardShop() {
 
     return (
         <>
-        <Dialog open={mainOpen} onOpenChange={setMainOpen}>
+        <Dialog open={mainOpen} onOpenChange={(e)=>{
+            if (e && canOpenPopup) setMainOpen(e);
+            else if (!e) setMainOpen(e);
+        }}>
             <DialogTrigger asChild>
-                <Hammer size={88} stroke="black" className={myTurn ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} />
+                <Hammer size={88} stroke="black" className={canOpenPopup ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"} />
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>

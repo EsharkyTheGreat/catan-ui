@@ -5,25 +5,23 @@ import { useGameStore } from "@/store/GameState";
 import { BuyDevelopmentCardEvent } from "@/lib/websocket";
 
 export default function BuyDevelopmentCardButton() {
-    const { playerResources, username, socket, currentPlayer, discardInProgress } = useGameStore()
+    const { playerResources, username, socket, currentPlayer, discardInProgress, dieRolledThisTurn } = useGameStore()
 
     const hasResources = playerResources.SHEEP >= 1 && playerResources.STONE >= 1 && playerResources.WHEAT >= 1
     const myTurn = username === currentPlayer
 
+    const canBuyDevelopmentCard = hasResources && myTurn && !discardInProgress && dieRolledThisTurn;
+
     const buyDevelopmentCard = () => {
         if (!username) return;
         if (!socket) return;
-        if (!hasResources) return;
-        if (!myTurn) return;
-        if (discardInProgress) return;
+        if (!canBuyDevelopmentCard) return;
         const data: BuyDevelopmentCardEvent = {
           type: "DEVELOPMENT_CARD_BUY_REQUEST",
           username: username
         }
         socket.send(JSON.stringify(data))
     }
-
-    const canBuyDevelopmentCard = hasResources && myTurn && !discardInProgress
 
     return (
         <div className="transition-transform duration-200 hover:scale-110">
