@@ -22,6 +22,7 @@ import {
   UseMonopolyEvent,
   UseTwoFreeRoadsEvent,
   UseYearOfPlentyEvent,
+  RobberPlaceEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -131,6 +132,7 @@ export type GamePhases =
   | "house_placement"
   | "settlement_placement"
   | "robber"
+  | "place_robber"
   | null;
 
 export type GameStatuses = "active" | "lobby" | "finished";
@@ -225,4 +227,5 @@ export type GameState = GameSnapshot & {
 
   onDiscard: (event: DiscardEvent) => Promise<void>;
   onDiscardEnd: (event: DiscardEndEvent) => Promise<void>;
+  onRobberPlaced: (event: RobberPlaceEvent) => Promise<void>;
 };

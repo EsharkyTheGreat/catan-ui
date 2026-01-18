@@ -31,7 +31,7 @@ export default function NumberToken({
   const dotSpacing = 2;
 
   return (
-    <Group x={x} y={y}>
+    <Group x={x} y={y} listening={false}>
       {/* background rect */}
       <Rect
         x={-size / 2}

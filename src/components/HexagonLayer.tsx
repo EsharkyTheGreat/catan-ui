@@ -1,12 +1,13 @@
-import { Layer, RegularPolygon } from "react-konva";
+import { Image, Layer, RegularPolygon } from "react-konva";
 import { useMemo, useState } from "react";
 import useImage from "use-image";
 import NumberToken from "@/components/NumberToken";
 import { useGameStore } from "@/store/GameState";
 import { getCatanFacePositions } from "@/lib/hexagonUtils";
+import { RobberPlaceEvent } from "@/lib/websocket";
 
 export default function HexagonLayer() {
-  const { faces, dimensions } = useGameStore();
+  const { faces, dimensions, phase, socket, username } = useGameStore();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [brickImage] = useImage("/BrickSprite.png");
   const [stoneImage] = useImage("/StoneSprite.png");
@@ -14,10 +15,24 @@ export default function HexagonLayer() {
   const [forestImage] = useImage("/ForestSprite.png");
   const [sheepImage] = useImage("/SheepSprite.png")
   const [dessertImage] = useImage("/DessertSprite.png")
+  const [robberImage] = useImage("/robber.svg")
   const faceWithPositions = useMemo(
     () => getCatanFacePositions(dimensions, faces),
     [dimensions, faces]
   );
+
+  const handleTileClick = (q: number, r: number, s: number) => {
+    if (phase === "place_robber") {
+       const event: RobberPlaceEvent = {
+        type: "ROBBER_PLACED",
+        username: username,
+        q: q,
+        r: r,
+        s: s
+       }
+       socket?.send(JSON.stringify(event))
+    }
+  }
 
   return (
     <Layer>
@@ -58,6 +73,7 @@ export default function HexagonLayer() {
             opacity={hoveredKey === tileKey ? 0.7 : 1}
             onMouseEnter={() => setHoveredKey(tileKey)}
             onMouseLeave={() => setHoveredKey(null)}
+            onClick={() => handleTileClick(tile.data.q, tile.data.r, tile.data.s)}
           />
         );
       })}
@@ -72,6 +88,20 @@ export default function HexagonLayer() {
             y={tile.y}
           />
         );
+      })}
+      {faceWithPositions.map((tile) => {
+        if (!tile.data.hasRobber) return;
+        return (
+            <Image
+                key={`robber-${tile.data.q}-${tile.data.r}-${tile.data.s}`}
+                image={robberImage}
+                x={tile.x - 20}
+                y={tile.y - 20}
+                width={40}
+                height={40}
+                listening={false}
+            />
+        )
       })}
     </Layer>
   );

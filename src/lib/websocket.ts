@@ -182,6 +182,14 @@ export type DiscardEndEvent = {
   type: "DISCARD_END";
 }
 
+export type RobberPlaceEvent = {
+  type: "ROBBER_PLACED";
+  username: string;
+  q: number;
+  r: number;
+  s: number;
+};
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
@@ -208,7 +216,8 @@ export type ServerMessage =
   | UseYearOfPlentyEvent
   | TurnEndEvent
   | DiscardEvent
-  | DiscardEndEvent;
+  | DiscardEndEvent
+  | RobberPlaceEvent;
 
 // Client-to-server events
 export type DiscardCardsEvent = {

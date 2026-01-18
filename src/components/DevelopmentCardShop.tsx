@@ -35,9 +35,12 @@ const RESOURCES: {id: string, name: CatanResource, color: string, icon: string}[
     { id: 'ore', name: 'STONE', color: 'bg-gray-600', icon: '⛰️' }
 ];
 
+import toast from "react-hot-toast";
+
 export default function DevelopmentCardShop() {
-    const { playerDevelopmentCards, socket, username, currentPlayer } = useGameStore()
+    const { playerDevelopmentCards, socket, username, currentPlayer, setPhase } = useGameStore()
     const myTurn = username === currentPlayer
+    const [mainOpen, setMainOpen] = useState(false);
     const [monopolyDialogOpen, setMonopolyDialogOpen] = useState(false);
     const [yearOfPlentyDialogOpen, setYearOfPlentyDialogOpen] = useState(false);
     const [selectedMonopolyResource, setSelectedMonopolyResource] = useState<CatanResource | null>(null);
@@ -63,6 +66,10 @@ export default function DevelopmentCardShop() {
             setMonopolyDialogOpen(true);
         } else if (cardId === "Year of Plenty") {
             setYearOfPlentyDialogOpen(true);
+        } else if (cardId === "Knight") {
+            setPhase("place_robber");
+            setMainOpen(false);
+            toast.success("Place the robber!");
         }
     };
 
@@ -111,7 +118,7 @@ export default function DevelopmentCardShop() {
 
     return (
         <>
-        <Dialog>
+        <Dialog open={mainOpen} onOpenChange={setMainOpen}>
             <DialogTrigger asChild>
                 <Hammer size={88} stroke="black" className={myTurn ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} />
             </DialogTrigger>

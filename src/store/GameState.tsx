@@ -37,6 +37,7 @@ import {
   UseMonopolyEvent,
   UseTwoFreeRoadsEvent,
   UseYearOfPlentyEvent,
+  RobberPlaceEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 import { fetchGameRoomSummary, fetchPlayerSummary } from "@/lib/api";
@@ -266,6 +267,10 @@ export const useGameStore = create<GameState>()(
       const roll = { die1: event.die1, die2: event.die2}
       get().setLastRoll(roll)
       await get().refreshGameMetadata()
+      if (roll.die1 + roll.die2 === 7 && !get().discardInProgress && event.username === get().username) {
+        get().setPhase("place_robber")
+        toast.success("Place the robber!")
+      }
     },
     onTradeBroadcast: (event: TradeBroadcastEvent) => {
       if (event.status == "CREATED") {
@@ -408,6 +413,7 @@ export const useGameStore = create<GameState>()(
           if (data.type == "TURN_END") get().onTurnEnd(data as TurnEndEvent)
           if (data.type == "DISCARD") get().onDiscard(data as DiscardEvent)
           if (data.type == "DISCARD_END") get().onDiscardEnd(data as DiscardEndEvent)
+          if (data.type == "ROBBER_PLACED") get().onRobberPlaced(data as RobberPlaceEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
@@ -472,6 +478,21 @@ export const useGameStore = create<GameState>()(
     },
     onDiscardEnd: async (event: DiscardEndEvent) => {
       await get().refreshGameMetadata()
+      const me = get().username
+      if (get().currentPlayer === me) {
+        get().setPhase("place_robber")
+        toast.success("Place the robber!")
+      }
+    },
+    onRobberPlaced: async (event: RobberPlaceEvent) => {
+      await get().refreshGameMetadata()
+      const me = get().username
+      if (event.username === me) {
+        toast.success("You have placed the robber")
+        get().setPhase(null)
+      } else {
+        toast.success(`${event.username} has placed the robber`)
+      }
     },
     setPhase: (phase: GamePhases) => set({ phase }),
     setFaces: (faces: CatanTile[]) => set({ faces }),

@@ -3,7 +3,7 @@ import { useGameStore } from "@/store/GameState";
 import { TurnEndEvent } from "@/lib/websocket";
 
 export default function EndTurnButton() {
-    const { username, currentPlayer, socket, discardInProgress, playerTurnCount, housesPlacedThisTurn, dieRolledThisTurn, roadsPlacedThisTurn } = useGameStore();
+    const { username, currentPlayer, socket, discardInProgress, playerTurnCount, housesPlacedThisTurn, dieRolledThisTurn, roadsPlacedThisTurn, setPhase } = useGameStore();
     const myTurn = username === currentPlayer;
 
     const endTurn = () => {
@@ -14,6 +14,7 @@ export default function EndTurnButton() {
             type: "TURN_END",
             username: username
         }
+        setPhase(null)
         socket.send(JSON.stringify(data))
     }
 
