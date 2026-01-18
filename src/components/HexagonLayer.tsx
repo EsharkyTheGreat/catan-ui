@@ -5,6 +5,8 @@ import NumberToken from "@/components/NumberToken";
 import { useGameStore } from "@/store/GameState";
 import { getCatanFacePositions } from "@/lib/hexagonUtils";
 import { RobberPlaceEvent } from "@/lib/websocket";
+import { CatanTilePosition } from "@/lib/types";
+import toast from "react-hot-toast";
 
 export default function HexagonLayer() {
   const { faces, dimensions, phase, socket, username } = useGameStore();
@@ -21,16 +23,21 @@ export default function HexagonLayer() {
     [dimensions, faces]
   );
 
-  const handleTileClick = (q: number, r: number, s: number) => {
+  const handleTileClick = (tile: CatanTilePosition) => {
     if (phase === "place_robber") {
        const event: RobberPlaceEvent = {
         type: "ROBBER_PLACED",
         username: username,
-        q: q,
-        r: r,
-        s: s
+        q: tile.data.q,
+        r: tile.data.r,
+        s: tile.data.s  
        }
-       socket?.send(JSON.stringify(event))
+       if (tile.data.hasRobber) {
+        toast.error("Robber is already on this tile")
+        return;
+       } else {
+        socket?.send(JSON.stringify(event))
+       }
     }
   }
 
@@ -73,7 +80,7 @@ export default function HexagonLayer() {
             opacity={hoveredKey === tileKey ? 0.7 : 1}
             onMouseEnter={() => setHoveredKey(tileKey)}
             onMouseLeave={() => setHoveredKey(null)}
-            onClick={() => handleTileClick(tile.data.q, tile.data.r, tile.data.s)}
+            onClick={() => handleTileClick(tile)}
           />
         );
       })}
