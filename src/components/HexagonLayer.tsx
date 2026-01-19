@@ -1,4 +1,4 @@
-import { Image, Layer, Line, RegularPolygon } from "react-konva";
+import { Image, Layer, Line, RegularPolygon, Text } from "react-konva";
 import { useMemo, useState, useEffect } from "react";
 import useImage from "use-image";
 import NumberToken from "@/components/NumberToken";
@@ -140,7 +140,7 @@ export default function HexagonLayer() {
       {portWithPositions.map((port) => {
         return (
           <Line
-            key={`port-${port.data.target_edge.q1}-${port.data.target_edge.r1}-${port.data.target_edge.s1}`}
+            key={`port-${port.data.target_edge.q1}-${port.data.target_edge.r1}-${port.data.target_edge.s1}-${port.line1endX}-${port.line1endY}`}
             points={[port.x, port.y, port.line1endX, port.line1endY]}
             stroke="black"
             strokeWidth={1}
@@ -151,10 +151,23 @@ export default function HexagonLayer() {
       {portWithPositions.map((port) => {
         return (
           <Line
-            key={`port-${port.data.target_edge.q2}-${port.data.target_edge.r2}-${port.data.target_edge.s2}`}
+            key={`port-${port.data.target_edge.q2}-${port.data.target_edge.r2}-${port.data.target_edge.s2}-${port.line2endX}-${port.line2endY}`}
             points={[port.x, port.y, port.line2endX, port.line2endY]}
             stroke="black"
             strokeWidth={1}
+            listening={false}
+          />
+        )
+      })}
+      {portWithPositions.map((port) => {
+        return (
+          <Text
+            key={`port-${port.data.target_edge.q1}-${port.data.target_edge.r1}-${port.data.target_edge.s1}-${port.line1endX}-${port.line1endY}-txt`}
+            text={JSON.stringify(port.data.trade_ratio)}
+            x={port.x}
+            y={port.y}
+            fontSize={10}
+            fill="black"
             listening={false}
           />
         )

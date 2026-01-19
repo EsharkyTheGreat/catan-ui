@@ -86,9 +86,7 @@ export type BankTradeRequestEvent = {
   type: "BANK_TRADE_REQUEST"
   username: string;
   resource_giving: CatanResource
-  resource_giving_count: number
   resource_taking: CatanResource
-  resource_taking_count: number
 }
 
 export type BankTradeResponseEvent = {

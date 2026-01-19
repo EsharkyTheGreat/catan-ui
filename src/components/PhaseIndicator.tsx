@@ -1,10 +1,12 @@
 import { useGameStore } from "@/store/GameState"
 
 export default function PhaseIndicator() {
-    const { phase, freeRoadCount, currentPlayer, dieRolledThisTurn, username, myHouseCounts, playerTurnCount, housesPlacedThisTurn, roadsPlacedThisTurn } = useGameStore()
+    const { phase, freeRoadCount, currentPlayer, dieRolledThisTurn, username, myHouseCounts, playerTurnCount, housesPlacedThisTurn, roadsPlacedThisTurn, discardInProgress } = useGameStore()
 
     const myTurn: boolean = username === currentPlayer
     const myTurnCount: number = playerTurnCount[username]
+
+    if (discardInProgress) return <div>Discard in progress...</div>
 
     if (!myTurn) return <div>Waiting for {currentPlayer} to play</div>
 

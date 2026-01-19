@@ -204,38 +204,13 @@ export const useGameStore = create<GameState>()(
         }
       })
     },
-    onBankTradeResponse: (event: BankTradeResponseEvent) => {
+    onBankTradeResponse: async (event: BankTradeResponseEvent) => {
       if (!event.success) {
         toast.error(`Invalid Bank Trade sent by ${event.username}`)
         return
       }
       toast.success(`Bank Trade Made Successfully by ${event.username} and got ${event.resource_taking_count}x${event.resource_taking}`)
-      if (get().username == event.username) {
-        set((state) => {
-          const playerResources = get().playerResources
-          playerResources[event.resource_giving] -= event.resource_giving_count
-          playerResources[event.resource_taking] += event.resource_taking_count
-          return {
-            ...state,
-            playerResources: playerResources,
-          }
-        })
-      }
-      set((state) => {
-        const playerMetadata = get().players
-        const targetPlayer = playerMetadata.find(p => p.name === event.username)
-        if (!targetPlayer) return { ...state }
-        targetPlayer.cardCount += event.resource_taking_count - event.resource_giving_count
-        const bankResources = get().bankResources
-        bankResources[event.resource_giving] += event.resource_giving_count
-        bankResources[event.resource_taking] -= event.resource_taking_count
-        return {
-          ...state,
-          players: playerMetadata,
-          bankResources: bankResources,
-          gameLog: [...state.gameLog, { player: event.username, message: `Got ${event.resource_taking_count}x${event.resource_taking} from the bank` }]
-        }
-      })
+      await get().refreshGameMetadata()
     },
     onFreeTwoRoadsPlayed: async (event: UseTwoFreeRoadsEvent) => {
       const me = get().username

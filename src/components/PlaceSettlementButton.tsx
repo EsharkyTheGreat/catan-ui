@@ -22,7 +22,7 @@ export default function PlaceSettlementButton() {
             className={canPlaceSettlement ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"}
             onClick={() => {
               if (phase !== "settlement_placement" && canPlaceSettlement) setPhase("settlement_placement");
-              else setPhase(null)
+              else if (phase === "settlement_placement") setPhase(null)
             }}
           />
           <div className="text-[10px] text-center leading-tight">Settlement</div>

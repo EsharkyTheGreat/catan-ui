@@ -21,7 +21,7 @@ export default function PlaceHouseButton() {
             className={canPlaceHouse ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"}
             onClick={() => {
               if (phase !== "house_placement" && canPlaceHouse) setPhase("house_placement");
-              else setPhase(null);
+              else if (phase === "house_placement") setPhase(null);
             }}
           />
           <div className="text-[10px] text-center leading-tight">House</div>

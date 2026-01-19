@@ -134,6 +134,7 @@ export type Player = {
   longestArmy: number;
   developmentCards: number;
   cardCount: number;
+  tradeRatio: Record<CatanResource, number>
 };
 
 export type Tile = {
@@ -229,7 +230,7 @@ export type GameState = GameSnapshot & {
   onHousePlaced: (event: HousePlacedEvent) => Promise<void>;
   onSettlementPlaced: (event: SettlementPlacedEvent) => Promise<void>;
   onDiceRoll: (event: DiceRollResponseEvent) => Promise<void>;
-  onBankTradeResponse: (event: BankTradeResponseEvent) => void;
+  onBankTradeResponse: (event: BankTradeResponseEvent) => Promise<void>;
 
   onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => void;
   onFreeTwoRoadsPlayed: (event: UseTwoFreeRoadsEvent) => Promise<void>;

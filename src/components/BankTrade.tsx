@@ -13,17 +13,22 @@ const RESOURCES: { id: string, name: CatanResource, color: string, icon: string 
 ];
 
 export default function BankTrade() {
-    const { playerResources, socket, username } = useGameStore()
+    const { playerResources, socket, username, players } = useGameStore()
+
+    const myPlayer = players.find(player => player.name === username)
+    if (!myPlayer) return null;
 
     const [bankGiving, setBankGiving] = useState<CatanResource | "">("")
     const [bankGetting, setBankGetting] = useState<CatanResource | "">("")
 
-    const getBankRate = () => {
-        return 4;
+    const getBankRate = (resource: CatanResource | "") => {
+        if (!resource) return 4;
+        return myPlayer.tradeRatio[resource];
     };
 
     const canExecuteBankTrade = () => {
-        const rate = getBankRate();
+        if (!bankGiving || !bankGetting) return false;
+        const rate = getBankRate(bankGiving);
         return bankGiving &&
             bankGetting &&
             playerResources[bankGiving] >= rate &&
@@ -38,9 +43,7 @@ export default function BankTrade() {
         const data: BankTradeRequestEvent = {
             type: "BANK_TRADE_REQUEST",
             resource_giving: bankGiving as CatanResource,
-            resource_giving_count: 4,
             resource_taking: bankGetting as CatanResource,
-            resource_taking_count: 1,
             username: username
         }
         socket?.send(JSON.stringify(data))
@@ -56,7 +59,7 @@ export default function BankTrade() {
                     {/* Give */}
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-amber-900 mb-2">
-                            You Give ({4})
+                            You Give ({getBankRate(bankGiving)})
                         </label>
                         <select
                             value={bankGiving}
@@ -65,7 +68,7 @@ export default function BankTrade() {
                         >
                             <option value="">Select resource</option>
                             {RESOURCES.map(res => (
-                                <option key={res.id} value={res.name} disabled={playerResources[res.name] < 4}>
+                                <option key={res.id} value={res.name} disabled={playerResources[res.name] < getBankRate(res.name)}>
                                     {res.icon} {res.id} ({playerResources[res.name]} available)
                                 </option>
                             ))}
