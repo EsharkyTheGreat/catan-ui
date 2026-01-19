@@ -28,10 +28,12 @@ export default function PlaceRoadButton() {
           <div className="text-[10px] text-center leading-tight">Road</div>
         </HoverCardTrigger>
         <HoverCardContent className="w-fit">
-          <div className="flex items-center h-full bg-amber-50 rounded-xl p-2">
+          {freeRoadCount > 0 ? <div className="flex items-center h-full bg-amber-50 rounded-xl p-2">
+            <p>{`Free Road (${freeRoadCount}) available`}</p>
+          </div> : <div className="flex items-center h-full bg-amber-50 rounded-xl p-2">
             <ResourceCard resourceType="BRICK" count={1} size={60} hidden={playerResources.BRICK < 1} />
             <ResourceCard resourceType="TREE" count={1} size={60} hidden={playerResources.TREE < 1} />
-          </div>
+          </div>}
         </HoverCardContent>
       </HoverCard>
     </div>
