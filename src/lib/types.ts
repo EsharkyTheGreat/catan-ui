@@ -82,11 +82,28 @@ export interface CatanTile {
   hasRobber: boolean;
 }
 
+export interface CatanPortPosition {
+  x: number;
+  y: number;
+  line1endX: number;
+  line1endY: number;
+  line2endX: number;
+  line2endY: number;
+  data: CatanPort;
+}
+
+export interface CatanPort {
+  source_face: CatanTile
+  target_edge: CatanEdge
+  trade_ratio: Record<CatanResource, number>
+}
+
 export type CatanBoardSummary = {
   n: number;
   faces: CatanTile[];
   edges: CatanEdge[];
   vertices: CatanVertex[];
+  ports: CatanPort[];
 };
 
 export type Trade = {
@@ -145,6 +162,7 @@ export type GameSnapshot = {
   players: Player[];
   faces: CatanTile[];
   edges: CatanEdge[];
+  ports: CatanPort[];
   vertices: CatanVertex[];
   currentPlayer: string | null;
   phase: GamePhases;

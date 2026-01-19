@@ -6,6 +6,8 @@ import {
   CatanVertexPosition,
   CatanTile,
   CatanVertex,
+  CatanPort,
+  CatanPortPosition,
 } from "@/lib/types";
 
 // Convert q,r,s coordinates to x,y coordinates
@@ -56,6 +58,36 @@ export const hexToPixel = (
 //   }
 //   return tiles;
 // };
+
+export const getCatanPortPositions = (
+  dimensions: {
+    width: number;
+    height: number;
+  },
+  ports: CatanPort[],
+  edges: CatanEdge[],
+) => {
+  const portPositions: CatanPortPosition[] = [];
+  const edgePositions = getCatanEdgePositions(dimensions, edges);
+  const centerX = dimensions.width / 2;
+  const centerY = dimensions.height / 2;
+  ports.forEach((port) => {
+    const { x, y } = hexToPixel(port.source_face.q, port.source_face.r, port.source_face.s);
+    const edge = edgePositions.find((edge) => (edge.data.q1 == port.target_edge.q1 && edge.data.r1 == port.target_edge.r1 && edge.data.s1 == port.target_edge.s1 && edge.data.q2 == port.target_edge.q2 && edge.data.r2 == port.target_edge.r2 && edge.data.s2 == port.target_edge.s2));
+    if (!edge) return;
+    portPositions.push({
+      data: port,
+      x: centerX + x,
+      y: centerY + y,
+      line1endX: edge.startX,
+      line1endY: edge.startY,
+      line2endX: edge.endX,
+      line2endY: edge.endY,
+    });
+  });
+
+  return portPositions;
+};
 
 export const getCatanFacePositions = (
   dimensions: {

@@ -1,15 +1,15 @@
-import { Image, Layer, RegularPolygon } from "react-konva";
+import { Image, Layer, Line, RegularPolygon } from "react-konva";
 import { useMemo, useState, useEffect } from "react";
 import useImage from "use-image";
 import NumberToken from "@/components/NumberToken";
 import { useGameStore } from "@/store/GameState";
-import { getCatanFacePositions } from "@/lib/hexagonUtils";
+import { getCatanFacePositions, getCatanPortPositions } from "@/lib/hexagonUtils";
 import { RobberPlaceEvent } from "@/lib/websocket";
 import { CatanTilePosition } from "@/lib/types";
 import toast from "react-hot-toast";
 
 export default function HexagonLayer() {
-  const { faces, dimensions, phase, socket, username } = useGameStore();
+  const { faces, dimensions, phase, socket, username, ports, edges } = useGameStore();
   const [blink, setBlink] = useState(true);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [brickImage] = useImage("/BrickSprite.png");
@@ -22,6 +22,10 @@ export default function HexagonLayer() {
   const faceWithPositions = useMemo(
     () => getCatanFacePositions(dimensions, faces),
     [dimensions, faces]
+  );
+  const portWithPositions = useMemo(
+    () => getCatanPortPositions(dimensions, ports, edges),
+    [dimensions, ports, edges]
   );
 
   useEffect(() => {
@@ -38,19 +42,19 @@ export default function HexagonLayer() {
 
   const handleTileClick = (tile: CatanTilePosition) => {
     if (phase === "place_robber") {
-       const event: RobberPlaceEvent = {
+      const event: RobberPlaceEvent = {
         type: "ROBBER_PLACED",
         username: username,
         q: tile.data.q,
         r: tile.data.r,
-        s: tile.data.s  
-       }
-       if (tile.data.hasRobber) {
+        s: tile.data.s
+      }
+      if (tile.data.hasRobber) {
         toast.error("Robber is already on this tile")
         return;
-       } else {
+      } else {
         socket?.send(JSON.stringify(event))
-       }
+      }
     }
   }
 
@@ -92,16 +96,16 @@ export default function HexagonLayer() {
             fillPatternOffsetY={500}
             opacity={phase === "place_robber" ? (blink ? 1 : 0.6) : (hoveredKey === tileKey ? 0.7 : 1)}
             onMouseEnter={(e) => {
-                setHoveredKey(tileKey);
-                if (phase === "place_robber") {
-                    const container = e.target.getStage()?.container();
-                    if (container) container.style.cursor = "pointer";
-                }
+              setHoveredKey(tileKey);
+              if (phase === "place_robber") {
+                const container = e.target.getStage()?.container();
+                if (container) container.style.cursor = "pointer";
+              }
             }}
             onMouseLeave={(e) => {
-                setHoveredKey(null);
-                const container = e.target.getStage()?.container();
-                if (container) container.style.cursor = "default";
+              setHoveredKey(null);
+              const container = e.target.getStage()?.container();
+              if (container) container.style.cursor = "default";
             }}
             onClick={() => handleTileClick(tile)}
           />
@@ -122,15 +126,37 @@ export default function HexagonLayer() {
       {faceWithPositions.map((tile) => {
         if (!tile.data.hasRobber) return;
         return (
-            <Image
-                key={`robber-${tile.data.q}-${tile.data.r}-${tile.data.s}`}
-                image={robberImage}
-                x={tile.x - 20}
-                y={tile.y - 20}
-                width={40}
-                height={40}
-                listening={false}
-            />
+          <Image
+            key={`robber-${tile.data.q}-${tile.data.r}-${tile.data.s}`}
+            image={robberImage}
+            x={tile.x - 20}
+            y={tile.y - 20}
+            width={40}
+            height={40}
+            listening={false}
+          />
+        )
+      })}
+      {portWithPositions.map((port) => {
+        return (
+          <Line
+            key={`port-${port.data.target_edge.q1}-${port.data.target_edge.r1}-${port.data.target_edge.s1}`}
+            points={[port.x, port.y, port.line1endX, port.line1endY]}
+            stroke="black"
+            strokeWidth={1}
+            listening={false}
+          />
+        )
+      })}
+      {portWithPositions.map((port) => {
+        return (
+          <Line
+            key={`port-${port.data.target_edge.q2}-${port.data.target_edge.r2}-${port.data.target_edge.s2}`}
+            points={[port.x, port.y, port.line2endX, port.line2endY]}
+            stroke="black"
+            strokeWidth={1}
+            listening={false}
+          />
         )
       })}
     </Layer>
