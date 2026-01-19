@@ -55,9 +55,9 @@ export const useGameStore = create<GameState>()(
     vertices: [],
     currentPlayer: null,
     phase: "dice",
-    lastRoll: {die1: 1, die2: 1},
-    playerResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
-    playerDevelopmentCards: {"Road Building":0,"Victory Point":0,"Year of Plenty":0,"Knight":0,"Monopoly":0},
+    lastRoll: { die1: 1, die2: 1 },
+    playerResources: { "WHEAT": 0, "BRICK": 0, "SHEEP": 0, "STONE": 0, "TREE": 0 },
+    playerDevelopmentCards: { "Road Building": 0, "Victory Point": 0, "Year of Plenty": 0, "Knight": 0, "Monopoly": 0 },
     gameLog: Array.from({ length: 12 }, () => ({
       player: "Esharky",
       message: "Hello",
@@ -65,12 +65,13 @@ export const useGameStore = create<GameState>()(
     chat: [],
     socket: null,
     status: "lobby",
-    bankResources: {"WHEAT":0,"BRICK":0,"SHEEP":0,"STONE":0,"TREE":0},
+    bankResources: { "WHEAT": 0, "BRICK": 0, "SHEEP": 0, "STONE": 0, "TREE": 0 },
     activeOpenTrade: {},
     freeRoadCount: 0,
     myHouseCounts: 0,
     mySettlementCounts: 0,
     myRoadCounts: 0,
+    myVictoryPoints: 0,
     dieRolledThisTurn: false,
     mustDiscardCards: false,
     initialCardCountForDiscard: 0,
@@ -82,23 +83,23 @@ export const useGameStore = create<GameState>()(
       const username = get().username
       if (!username) return;
       const gameSummary = await fetchGameRoomSummary(get().id);
-      const playerSummary = await fetchPlayerSummary(get().id,username);
+      const playerSummary = await fetchPlayerSummary(get().id, username);
       if (!playerSummary) return
       // Calculate current player's total cards
       const currentPlayerResources = playerSummary.resourceCount;
       const totalCards = Object.values(currentPlayerResources).reduce((sum, count) => sum + count, 0);
-      
+
       // Check if discard is needed: discard_counter > 0 indicates discard phase is active
       const isDiscardPhase = gameSummary.discard_counter && gameSummary.discard_counter > 0;
-      
+
       let mustDiscardCards = false;
-      
-      if (isDiscardPhase) {        
+
+      if (isDiscardPhase) {
         if (totalCards >= 7) {
           mustDiscardCards = true;
         }
-      } 
-      
+      }
+
       set({
         status: gameSummary.status,
         players: gameSummary.players,
@@ -116,6 +117,7 @@ export const useGameStore = create<GameState>()(
         myHouseCounts: playerSummary.houses_placed,
         mySettlementCounts: playerSummary.settlements_placed,
         myRoadCounts: playerSummary.roads_placed,
+        myVictoryPoints: playerSummary.victory_points,
         dieRolledThisTurn: gameSummary.die_rolled_this_turn,
         playerTurnCount: gameSummary.player_turn_count,
         housesPlacedThisTurn: gameSummary.houses_placed_this_turn,
@@ -125,8 +127,8 @@ export const useGameStore = create<GameState>()(
         mustDiscardCards: mustDiscardCards,
       });
     },
-    setFreeRoadCount: (count: number) => set({freeRoadCount: count}),
-    setMustDiscardCards: (mustDiscard: boolean) => set({mustDiscardCards: mustDiscard}),
+    setFreeRoadCount: (count: number) => set({ freeRoadCount: count }),
+    setMustDiscardCards: (mustDiscard: boolean) => set({ mustDiscardCards: mustDiscard }),
     setGameStatus: (status: GameStatuses) => set({ status }),
     setPlayers: (players: Player[]) => set({ players }),
     setCurrentPlayer: (name: string) => set({ currentPlayer: name }),
@@ -170,7 +172,7 @@ export const useGameStore = create<GameState>()(
       //TODO Write Logic to just update state in memory instead of refetching everything
     },
     onDevelopmentCardBuyEvent: (event: BuyDevelopmentCardResponseEvent) => {
-      set((state)=> {
+      set((state) => {
         const me = get().username
         if (event.username === me) {
           const myDevelopmentCards = get().playerDevelopmentCards
@@ -187,8 +189,8 @@ export const useGameStore = create<GameState>()(
           }
         } else {
           const allPlayers = get().players
-          const otherPlayer = get().players.find(p=>p.name === event.username)
-          if (!otherPlayer) return {...state}
+          const otherPlayer = get().players.find(p => p.name === event.username)
+          if (!otherPlayer) return { ...state }
           otherPlayer.developmentCards += 1
           otherPlayer.cardCount -= 3
           toast.success(`Player: ${event.username} has bought a Development Card`)
@@ -206,7 +208,7 @@ export const useGameStore = create<GameState>()(
       }
       toast.success(`Bank Trade Made Successfully by ${event.username} and got ${event.resource_taking_count}x${event.resource_taking}`)
       if (get().username == event.username) {
-        set((state)=> {
+        set((state) => {
           const playerResources = get().playerResources
           playerResources[event.resource_giving] -= event.resource_giving_count
           playerResources[event.resource_taking] += event.resource_taking_count
@@ -216,10 +218,10 @@ export const useGameStore = create<GameState>()(
           }
         })
       }
-      set((state)=>{
+      set((state) => {
         const playerMetadata = get().players
         const targetPlayer = playerMetadata.find(p => p.name === event.username)
-        if (!targetPlayer) return {...state}
+        if (!targetPlayer) return { ...state }
         targetPlayer.cardCount += event.resource_taking_count - event.resource_giving_count
         const bankResources = get().bankResources
         bankResources[event.resource_giving] += event.resource_giving_count
@@ -228,7 +230,7 @@ export const useGameStore = create<GameState>()(
           ...state,
           players: playerMetadata,
           bankResources: bankResources,
-          gameLog: [...state.gameLog, {player: event.username,message: `Got ${event.resource_taking_count}x${event.resource_taking} from the bank`}]
+          gameLog: [...state.gameLog, { player: event.username, message: `Got ${event.resource_taking_count}x${event.resource_taking} from the bank` }]
         }
       })
     },
@@ -264,7 +266,7 @@ export const useGameStore = create<GameState>()(
       await get().refreshGameMetadata()
     },
     onDiceRoll: async (event: DiceRollResponseEvent) => {
-      const roll = { die1: event.die1, die2: event.die2}
+      const roll = { die1: event.die1, die2: event.die2 }
       get().setLastRoll(roll)
       await get().refreshGameMetadata()
       if (roll.die1 + roll.die2 === 7 && !get().discardInProgress && event.username === get().username) {
@@ -284,7 +286,7 @@ export const useGameStore = create<GameState>()(
       }
     },
     onTradeCreated: (event: TradeBroadcastEvent) => {
-      set((state)=>{
+      set((state) => {
         const newTrades = state.activeOpenTrade
         const newTrade: Trade = {
           trade_id: event.id,
@@ -294,9 +296,9 @@ export const useGameStore = create<GameState>()(
           username: event.username,
           toast_id: "",
         }
-        newTrade.toast_id = toast.custom((t)=>
+        newTrade.toast_id = toast.custom((t) =>
           <PlayerTradePopup trade={newTrade} toast_id={t.id} />
-        ,{duration: 35*1000,position: "top-left"})
+          , { duration: 35 * 1000, position: "top-left" })
         newTrades[event.id] = newTrade
         return {
           activeOpenTrades: newTrades,
@@ -305,7 +307,7 @@ export const useGameStore = create<GameState>()(
       })
     },
     onTradeUpdate: (event: TradeBroadcastEvent) => {
-      set((state)=> {
+      set((state) => {
         const newTrades = state.activeOpenTrade
         const newTrade = newTrades[event.id]
         newTrade.player_sentiment = event.player_sentiment
@@ -320,8 +322,8 @@ export const useGameStore = create<GameState>()(
       const trades = get().activeOpenTrade
       const trade = trades[event.id]
       toast.dismiss(trade.toast_id)
-      set((state)=>{
-        const {[event.id]: _, ...filteredTrades } = trades
+      set((state) => {
+        const { [event.id]: _, ...filteredTrades } = trades
         return {
           ...state,
           activeOpenTrade: filteredTrades
@@ -372,8 +374,8 @@ export const useGameStore = create<GameState>()(
         }
       }
       toast.dismiss(trade.toast_id)
-      set((state)=>{
-        const {[event.id]: _, ...filteredTrades } = get().activeOpenTrade
+      set((state) => {
+        const { [event.id]: _, ...filteredTrades } = get().activeOpenTrade
         return {
           ...state,
           activeOpenTrade: filteredTrades
@@ -405,7 +407,7 @@ export const useGameStore = create<GameState>()(
           if (data.type === "SETTLEMENT_PLACED") get().onSettlementPlaced(data as SettlementPlacedEvent)
           if (data.type === "DICE_ROLL_RESPONSE") get().onDiceRoll(data as DiceRollResponseEvent)
           if (data.type === "BANK_TRADE_RESPONSE") get().onBankTradeResponse(data as BankTradeResponseEvent)
-          if (data.type === "TRADE_BROADCAST") get().onTradeBroadcast(data as TradeBroadcastEvent) 
+          if (data.type === "TRADE_BROADCAST") get().onTradeBroadcast(data as TradeBroadcastEvent)
           if (data.type == "DEVELOPMENT_CARD_BUY_RESPONSE") get().onDevelopmentCardBuyEvent(data as BuyDevelopmentCardResponseEvent)
           if (data.type == "PLACE_TWO_FREE_ROADS") get().onFreeTwoRoadsPlayed(data as UseTwoFreeRoadsEvent)
           if (data.type == "USE_MONOPOLY_CARD") get().onUseMonopolyCard(data as UseMonopolyEvent)
@@ -429,10 +431,10 @@ export const useGameStore = create<GameState>()(
         };
       });
     },
-    setLastRoll: (roll: {die1: number, die2: number}) => set({lastRoll: roll}),
-    setPlayerResources: (newResources: Record<CatanResource,number>) => set({playerResources: newResources}),
+    setLastRoll: (roll: { die1: number, die2: number }) => set({ lastRoll: roll }),
+    setPlayerResources: (newResources: Record<CatanResource, number>) => set({ playerResources: newResources }),
     addPlayerResource: (resourceType: CatanResource, resourceCount: number) => {
-      set((state)=>{
+      set((state) => {
         const newPlayerResources = get().playerResources
         newPlayerResources[resourceType] += resourceCount
         return {
@@ -441,10 +443,10 @@ export const useGameStore = create<GameState>()(
         }
       })
     },
-    setBankResources: (newResources: Record<CatanResource,number>) => set({bankResources: newResources}),
-    setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => set({playerDevelopmentCards:newCards}),
+    setBankResources: (newResources: Record<CatanResource, number>) => set({ bankResources: newResources }),
+    setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType, number>) => set({ playerDevelopmentCards: newCards }),
     setChat: (messages: ChatMessage[]) => set({ chat: messages }),
-    setActiveOpenTrades: (newTrades: Record<UUID,Trade>) => set({activeOpenTrade: newTrades}),
+    setActiveOpenTrades: (newTrades: Record<UUID, Trade>) => set({ activeOpenTrade: newTrades }),
     addChat: (message: string) => {
       set((state) => {
         if (!state.currentPlayer) return state;

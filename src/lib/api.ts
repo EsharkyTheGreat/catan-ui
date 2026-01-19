@@ -16,13 +16,13 @@ export interface GameRoom {
   turn_index: number;
   player_turn_count: Record<string, number>;
   phase:
-    | "FIRST_FREE_HOUSE_PLACEMENT"
-    | "SECOND_FREE_HOUSE_PLACEMENT"
-    | "DICE_ROLL"
-    | "ACTION"
-    | "DISCARD_TIMER";
+  | "FIRST_FREE_HOUSE_PLACEMENT"
+  | "SECOND_FREE_HOUSE_PLACEMENT"
+  | "DICE_ROLL"
+  | "ACTION"
+  | "DISCARD_TIMER";
   board: CatanBoardSummary;
-  bank_resources: Record<CatanResource,number>
+  bank_resources: Record<CatanResource, number>
   active_open_trades: Record<UUID, Trade>
   die_rolled_this_turn: boolean;
   houses_placed_this_turn: number;
@@ -35,13 +35,14 @@ export interface PlayerDetailedSummary {
   name: string;
   longestRoad: number;
   longestArmy: number;
-  developmentCards: Record<DevelopmentCardType,number>;
+  developmentCards: Record<DevelopmentCardType, number>;
   color: "RED" | "YELLOW" | "BLUE" | "GREEN";
   resourceCount: Record<"WHEAT" | "BRICK" | "TREE" | "SHEEP" | "STONE", number>;
   free_road_count: number;
   houses_placed: number;
   settlements_placed: number;
   roads_placed: number;
+  victory_points: number;
 }
 
 export interface ValidHousePlacementPositions {

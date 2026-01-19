@@ -116,7 +116,6 @@ export type Player = {
   longestArmy: number;
   developmentCards: number;
   cardCount: number;
-  victoryPoints: number;
 };
 
 export type Tile = {
@@ -131,7 +130,6 @@ export type GamePhases =
   | "road_placement"
   | "house_placement"
   | "settlement_placement"
-  | "robber"
   | "place_robber"
   | null;
 
@@ -150,16 +148,17 @@ export type GameSnapshot = {
   currentPlayer: string | null;
   phase: GamePhases;
   status: GameStatuses;
-  lastRoll: {die1: number, die2: number};
+  lastRoll: { die1: number, die2: number };
   socket: WebSocket | null;
-  playerResources: Record<CatanResource,number>;
-  bankResources: Record<CatanResource,number>;
-  playerDevelopmentCards: Record<DevelopmentCardType,number>;
-  activeOpenTrade: Record<UUID,Trade>;
+  playerResources: Record<CatanResource, number>;
+  bankResources: Record<CatanResource, number>;
+  playerDevelopmentCards: Record<DevelopmentCardType, number>;
+  activeOpenTrade: Record<UUID, Trade>;
   freeRoadCount: number;
   myHouseCounts: number;
   mySettlementCounts: number;
   myRoadCounts: number;
+  myVictoryPoints: number;
   dieRolledThisTurn: boolean;
   mustDiscardCards: boolean;
   initialCardCountForDiscard: number;
@@ -190,12 +189,12 @@ export type GameState = GameSnapshot & {
 
   setCurrentPlayer: (name: string) => void;
   setPlayers: (players: Player[]) => void;
-  setLastRoll: (roll: {die1: number, die2: number}) => void;
-  setPlayerResources: (newResources: Record<CatanResource,number>) => void;
+  setLastRoll: (roll: { die1: number, die2: number }) => void;
+  setPlayerResources: (newResources: Record<CatanResource, number>) => void;
   addPlayerResource: (resourceType: CatanResource, resourceCount: number) => void;
-  setBankResources: (newResources: Record<CatanResource,number>) => void;
-  setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType,number>) => void;
-  setActiveOpenTrades: (newTrades: Record<UUID,Trade>) => void;
+  setBankResources: (newResources: Record<CatanResource, number>) => void;
+  setPlayerDevelopmentCards: (newCards: Record<DevelopmentCardType, number>) => void;
+  setActiveOpenTrades: (newTrades: Record<UUID, Trade>) => void;
   setFreeRoadCount: (count: number) => void;
   setMustDiscardCards: (mustDiscard: boolean) => void;
 
