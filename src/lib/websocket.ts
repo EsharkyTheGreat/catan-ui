@@ -102,11 +102,11 @@ export type BankTradeResponseEvent = {
 }
 
 export type TradeCreateEvent = {
-    type: "TRADE_CREATE";
-    username: string;
-    offering: Record<CatanResource, number>;
-    receiving: Record<CatanResource, number>;
-} 
+  type: "TRADE_CREATE";
+  username: string;
+  offering: Record<CatanResource, number>;
+  receiving: Record<CatanResource, number>;
+}
 
 export type TradeBroadcastEvent = {
   type: "TRADE_BROADCAST";
@@ -115,27 +115,27 @@ export type TradeBroadcastEvent = {
   offering: Record<CatanResource, number>;
   receiving: Record<CatanResource, number>;
   player_sentiment: Record<string, TradeResponse>;
-  accepter: string|null;
+  accepter: string | null;
   status: TradeStatus
 }
 
 export type TradeAcceptEvent = {
-    type: "TRADE_ACCEPTED";
-    id: UUID
-    username: string;
+  type: "TRADE_ACCEPTED";
+  id: UUID
+  username: string;
 }
 
 export type TradeDeclineEvent = {
-    type: "TRADE_DECLINED";
-    id: UUID
-    username: string;
+  type: "TRADE_DECLINED";
+  id: UUID
+  username: string;
 }
 
 export type TradeAcceptOfferEvent = {
-    type: "TRADE_ACCEPT_OFFER";
-    id: UUID
-    username: string;
-    accepting_offer_of: string;
+  type: "TRADE_ACCEPT_OFFER";
+  id: UUID
+  username: string;
+  accepting_offer_of: string;
 }
 
 export type BuyDevelopmentCardEvent = {
@@ -144,10 +144,10 @@ export type BuyDevelopmentCardEvent = {
 }
 
 export type BuyDevelopmentCardResponseEvent = {
-    type: "DEVELOPMENT_CARD_BUY_RESPONSE";
-    success: boolean;
-    username: string;
-    card: DevelopmentCardType;
+  type: "DEVELOPMENT_CARD_BUY_RESPONSE";
+  success: boolean;
+  username: string;
+  card: DevelopmentCardType;
 }
 
 export type UseTwoFreeRoadsEvent = {
@@ -190,6 +190,11 @@ export type RobberPlaceEvent = {
   s: number;
 };
 
+export type GameOverEvent = {
+  type: "GAME_OVER";
+  username: string;
+}
+
 export type ServerMessage =
   | ChatMessageEvent
   | ConnectedEvent
@@ -217,7 +222,8 @@ export type ServerMessage =
   | TurnEndEvent
   | DiscardEvent
   | DiscardEndEvent
-  | RobberPlaceEvent;
+  | RobberPlaceEvent
+  | GameOverEvent;
 
 // Client-to-server events
 export type DiscardCardsEvent = {

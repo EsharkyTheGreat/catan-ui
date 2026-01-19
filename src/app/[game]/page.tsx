@@ -25,6 +25,7 @@ export default function Home() {
     refreshGameMetadata,
     setId,
     setUsername,
+    gameWinner,
   } = useGameStore();
 
   useEffect(() => {
@@ -51,6 +52,29 @@ export default function Home() {
     if (!socket) return;
     const x: GameStartedEvent = { type: "GAME_STARTED" };
     socket.send(JSON.stringify(x));
+  }
+
+  if (status === "finished") {
+    return (
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-2xl">
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">
+              Game Finished - {gameId}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">
+                  Winner - {gameWinner}
+                </h3>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (status === "lobby") {

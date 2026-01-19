@@ -38,6 +38,7 @@ import {
   UseTwoFreeRoadsEvent,
   UseYearOfPlentyEvent,
   RobberPlaceEvent,
+  GameOverEvent,
 } from "@/lib/websocket";
 import toast from "react-hot-toast";
 import { fetchGameRoomSummary, fetchPlayerSummary } from "@/lib/api";
@@ -416,6 +417,7 @@ export const useGameStore = create<GameState>()(
           if (data.type == "DISCARD") get().onDiscard(data as DiscardEvent)
           if (data.type == "DISCARD_END") get().onDiscardEnd(data as DiscardEndEvent)
           if (data.type == "ROBBER_PLACED") get().onRobberPlaced(data as RobberPlaceEvent)
+          if (data.type == "GAME_OVER") get().onGameOver(data as GameOverEvent)
         } catch (err) {
           console.error("Invalid JSON Data: ", e.data, err);
         }
@@ -474,6 +476,16 @@ export const useGameStore = create<GameState>()(
         toast.success(`${event.username} has ended their turn and it is now your turn`)
       }
       await get().refreshGameMetadata()
+    },
+    onGameOver: async (event: GameOverEvent) => {
+      const me = get().username
+      if (event.username === me) {
+        toast.success("You have won the game!")
+      } else {
+        toast.success(`${event.username} has won the game!`)
+      }
+      set({ status: "finished", gameWinner: event.username })
+
     },
     onDiscard: async (event: DiscardEvent) => {
       await get().refreshGameMetadata()

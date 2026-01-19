@@ -23,6 +23,7 @@ import {
   UseTwoFreeRoadsEvent,
   UseYearOfPlentyEvent,
   RobberPlaceEvent,
+  GameOverEvent,
 } from "./websocket";
 
 export interface CatanEdgePosition {
@@ -166,6 +167,7 @@ export type GameSnapshot = {
   housesPlacedThisTurn: number;
   roadsPlacedThisTurn: number;
   playerTurnCount: Record<string, number>;
+  gameWinner: string | null;
 };
 
 export type GameState = GameSnapshot & {
@@ -223,6 +225,7 @@ export type GameState = GameSnapshot & {
   onTradeCompletion: (event: TradeBroadcastEvent) => void;
 
   onTurnEnd: (event: TurnEndEvent) => Promise<void>;
+  onGameOver: (event: GameOverEvent) => Promise<void>;
 
   onDiscard: (event: DiscardEvent) => Promise<void>;
   onDiscardEnd: (event: DiscardEndEvent) => Promise<void>;
