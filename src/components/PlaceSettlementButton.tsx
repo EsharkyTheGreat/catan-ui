@@ -32,6 +32,7 @@ export default function PlaceSettlementButton() {
             <ResourceCard resourceType="STONE" count={3} size={60} hidden={playerResources.STONE < 3} />
             <ResourceCard resourceType="WHEAT" count={2} size={60} hidden={playerResources.WHEAT < 2} />
           </div>
+          <div className="text-[10px] text-center">{`Placed (${mySettlementCounts}/4)`}</div>
         </HoverCardContent>
       </HoverCard>
     </div>

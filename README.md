@@ -17,5 +17,5 @@
 - [x] Restict Settlement placement when 4 are upgraded
 - [x] Add Longest Road to Player Card Display
 - [x] Add Largest Army to Player Card Display
-- [ ] Add Remaining House and Roads to their cards
+- [x] Add Remaining House and Roads to their cards
 - [ ] Make houses blink when upgrading to settlements

@@ -33,6 +33,7 @@ export default function PlaceHouseButton() {
             <ResourceCard resourceType="SHEEP" count={1} size={60} hidden={playerResources.SHEEP < 1} />
             <ResourceCard resourceType="WHEAT" count={1} size={60} hidden={playerResources.WHEAT < 1} />
           </div>
+          <div className="text-[10px] text-center">{`Placed (${myHouseCounts}/5)`}</div>
         </HoverCardContent>
       </HoverCard>
     </div>
