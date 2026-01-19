@@ -12,9 +12,9 @@
 - [ ] When free roads are available in the popup of roads don't show cost but show that you have 2 free roads available
 - [x] Allow trade popup to open only if it is your turn
 - [x] Give blinking effect to all hexagon tiles when phase is place_robber
-- [ ] Game over screen
-- [ ] Restrict house placement when you have placed 5 house
-- [ ] Restict Settlement placement when 4 are upgraded
+- [x] Game over screen
+- [x] Restrict house placement when you have placed 5 house
+- [x] Restict Settlement placement when 4 are upgraded
 - [x] Add Longest Road to Player Card Display
 - [x] Add Largest Army to Player Card Display
 - [ ] Add Remaining House and Roads to their cards
