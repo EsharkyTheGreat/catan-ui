@@ -23,3 +23,5 @@
 - [x] Refresh place_robber state from backend upon refresh
 - [x] Reflect GameConfig state for configurable params
 - [ ] Bug fix chat incorrect name
+- [ ] incorrect turn whose indicator
+- [ ] Move your turn to centre of screen
