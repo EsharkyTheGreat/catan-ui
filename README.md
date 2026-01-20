@@ -4,7 +4,7 @@
 
 - [x] Add Sheep
 - [x] Add Dessert
-- [ ] Add Ports
+- [x] Add Ports
 - [x] Make sure dice is rolled first before performing any action
 - [x] Discard to be only popped up if it is for current player
 - [x] Robber cannot be placed on same tile

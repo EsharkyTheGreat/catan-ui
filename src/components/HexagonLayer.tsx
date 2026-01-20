@@ -23,12 +23,14 @@ export default function HexagonLayer() {
   const [genericPortImage] = useImage("/generic_port.png");
   const [treePortImage] = useImage("/tree_port.png");
   const [sheepPortImage] = useImage("/sheep_port.png")
+  const [wheatPortImage] = useImage("/wheat_port.png")
+  const [stonePortImage] = useImage("/stone_port.png")
   const portImageMap = {
     BRICK: brickPortImage,
     SHEEP: sheepPortImage,
-    STONE: brickPortImage,
+    STONE: stonePortImage,
     TREE: treePortImage,
-    WHEAT: brickPortImage,
+    WHEAT: wheatPortImage,
     GENERIC: genericPortImage,
   }
   const faceWithPositions = useMemo(
