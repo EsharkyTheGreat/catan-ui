@@ -102,7 +102,7 @@ export const useGameStore = create<GameState>()(
         }
       }
       const current_roll = gameSummary.current_roll;
-      if (current_roll.length === 2 && gameSummary.current_turn === username && current_roll[0] + current_roll[1] === 7) {
+      if (current_roll.length === 2 && gameSummary.current_turn === username && current_roll[0] + current_roll[1] === 7 && gameSummary.robber_placement_required) {
         set({ phase: "place_robber" })
       }
 

@@ -22,3 +22,4 @@
 - [x] Reflect Bank Trade Ratio from player
 - [x] Refresh place_robber state from backend upon refresh
 - [x] Reflect GameConfig state for configurable params
+- [ ] Bug fix chat incorrect name

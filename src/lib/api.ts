@@ -30,6 +30,7 @@ export interface GameRoom {
   houses_placed_this_turn: number;
   roads_placed_this_turn: number;
   discard_counter?: number;
+  robber_placement_required: boolean;
 }
 
 export interface PlayerDetailedSummary {
