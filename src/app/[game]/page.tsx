@@ -39,6 +39,9 @@ export default function Home() {
         `ws://localhost:8000/ws/${gameId}?player_name=${username}`
       );
       connect(ws);
+      if (ws.CLOSED) {
+        window.location.href = "/";
+      }
       return () => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.close();
