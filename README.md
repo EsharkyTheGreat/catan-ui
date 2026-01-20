@@ -18,5 +18,6 @@
 - [x] Add Longest Road to Player Card Display
 - [x] Add Largest Army to Player Card Display
 - [x] Add Remaining House and Roads to their cards
-- [ ] Make houses blink when upgrading to settlements
+- [x] Make houses blink when upgrading to settlements
 - [x] Reflect Bank Trade Ratio from player
+- [x] Refresh place_robber state from backend upon refresh

@@ -5,7 +5,7 @@ import NumberToken from "@/components/NumberToken";
 import { useGameStore } from "@/store/GameState";
 import { getCatanFacePositions, getCatanPortPositions } from "@/lib/hexagonUtils";
 import { RobberPlaceEvent } from "@/lib/websocket";
-import { CatanTilePosition } from "@/lib/types";
+import { CatanTilePosition, CatanResource } from "@/lib/types";
 import toast from "react-hot-toast";
 
 export default function HexagonLayer() {
@@ -19,6 +19,18 @@ export default function HexagonLayer() {
   const [sheepImage] = useImage("/SheepSprite.png")
   const [dessertImage] = useImage("/DessertSprite.png")
   const [robberImage] = useImage("/robber.svg")
+  const [brickPortImage] = useImage("/brick_port.png");
+  const [genericPortImage] = useImage("/generic_port.png");
+  const [treePortImage] = useImage("/tree_port.png");
+  const [sheepPortImage] = useImage("/sheep_port.png")
+  const portImageMap = {
+    BRICK: brickPortImage,
+    SHEEP: sheepPortImage,
+    STONE: brickPortImage,
+    TREE: treePortImage,
+    WHEAT: brickPortImage,
+    GENERIC: genericPortImage,
+  }
   const faceWithPositions = useMemo(
     () => getCatanFacePositions(dimensions, faces),
     [dimensions, faces]
@@ -159,7 +171,7 @@ export default function HexagonLayer() {
           />
         )
       })}
-      {portWithPositions.map((port) => {
+      {/* {portWithPositions.map((port) => {
         return (
           <Text
             key={`port-${port.data.target_edge.q1}-${port.data.target_edge.r1}-${port.data.target_edge.s1}-${port.line1endX}-${port.line1endY}-txt`}
@@ -168,6 +180,32 @@ export default function HexagonLayer() {
             y={port.y}
             fontSize={10}
             fill="black"
+            listening={false}
+          />
+        )
+      })} */}
+      {portWithPositions.map((port) => {
+        const tradeRatio = port.data.trade_ratio;
+        const genericPort = tradeRatio.BRICK == 3 && tradeRatio.SHEEP == 3 && tradeRatio.STONE == 3 && tradeRatio.TREE == 3 && tradeRatio.WHEAT == 3;
+        let resourcePort = "BRICK"
+        let portImage = portImageMap.GENERIC
+        if (!genericPort) {
+          Object.keys(tradeRatio).forEach((key) => {
+            if (tradeRatio[key as CatanResource] === 2) {
+              resourcePort = key;
+            }
+          })
+          portImage = portImageMap[resourcePort as CatanResource]
+        }
+        return (
+          <Image
+            key={`port-${port.data.target_edge.q1}-${port.data.target_edge.r1}-${port.data.target_edge.s1}-${port.line1endX}-${port.line1endY}`}
+            image={portImage}
+            x={port.x}
+            y={port.y}
+            offset={{ x: 15, y: 15 }}
+            width={30}
+            height={30}
             listening={false}
           />
         )

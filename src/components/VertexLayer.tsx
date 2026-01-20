@@ -15,6 +15,19 @@ export default function VertexLayer() {
   const { id, username, vertices, dimensions, phase, socket, setPhase, players } = useGameStore();
 
   const [allowedVertices, setAllowedVertices] = useState<CatanVertex[]>([]);
+  const [blink, setBlink] = useState(true);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (phase === "settlement_placement") {
+      interval = setInterval(() => {
+        setBlink((prev) => !prev);
+      }, 500);
+    } else {
+      setBlink(true);
+    }
+    return () => clearInterval(interval);
+  }, [phase]);
 
   const getPlayerColor = (player_name: string | null) => {
     if (!player_name) { return "RED" }
@@ -120,6 +133,7 @@ export default function VertexLayer() {
               y={vertex.y - 8}
               scaleX={0.25} // scale it up/down to fit your Stage
               scaleY={0.25}
+              opacity={phase === "settlement_placement" && vertex.data.owner === username ? (blink ? 1 : 0.6) : 1}
               onClick={(e) => {
                 if (phase === "settlement_placement" && vertex.data.owner === username) {
                   const target = e.target as Konva.Path;
