@@ -56,7 +56,7 @@ export interface ValidRoadPlacementPositions {
 }
 
 const HOST: string = "localhost";
-const PORT: number = 8000;
+const PORT: number = 8001;
 const BASE_PATH = `http://${HOST}:${PORT}`;
 
 export const fetchGameRooms = async (): Promise<GameRoom[]> => {
