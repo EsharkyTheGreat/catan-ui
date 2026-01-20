@@ -4,10 +4,10 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceHouseButton() {
-  const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, discardInProgress, housesPlacedThisTurn, playerTurnCount, dieRolledThisTurn } = useGameStore()
+  const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, discardInProgress, housesPlacedThisTurn, playerTurnCount, dieRolledThisTurn, config } = useGameStore()
   const canBuyHouse = (playerResources.BRICK >= 1 && playerResources.TREE >= 1 && playerResources.SHEEP >= 1 && playerResources.WHEAT >= 1) || myHouseCounts < 2;
   const myTurn = username === currentPlayer
-  const maxHouseReached = myHouseCounts >= 5;
+  const maxHouseReached = myHouseCounts >= config.max_houses;
 
   const canPlaceHouse: boolean = !maxHouseReached && myTurn && canBuyHouse && !discardInProgress && (playerTurnCount[username] in [0, 1] ? housesPlacedThisTurn < 1 : dieRolledThisTurn);
 
@@ -33,7 +33,7 @@ export default function PlaceHouseButton() {
             <ResourceCard resourceType="SHEEP" count={1} size={60} hidden={playerResources.SHEEP < 1} />
             <ResourceCard resourceType="WHEAT" count={1} size={60} hidden={playerResources.WHEAT < 1} />
           </div>
-          <div className="text-[10px] text-center">{`Placed (${myHouseCounts}/5)`}</div>
+          <div className="text-[10px] text-center">{`Placed (${myHouseCounts}/${config.max_houses})`}</div>
         </HoverCardContent>
       </HoverCard>
     </div>

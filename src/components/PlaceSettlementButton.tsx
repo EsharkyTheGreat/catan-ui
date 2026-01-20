@@ -5,10 +5,10 @@ import { useGameStore } from "@/store/GameState";
 
 export default function PlaceSettlementButton() {
 
-  const { phase, setPhase, playerResources, username, currentPlayer, discardInProgress, dieRolledThisTurn, mySettlementCounts } = useGameStore()
+  const { phase, setPhase, playerResources, username, currentPlayer, discardInProgress, dieRolledThisTurn, mySettlementCounts, config } = useGameStore()
   const canBuySettlement = playerResources.STONE >= 3 && playerResources.WHEAT >= 2
   const myTurn = username === currentPlayer
-  const maxSettlementReached = mySettlementCounts >= 4;
+  const maxSettlementReached = mySettlementCounts >= config.max_settlements;
 
   const canPlaceSettlement: boolean = !maxSettlementReached && myTurn && canBuySettlement && !discardInProgress && dieRolledThisTurn;
 
@@ -32,7 +32,7 @@ export default function PlaceSettlementButton() {
             <ResourceCard resourceType="STONE" count={3} size={60} hidden={playerResources.STONE < 3} />
             <ResourceCard resourceType="WHEAT" count={2} size={60} hidden={playerResources.WHEAT < 2} />
           </div>
-          <div className="text-[10px] text-center">{`Placed (${mySettlementCounts}/4)`}</div>
+          <div className="text-[10px] text-center">{`Placed (${mySettlementCounts}/${config.max_settlements})`}</div>
         </HoverCardContent>
       </HoverCard>
     </div>

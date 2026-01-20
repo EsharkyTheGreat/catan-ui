@@ -116,6 +116,17 @@ export type Trade = {
   toast_id: string;
 }
 
+export type GameConfig = {
+  victory_points_needed_to_win: number;
+  max_roads: number;
+  max_houses: number;
+  max_settlements: number;
+  max_development_cards: number;
+  starting_bank_resources: number;
+  discard_threshold: number;
+  pre_generated_map: string | null;
+}
+
 export type TradeResponse = "ACCEPT" | "NO_RESPONSE" | "DECLINE"
 export type TradeStatus = "COMPLETED" | "CREATED" | "IN_PROGRESS" | "EXPIRED"
 export type CatanResource = "TREE" | "BRICK" | "SHEEP" | "WHEAT" | "STONE";
@@ -159,6 +170,7 @@ export type GameSnapshot = {
   username: string;
   chat: ChatMessage[];
   dimensions: { width: number; height: number };
+  config: GameConfig;
   gameLog: ChatMessage[];
   players: Player[];
   faces: CatanTile[];

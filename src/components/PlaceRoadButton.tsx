@@ -4,12 +4,12 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceRoadButton() {
-  const { phase, setPhase, playerResources, freeRoadCount, username, currentPlayer, myRoadCounts, discardInProgress, playerTurnCount, roadsPlacedThisTurn, housesPlacedThisTurn, dieRolledThisTurn } = useGameStore()
+  const { phase, setPhase, playerResources, freeRoadCount, username, currentPlayer, myRoadCounts, discardInProgress, playerTurnCount, roadsPlacedThisTurn, housesPlacedThisTurn, dieRolledThisTurn, config } = useGameStore()
 
   const canBuyRoad = ((playerResources.BRICK >= 1 && playerResources.TREE >= 1) || freeRoadCount > 0) || myRoadCounts < 2;
   const myTurn = username === currentPlayer
   const setupPhaseRoadCriteria = playerTurnCount[username] in [0, 1] ? roadsPlacedThisTurn === 0 && housesPlacedThisTurn === 1 : dieRolledThisTurn;
-  const maxRoadsReached = myRoadCounts >= 15;
+  const maxRoadsReached = myRoadCounts >= config.max_roads;
 
   const canPlaceRoad = !maxRoadsReached && canBuyRoad && myTurn && !discardInProgress && setupPhaseRoadCriteria;
 
@@ -35,7 +35,7 @@ export default function PlaceRoadButton() {
             <ResourceCard resourceType="BRICK" count={1} size={60} hidden={playerResources.BRICK < 1} />
             <ResourceCard resourceType="TREE" count={1} size={60} hidden={playerResources.TREE < 1} />
           </div>}
-          <div className="text-[10px] text-center">{`Placed (${myRoadCounts}/15)`}</div>
+          <div className="text-[10px] text-center">{`Placed (${myRoadCounts}/${config.max_roads})`}</div>
         </HoverCardContent>
       </HoverCard>
     </div>

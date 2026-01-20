@@ -97,7 +97,7 @@ export const useGameStore = create<GameState>()(
       let mustDiscardCards = false;
 
       if (isDiscardPhase) {
-        if (totalCards >= 7) {
+        if (totalCards > gameSummary.config.discard_threshold) {
           mustDiscardCards = true;
         }
       }
@@ -110,6 +110,7 @@ export const useGameStore = create<GameState>()(
         status: gameSummary.status,
         players: gameSummary.players,
         currentPlayer: gameSummary.current_turn ?? null,
+        config: gameSummary.config,
         faces: gameSummary.board.faces,
         edges: gameSummary.board.edges,
         ports: gameSummary.board.ports,
