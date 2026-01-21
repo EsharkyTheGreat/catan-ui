@@ -30,6 +30,22 @@ export default function RootLayout({
       >
         {children}
         <Toaster position="top-left" />
+        <Toaster toasterId="your-turn" containerStyle={
+          {
+            position: "fixed",
+            top: "10vh",
+            left: "40vw",
+            right: "auto",
+            bottom: "auto",
+          }
+        } toastOptions={{
+          style: {
+            fontSize: "18px",
+            padding: "16px 20px",
+            minWidth: "360px",
+            borderRadius: "14px",
+          },
+        }} />
       </body>
     </html>
   );

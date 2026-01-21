@@ -433,15 +433,15 @@ export const useGameStore = create<GameState>()(
     setActiveOpenTrades: (newTrades: Record<UUID, Trade>) => set({ activeOpenTrade: newTrades }),
     addChat: (message: string) => {
       set((state) => {
-        if (!state.currentPlayer) return state;
+        if (!state.username) return state;
         const newMessages = [
           ...state.chat,
-          { player: state.currentPlayer, message: message },
+          { player: state.username, message: message },
         ];
         const event: ChatMessageEvent = {
           type: "CHAT_MESSAGE",
           message: message,
-          player: state.currentPlayer,
+          player: state.username,
         };
         get().socket?.send(JSON.stringify(event));
         return {
@@ -455,9 +455,13 @@ export const useGameStore = create<GameState>()(
       if (event.username === me) {
         toast.success("You have ended your turn")
       } else {
-        toast.success(`${event.username} has ended their turn and it is now your turn`)
+        toast.success(`${event.username} has ended their turn`)
       }
       await get().refreshGameMetadata()
+      const gameSummary = await fetchGameRoomSummary(get().id);
+      if (gameSummary.current_turn === me) {
+        toast.success("It is now your turn", { toasterId: "your-turn", duration: 5000 })
+      }
     },
     onGameOver: async (event: GameOverEvent) => {
       const me = get().username

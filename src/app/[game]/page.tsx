@@ -10,6 +10,7 @@ import { fetchGameRoomSummary } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GameStartedEvent } from "@/lib/websocket";
+import { HOST, PORT } from "@/lib/api";
 
 export default function Home() {
   const canvasParentRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ export default function Home() {
       setUsername(username);
       refreshGameMetadata();
       const ws = new WebSocket(
-        `ws://localhost:8000/ws/${gameId}?player_name=${username}`
+        `ws://${HOST}:${PORT}/ws/${gameId}?player_name=${username}`
       );
       connect(ws);
       return () => {

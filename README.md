@@ -22,6 +22,7 @@
 - [x] Reflect Bank Trade Ratio from player
 - [x] Refresh place_robber state from backend upon refresh
 - [x] Reflect GameConfig state for configurable params
-- [ ] Bug fix chat incorrect name
-- [ ] incorrect turn whose indicator
-- [ ] Move your turn to centre of screen
+- [x] Bug fix chat incorrect name
+- [x] incorrect turn whose indicator
+- [x] Move your turn to centre of screen
+- [x] Make it so that backend url doesn't have to be configured
