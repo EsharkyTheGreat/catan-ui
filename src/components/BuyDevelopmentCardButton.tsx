@@ -5,43 +5,43 @@ import { useGameStore } from "@/store/GameState";
 import { BuyDevelopmentCardEvent } from "@/lib/websocket";
 
 export default function BuyDevelopmentCardButton() {
-    const { playerResources, username, socket, currentPlayer, discardInProgress, dieRolledThisTurn } = useGameStore()
+  const { playerResources, username, socket, currentPlayer, discardInProgress, dieRolledThisTurn, developmentCardsRemaining } = useGameStore()
 
-    const hasResources = playerResources.SHEEP >= 1 && playerResources.STONE >= 1 && playerResources.WHEAT >= 1
-    const myTurn = username === currentPlayer
+  const hasResources = playerResources.SHEEP >= 1 && playerResources.STONE >= 1 && playerResources.WHEAT >= 1
+  const myTurn = username === currentPlayer
 
-    const canBuyDevelopmentCard = hasResources && myTurn && !discardInProgress && dieRolledThisTurn;
+  const canBuyDevelopmentCard = hasResources && myTurn && !discardInProgress && dieRolledThisTurn && developmentCardsRemaining > 0;
 
-    const buyDevelopmentCard = () => {
-        if (!username) return;
-        if (!socket) return;
-        if (!canBuyDevelopmentCard) return;
-        const data: BuyDevelopmentCardEvent = {
-          type: "DEVELOPMENT_CARD_BUY_REQUEST",
-          username: username
-        }
-        socket.send(JSON.stringify(data))
+  const buyDevelopmentCard = () => {
+    if (!username) return;
+    if (!socket) return;
+    if (!canBuyDevelopmentCard) return;
+    const data: BuyDevelopmentCardEvent = {
+      type: "DEVELOPMENT_CARD_BUY_REQUEST",
+      username: username
     }
+    socket.send(JSON.stringify(data))
+  }
 
-    return (
-        <div className="transition-transform duration-200 hover:scale-110">
-          <HoverCard openDelay={10} closeDelay={10}>
-            <HoverCardTrigger>
-              <Spade size={64} 
-                stroke="black"
-                className={canBuyDevelopmentCard ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"}
-                 onClick={()=>buyDevelopmentCard()}
-              />
-              <div className="text-[10px] text-center leading-tight">Buy Development Card</div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-fit">
-              <div className="flex items-center h-full bg-amber-50 rounded-xl">
-                <ResourceCard resourceType="STONE" count={1} size={60} hidden={playerResources.STONE == 0} />
-                <ResourceCard resourceType="WHEAT" count={1} size={60} hidden={playerResources.WHEAT == 0}/>
-                <ResourceCard resourceType="SHEEP" count={1} size={60} hidden={playerResources.SHEEP == 0} />
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
-    )
+  return (
+    <div className="transition-transform duration-200 hover:scale-110">
+      <HoverCard openDelay={10} closeDelay={10}>
+        <HoverCardTrigger>
+          <Spade size={64}
+            stroke="black"
+            className={canBuyDevelopmentCard ? "hover:cursor-pointer" : "hover:cursor-not-allowed opacity-50"}
+            onClick={() => buyDevelopmentCard()}
+          />
+          <div className="text-[10px] text-center leading-tight">Buy Development Card</div>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-fit">
+          <div className="flex items-center h-full bg-amber-50 rounded-xl">
+            <ResourceCard resourceType="STONE" count={1} size={60} hidden={playerResources.STONE == 0} />
+            <ResourceCard resourceType="WHEAT" count={1} size={60} hidden={playerResources.WHEAT == 0} />
+            <ResourceCard resourceType="SHEEP" count={1} size={60} hidden={playerResources.SHEEP == 0} />
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    </div>
+  )
 }

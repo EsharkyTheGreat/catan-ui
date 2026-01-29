@@ -31,6 +31,7 @@ export interface GameRoom {
   roads_placed_this_turn: number;
   discard_counter?: number;
   robber_placement_required: boolean;
+  development_cards_remaining: number;
 }
 
 export interface PlayerDetailedSummary {

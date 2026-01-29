@@ -78,6 +78,8 @@ export const useGameStore = create<GameState>()(
     mustDiscardCards: false,
     initialCardCountForDiscard: 0,
     discardInProgress: false,
+    developmentCardsRemaining: 25,
+
 
     setUsername: (username: string) => set({ username }),
     setId: (gameId: string) => set({ id: gameId }),
@@ -133,6 +135,7 @@ export const useGameStore = create<GameState>()(
         // Handle discard state based on discard_counter
         discardInProgress: isDiscardPhase || false,
         mustDiscardCards: mustDiscardCards,
+        developmentCardsRemaining: gameSummary.development_cards_remaining,
       });
     },
     setFreeRoadCount: (count: number) => set({ freeRoadCount: count }),

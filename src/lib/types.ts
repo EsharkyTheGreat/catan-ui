@@ -199,6 +199,7 @@ export type GameSnapshot = {
   roadsPlacedThisTurn: number;
   playerTurnCount: Record<string, number>;
   gameWinner: string | null;
+  developmentCardsRemaining: number;
 };
 
 export type GameState = GameSnapshot & {
