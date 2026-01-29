@@ -49,6 +49,11 @@ export interface PlayerDetailedSummary {
   victory_points: number;
 }
 
+export interface GameOverStatistics {
+  winner: string;
+  players: PlayerDetailedSummary[];
+}
+
 export interface ValidHousePlacementPositions {
   vertices: CatanVertex[]
 }
@@ -171,6 +176,23 @@ export const fetchValidRoadPlacementPositions = async (game_id: string, player_n
   } catch (error) {
     console.error("Failed to fetch valid road placement positions:", error);
     toast.error("Failed to fetch valid road placement positions:");
+    return null;
+  }
+}
+
+export const fetchGameOverSummary = async (game_id: string): Promise<GameOverStatistics | null> => {
+  try {
+    const response = await fetch(
+      `${BASE_PATH}/game/statistics?game_id=${encodeURIComponent(game_id)}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = (await response.json()) as GameOverStatistics;
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch game over summary:", error);
+    toast.error("Failed to fetch game over summary");
     return null;
   }
 }

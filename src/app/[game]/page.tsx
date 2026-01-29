@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import CatanBoard from "@/components/CatanBoard";
 import BottomNavbar from "@/components/BottomNavbar";
 import RightNavbar from "@/components/RightNavbar";
+import GameOverStats from "@/components/GameOverStats";
 import DiscardCardsDialog from "@/components/DiscardCardsDialog";
 import { useGameStore } from "@/store/GameState";
 import { fetchGameRoomSummary } from "@/lib/api";
@@ -65,13 +66,7 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">
-                  Winner - {gameWinner}
-                </h3>
-              </div>
-            </div>
+            <GameOverStats gameId={gameId} visible={status === "finished"} />
           </CardContent>
         </Card>
       </div>

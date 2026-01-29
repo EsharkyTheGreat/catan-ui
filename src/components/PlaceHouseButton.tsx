@@ -4,10 +4,10 @@ import ResourceCard from "@/components/ResourceCard";
 import { useGameStore } from "@/store/GameState";
 
 export default function PlaceHouseButton() {
-  const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, discardInProgress, housesPlacedThisTurn, playerTurnCount, dieRolledThisTurn, config } = useGameStore()
+  const { phase, setPhase, playerResources, username, currentPlayer, myHouseCounts, mySettlementCounts, discardInProgress, housesPlacedThisTurn, playerTurnCount, dieRolledThisTurn, config } = useGameStore()
   const canBuyHouse = (playerResources.BRICK >= 1 && playerResources.TREE >= 1 && playerResources.SHEEP >= 1 && playerResources.WHEAT >= 1) || myHouseCounts < 2;
   const myTurn = username === currentPlayer
-  const maxHouseReached = myHouseCounts >= config.max_houses;
+  const maxHouseReached = myHouseCounts - mySettlementCounts >= config.max_houses;
 
   const canPlaceHouse: boolean = !maxHouseReached && myTurn && canBuyHouse && !discardInProgress && (playerTurnCount[username] in [0, 1] ? housesPlacedThisTurn < 1 : dieRolledThisTurn);
 
