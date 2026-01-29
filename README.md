@@ -27,5 +27,5 @@
 - [x] Move your turn to centre of screen
 - [x] Make it so that backend url doesn't have to be configured
 - [x] Show limited number of development cards from backend
-- [ ] Make the your turn indicator grow big and small to attract attention
+- [x] Make the your turn indicator grow big and small to attract attention
 - [ ] Game Over screen with statistics of each player

@@ -20,7 +20,7 @@ export default function CatanBoard({ parentRef }: Props) {
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>();
   const [testImg, setTestImg] = useState<HTMLImageElement | null>();
 
-  const { setVertices, dimensions, setDimensions } = useGameStore();
+  const { setVertices, dimensions, setDimensions, username, currentPlayer } = useGameStore();
 
   const clampStagePosition = (
     pos: { x: number; y: number },
@@ -179,11 +179,11 @@ export default function CatanBoard({ parentRef }: Props) {
             draggable
           />
           {testImg && <Image
-              image={testImg}
-              width={20}
-              height={20}
-              draggable
-            />
+            image={testImg}
+            width={20}
+            height={20}
+            draggable
+          />
           }
         </Layer>
       </Stage>
@@ -198,6 +198,7 @@ export default function CatanBoard({ parentRef }: Props) {
           padding: "8px 12px",
           boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
         }}
+        className={username === currentPlayer ? "animate-pulsate" : ""}
       >
         <PhaseIndicator />
       </div>
